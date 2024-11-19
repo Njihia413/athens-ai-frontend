@@ -4,7 +4,8 @@
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import { Link } from "react-router-dom";
-import Logo from "../../assets/img/Logo2.png";
+
+const LogoPath = '/Logo2.png';
 
 const UserHeader = (props) => {
     const layoutMode = document.body.getAttribute("data-layout-mode");
@@ -39,7 +40,7 @@ const UserHeader = (props) => {
             {/* Logo */}
             <div className="header-left">
                 <Link to="/" className="logo">
-                    <img src={Logo} width={40} height={40} alt="" />
+                    <img src={LogoPath} width={40} height={40} alt="" />
                 </Link>
             </div>
             {/* /Logo */}

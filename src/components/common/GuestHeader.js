@@ -1,7 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
-import Logo from "../../assets/img/Logo2.png";
+
+const LogoPath = '/Logo2.png';
 
 const GuestHeader = (props) => {
     const location = useLocation();
@@ -14,7 +15,7 @@ const GuestHeader = (props) => {
             {/* Logo */}
             <div className="header-left">
                 <Link to="/" className="logo">
-                    <img src={Logo} width={40} height={40} alt=""/>
+                    <img src={LogoPath} width={40} height={40} alt=""/>
                 </Link>
             </div>
             {/* /Logo */}

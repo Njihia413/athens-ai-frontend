@@ -6,9 +6,10 @@ import {
     Attachment,
 } from "../../Entryfile/imagepath";
 import axios from "axios";
-import AthensProfile from "../../assets/img/Logo.png"
 import { ToastContainer, toast, Slide  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+const LogoPath = '/Logo.png';
 
 const UserHome = () => {
     const [files, setFiles] = useState([]);
@@ -196,7 +197,7 @@ const UserHome = () => {
                                                         <div className="chat chat-left">
                                                             <div className="chat-avatar">
                                                                 <Link to="/" className="avatar">
-                                                                    <img alt="Athens Profile" src={AthensProfile} />
+                                                                    <img alt="Athens Profile" src={LogoPath} />
                                                                 </Link>
                                                             </div>
                                                             <div className="chat-body">
@@ -257,7 +258,7 @@ const UserHome = () => {
                                                         <div className="chat chat-left">
                                                             <div className="chat-avatar">
                                                                 <Link to="/" className="avatar">
-                                                                    <img alt="Athens Profile" src={AthensProfile}/>
+                                                                    <img alt="Athens Profile" src={LogoPath}/>
                                                                 </Link>
                                                             </div>
                                                             <div className="chat-body">

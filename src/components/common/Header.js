@@ -5,8 +5,9 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
 import { Link } from "react-router-dom";
-import Logo from "../../assets/img/Logo2.png";
 import Profile from "../../assets/img/Profile.png"
+
+const LogoPath = '/Logo2.png';
 
 const Header = (props) => {
     // const data = notifications.notifications;
@@ -38,7 +39,7 @@ const Header = (props) => {
             {/* Logo */}
             <div className="header-left">
                 <Link to="/" className="logo">
-                    <img src={Logo} width={40} height={40} alt="" />
+                    <img src={LogoPath} width={40} height={40} alt="" />
                 </Link>
             </div>
             {/* /Logo */}
