@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import { ToastContainer, toast, Slide  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const LogoPath = require('../../assets/img/Logo.png');
+const LogoPath = '/Logo.png';
 
 const Register = () => {
     const [formData, setFormData] = useState({

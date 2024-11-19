@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEyeSlash, faEye } from '@fortawesome/free-solid-svg-icons';
 
-const LogoPath = require('../../assets/img/Logo.png');
+const LogoPath = '/Logo.png';
 
 const ResetPassword = () => {
     const [showOldPassword, setShowOldPassword] = useState(false);

@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {Helmet} from "react-helmet";
 import {toast} from "react-toastify";
 
-const LogoPath = require('../../assets/img/Logo.png');
+const LogoPath = '/Logo.png';
 
 const Login = () => {
     const [eye, setEye] = useState(true);
