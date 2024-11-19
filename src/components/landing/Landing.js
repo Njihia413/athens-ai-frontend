@@ -1,7 +1,8 @@
 import React from "react";
-import Logo from '../../assets/img/Logo.png';
 import {Link} from "react-router-dom";
 import InitialImg from "../../assets/img/🌀.png";
+
+const LogoPath = '/Logo.png';
 
 const Landing = () => {
     return (
@@ -9,7 +10,7 @@ const Landing = () => {
             <section className="d-flex flex-column justify-content-center align-items-center flex-grow-1">
                 <div className="text-center">
                     {/* Logo with slow bounce animation */}
-                    <img className="mb-3 bounce-slow" alt="Logo" src={Logo}/>
+                    <img className="mb-3 bounce-slow" alt="Logo" src={LogoPath}/>
                     {/* Athens AI Text */}
                     <h1 className="display-1 fw-semibold text-dark">Athens AI</h1>
                 </div>
