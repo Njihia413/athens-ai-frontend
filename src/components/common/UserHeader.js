@@ -95,6 +95,9 @@ const UserHeader = (props) => {
                         <Link className="dropdown-item" to="/user/profile">
                             My Profile
                         </Link>
+                        <Link className="dropdown-item" to="/user/change-password">
+                            Change Password
+                        </Link>
                         <Link
                             to="/login"
                             className="dropdown-item"

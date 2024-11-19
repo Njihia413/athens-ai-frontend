@@ -186,7 +186,8 @@ const ResetPassword = () => {
                                                 </div>
                                             </form>
                                             <div className='account-footer'>
-                                                <p>Remembered your password? <a href='/login' id="a2">Login</a></p>
+                                                <p>Remembered your password? <Link to='/login' id="a2">Login</Link>
+                                                </p>
                                             </div>
                                         </div>
                                     </div>

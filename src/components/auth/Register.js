@@ -139,7 +139,7 @@ const Register = () => {
                                 <div className="account-box">
                                     <div className="account-wrapper">
                                         <h3 className="account-title">Register</h3>
-                                        <p className="account-subtitle">Access to our dashboard</p>
+                                        {/*<p className="account-subtitle">Access to our dashboard</p>*/}
 
                                         <div>
                                             <form onSubmit={handleSubmit} noValidate>
