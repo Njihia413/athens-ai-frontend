@@ -30,7 +30,7 @@ const RoleList = () => {
 
     // Fetch roles data
     useEffect(() => {
-        fetch("https://athens-ai-json-server-vercel.vercel.app/roles")
+        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles")
             .then((response) => response.json())
             .then((data) => {
                 setRoles(data);
@@ -161,7 +161,7 @@ const RoleList = () => {
                                                                     </Link>
                                                                 </td>
                                                                 <td>
-                                                                    {role.dateCreated}
+                                                                    {/*{role.dateCreated}*/}
                                                                 </td>
                                                                 <td>
                                                                     <div className="dropdown profile-action">
@@ -201,14 +201,14 @@ const RoleList = () => {
                                                             <tr className={`collapse row${role.id}`}>
                                                                 <td></td>
                                                                 <td>
-                                                                    <div>
-                                                                        <ul>
-                                                                            {/* Map through the dataSources array and create a list item for each entry */}
-                                                                            {role.dataSources && role.dataSources.map((dataSource, index) => (
-                                                                                <li key={index}>{dataSource}</li>
-                                                                            ))}
-                                                                        </ul>
-                                                                    </div>
+                                                                    {/*<div>*/}
+                                                                    {/*    <ul>*/}
+                                                                    {/*        /!* Map through the dataSources array and create a list item for each entry *!/*/}
+                                                                    {/*        {role.dataSources && role.dataSources.map((dataSource, index) => (*/}
+                                                                    {/*            <li key={index}>{dataSource}</li>*/}
+                                                                    {/*        ))}*/}
+                                                                    {/*    </ul>*/}
+                                                                    {/*</div>*/}
                                                                 </td>
                                                                 <td></td>
                                                             </tr>
@@ -293,19 +293,19 @@ const RoleList = () => {
                                                             <label>
                                                                 Datasources
                                                             </label>
-                                                            <Select
-                                                                isMulti
-                                                                name="datasources"
-                                                                options={dataSources.map(dataSource => ({
-                                                                    value: dataSource.name,
-                                                                    label: dataSource.name
-                                                                }))}
-                                                                value={selectedRole?.dataSources.map((ds) => ({
-                                                                    value: ds,
-                                                                    label: ds.charAt(0).toUpperCase() + ds.slice(1),
-                                                                }))}
-                                                                required
-                                                            />
+                                                            {/*<Select*/}
+                                                            {/*    isMulti*/}
+                                                            {/*    name="datasources"*/}
+                                                            {/*    options={dataSources.map(dataSource => ({*/}
+                                                            {/*        value: dataSource.name,*/}
+                                                            {/*        label: dataSource.name*/}
+                                                            {/*    }))}*/}
+                                                            {/*    value={selectedRole?.dataSources.map((ds) => ({*/}
+                                                            {/*        value: ds,*/}
+                                                            {/*        label: ds.charAt(0).toUpperCase() + ds.slice(1),*/}
+                                                            {/*    }))}*/}
+                                                            {/*    required*/}
+                                                            {/*/>*/}
                                                         </div>
                                                     </div>
                                                 </div>

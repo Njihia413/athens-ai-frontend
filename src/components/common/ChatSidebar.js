@@ -9,7 +9,7 @@ const ChatSidebar = () => {
             <div className="sidebar-menu">
               {/* Edit Icon at the Top Right */}
               <div className="d-flex justify-content-end align-items-center mb-3">
-                <Link to="/guest" className="text-white">
+                <Link to="#" className="text-white">
                   <i className="la la-edit" style={{ fontSize: '1.8rem' }}></i>
                 </Link>
               </div>

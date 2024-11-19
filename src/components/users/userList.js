@@ -154,7 +154,7 @@ const UserList = () => {
                                                     </thead>
                                                     <tbody>
                                                     {filteredUsers.map(user => (
-                                                        <tr key={user.id}>
+                                                        <tr key={user.identificationNumber}>
                                                             <td>{user.firstName}</td>
                                                             <td>{user.middleName}</td>
                                                             <td>{user.lastName}</td>

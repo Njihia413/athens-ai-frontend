@@ -10324,4 +10324,25 @@ option {
   color: black !important;
 }
 
+.result-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
 
+.result-list li {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.sources {
+  margin-top: 15px;
+  font-style: italic;
+  color: #6c757d;
+}
+
+.sources .highlight {
+  background-color: #ffe9a3;
+  padding: 2px 4px;
+  border-radius: 4px;
+}

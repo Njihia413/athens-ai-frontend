@@ -40,20 +40,6 @@ const RoleForm = () => {
                             <form noValidate>
                                 <div className="input-block">
                                     <label>
-                                        ID <span className="text-danger">*</span>
-                                    </label>
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="roleId"
-                                        autoComplete="off"
-                                        required
-                                        defaultValue="rid7"
-                                        disabled={true}
-                                    />
-                                </div>
-                                <div className="input-block">
-                                    <label>
                                         Name <span className="text-danger">*</span>
                                     </label>
                                     <input

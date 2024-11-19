@@ -8,6 +8,9 @@ import {
 import axios from "axios";
 import { ToastContainer, toast, Slide  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {TypeAnimation} from "react-type-animation";
+import ActionButtons from "../guest/ActionButtons";
+import { FaSpinner } from "react-icons/fa";
 
 const LogoPath = '/Logo.png';
 
@@ -19,7 +22,9 @@ const UserHome = () => {
     const [vectorResult, setVectorResult] = useState('');
     const [llmResult, setLLMResult] = useState('');
     const [sqlResult, setSqlResult] = useState('');
-    const [mongoResult, setMongoResult] = useState(''); const [sources, setSources] = useState('');
+    const [mongoResult, setMongoResult] = useState('');
+    const [sources, setSources] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // To handle loading state
 
     const showToast = (message, type) => {
         console.log(`Showing toast: ${message} - ${type}`); // Debug log
@@ -59,11 +64,14 @@ const UserHome = () => {
     };
 
     const handleQuery = async () => {
+        setQuery("");
+        setIsLoading(true);
+
         try {
             const res = await axios.post('http://localhost:8000/query', { query, role, model });
-            let data = res.data.message
+            let data = res.data.message;
             if (res.data) {
-                console.log(data.message)
+                console.log(data.message);
                 setVectorResult(data.vector_result);
                 setLLMResult(data.llm_chat_result);
                 setSqlResult(data.sql_result);
@@ -72,7 +80,9 @@ const UserHome = () => {
             }
         } catch (error) {
             console.error('Error querying:', error);
-            alert('Error querying');
+            showToast('Error querying', "error");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -95,38 +105,6 @@ const UserHome = () => {
                                     <div className="navbar">
                                         <div className="user-details me-auto">
                                             <div className="float-start user-img">
-                                                {/*<div class="d-flex align-items-center gap-0 overflow-hidden">*/}
-                                                {/*    <button*/}
-                                                {/*        aria-label=""*/}
-                                                {/*        type="button"*/}
-                                                {/*        className="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-3 px-2 py-1 fw-semibold"*/}
-                                                {/*        data-bs-toggle="dropdown"*/}
-                                                {/*        aria-expanded="false"*/}
-                                                {/*    >*/}
-                                                {/*            Athens Alpha*/}
-                                                {/*        <svg*/}
-                                                {/*            width="16"*/}
-                                                {/*            height="16"*/}
-                                                {/*            viewBox="0 0 24 24"*/}
-                                                {/*            fill="none"*/}
-                                                {/*            xmlns="http://www.w3.org/2000/svg"*/}
-                                                {/*            className="icon-sm text-muted"*/}
-                                                {/*        >*/}
-                                                {/*            <path*/}
-                                                {/*                fill-rule="evenodd"*/}
-                                                {/*                clip-rule="evenodd"*/}
-                                                {/*                d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.5196 16.8946 12.2652 17 12 17C11.7348 17 11.4804 16.8946 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z"*/}
-                                                {/*                fill="currentColor"*/}
-                                                {/*            ></path>*/}
-                                                {/*        </svg>*/}
-                                                {/*    </button>*/}
-                                                {/*    <ul class="dropdown-menu">*/}
-                                                {/*        <li><a className="dropdown-item" href="#">Option 1</a></li>*/}
-                                                {/*        <li><a className="dropdown-item" href="#">Option 2</a></li>*/}
-                                                {/*        <li><a className="dropdown-item" href="#">Option 3</a></li>*/}
-                                                {/*    </ul>*/}
-                                                {/*</div>*/}
-
                                                 <div className="col-sm-12 col-md-12">
                                                     <div
                                                         className="input-block ">
@@ -148,16 +126,6 @@ const UserHome = () => {
 
                                             </div>
                                         </div>
-                                        {/*<ul className="nav custom-menu">*/}
-                                        {/*    <li className="nav-item">*/}
-                                        {/*        <Link*/}
-                                        {/*            className="nav-link task-chat profile-rightbar float-end"*/}
-                                        {/*            id="task_chat"*/}
-                                        {/*            to="#task_window">*/}
-                                        {/*            <i className="fa fa-bars"/>*/}
-                                        {/*        </Link>*/}
-                                        {/*    </li>*/}
-                                        {/*</ul>*/}
                                     </div>
                                 </div>
 
@@ -166,20 +134,33 @@ const UserHome = () => {
                                         <div className="chat-wrap-inner">
                                             <div className="chat-box">
                                                 <div className="chats">
-                                                    {/*<div className="container-fluid">*/}
-                                                    {/*    <div className="row align-items-center mt-5">*/}
-                                                    {/*        <div className="welcome-message text-center">*/}
-                                                    {/*            <h2 className="text-primary">Hello, Kevin</h2>*/}
-                                                    {/*            <h2>What can I help you with today?</h2>*/}
-                                                    {/*            <div className="prompt-container">*/}
-                                                    {/*                <p>Here are some things you can ask me:</p>*/}
-                                                    {/*                <div>*/}
-                                                    {/*                    <ActionButtons/>*/}
-                                                    {/*                </div>*/}
-                                                    {/*            </div>*/}
-                                                    {/*        </div>*/}
-                                                    {/*    </div>*/}
-                                                    {/*</div>*/}
+                                                    {!query && (
+                                                        <div className="container-fluid">
+                                                            <div className="row align-items-center mt-5">
+                                                                <div className="welcome-message text-center">
+                                                                    <h2>
+                                                                        <TypeAnimation
+                                                                            sequence={[
+                                                                                'What can I help you with today?',
+                                                                            ]}
+                                                                            cursor={false}
+                                                                            wrapper="div"
+                                                                            easing="ease-in-out"
+                                                                            speed={50}
+                                                                            repeat={0}
+                                                                        />
+                                                                    </h2>
+                                                                    <div className="prompt-container">
+                                                                        <p>Here are some things you can ask me:</p>
+                                                                        <div>
+                                                                            <ActionButtons/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
 
                                                     {query && (
                                                         <div className="chat chat-right">
@@ -193,68 +174,8 @@ const UserHome = () => {
                                                         </div>
                                                     )}
 
-                                                    {llmResult && (
-                                                        <div className="chat chat-left">
-                                                            <div className="chat-avatar">
-                                                                <Link to="/" className="avatar">
-                                                                    <img alt="Athens Profile" src={LogoPath} />
-                                                                </Link>
-                                                            </div>
-                                                            <div className="chat-body">
-                                                                <div className="chat-bubble">
-                                                                    <div className="chat-content">
-                                                                        <p>
-                                                                            <strong>Athens AI Result</strong>
-                                                                                {llmResult}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {vectorResult && (
-                                                        <div className="chat chat-left">
-                                                            <div className="chat-body">
-                                                                <div className="chat-bubble">
-                                                                    <div className="chat-content">
-                                                                        <p>
-                                                                            <strong>Vector Result</strong>
-                                                                            {vectorResult}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {sqlResult && (
-                                                        <div className="chat chat-left">
-                                                            <div className="chat-body">
-                                                                <div className="chat-bubble">
-                                                                    <div className="chat-content">
-                                                                        <p><strong>SQL Result:</strong> {sqlResult}</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {mongoResult && (
-                                                        <div className="chat chat-left">
-                                                            <div className="chat-body">
-                                                                <div className="chat-bubble">
-                                                                    <div className="chat-content">
-                                                                        <p><strong>Mongo Result:</strong> {mongoResult}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-
-                                                    {sources && (
+                                                    {/* Combined results */}
+                                                    {(llmResult || vectorResult || sqlResult || mongoResult || sources) && (
                                                         <div className="chat chat-left">
                                                             <div className="chat-avatar">
                                                                 <Link to="/" className="avatar">
@@ -264,9 +185,20 @@ const UserHome = () => {
                                                             <div className="chat-body">
                                                                 <div className="chat-bubble">
                                                                     <div className="chat-content">
-                                                                        {sources ?
-                                                                            <p><strong>Sources:</strong> {sources}</p> :
-                                                                            <p>No sources yet</p>}
+                                                                        <p>
+                                                                            <strong>Results:</strong>
+                                                                        </p>
+                                                                        <ul className="result-list">
+                                                                            {llmResult && <li><strong>AI Result:</strong> {llmResult}</li>}
+                                                                            {vectorResult && <li><strong>Vector Result:</strong> {vectorResult}</li>}
+                                                                            {sqlResult && <li><strong>SQL Result:</strong> {sqlResult}</li>}
+                                                                            {mongoResult && <li><strong>Mongo Result:</strong> {mongoResult}</li>}
+                                                                        </ul>
+                                                                        {sources && (
+                                                                            <p className="sources">
+                                                                                <em><strong>Sources:</strong> <span className="highlight">{sources}</span></em>
+                                                                            </p>
+                                                                        )}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -277,33 +209,40 @@ const UserHome = () => {
                                         </div>
                                     </div>
                                 </div>
+
                                 <div className="chat-footer">
                                     <div className="message-bar">
-                                    <div className="message-inner">
+                                        <div className="message-inner">
                                             <Link
                                                 className="link attach-icon"
                                                 to="#"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#drag_files">
+                                                data-bs-target="#drag_files"
+                                            >
                                                 <img src={Attachment} alt=""/>
                                             </Link>
                                             <div className="message-area">
                                                 <div className="input-group">
-                                                  <textarea
-                                                      value={query}
-                                                      onChange={(e) => setQuery(e.target.value)}
-                                                      className="form-control"
-                                                      placeholder="Message Athens AI"
-                                                      // defaultValue={""}
-                                                  />
+                                                    <textarea
+                                                        value={query}
+                                                        onChange={(e) => setQuery(e.target.value)}
+                                                        className="form-control"
+                                                        placeholder="Message Athens AI"
+                                                    />
                                                     <span className="input-group-append">
-                                                    <button
-                                                        onClick={handleQuery}
-                                                        className="btn btn-primary"
-                                                        type="button">
-                                                      <i className="fa-solid fa-paper-plane"/>
-                                                    </button>
-                                                  </span>
+                                                        <button
+                                                            onClick={handleQuery}
+                                                            className="btn btn-primary"
+                                                            type="button"
+                                                            disabled={isLoading}
+                                                        >
+                                                            {isLoading ? (
+                                                                <FaSpinner className="animate-spin"/>
+                                                            ) : (
+                                                                <i className="fa-solid fa-paper-plane"/>
+                                                            )}
+                                                        </button>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -339,24 +278,6 @@ const UserHome = () => {
                                                     <div className="table-content">
                                                         <div className="container">
                                                             <div className="row filter-row mt-4">
-                                                                {/*<div className="col-sm-12 col-md-12">*/}
-                                                                {/*    <div className="input-block">*/}
-                                                                {/*        <label>*/}
-                                                                {/*            Upload file(s)*/}
-                                                                {/*        </label>*/}
-                                                                {/*        <input className="form-control" type="file" multiple onChange={handleFileChange}/>*/}
-                                                                {/*    </div>*/}
-                                                                {/*</div>*/}
-
-                                                                {/*<div className="col-sm-12 col-md-12">*/}
-                                                                {/*    <div className="input-block">*/}
-                                                                {/*        <button onClick={handleUpload}*/}
-                                                                {/*                className="btn btn-primary account-btn">Upload*/}
-                                                                {/*            Files*/}
-                                                                {/*        </button>*/}
-                                                                {/*    </div>*/}
-                                                                {/*</div>*/}
-
                                                                 <div className="col-sm-12 col-md-12">
                                                                     <div
                                                                         className="input-block form-focus select-focus">
@@ -376,27 +297,6 @@ const UserHome = () => {
                                                                             Role</label>
                                                                     </div>
                                                                 </div>
-
-                                                                {/*<div className="col-sm-12 col-md-12">*/}
-                                                                {/*    <div*/}
-                                                                {/*        className="input-block form-focus select-focus">*/}
-                                                                {/*        <select*/}
-                                                                {/*            value={model}*/}
-                                                                {/*            onChange={(e) => setModel(e.target.value)}*/}
-                                                                {/*            className="form-select form-control"*/}
-                                                                {/*        >*/}
-                                                                {/*            <option value="mistral">Athens Alpha*/}
-                                                                {/*            </option>*/}
-                                                                {/*            <option value="llama3.2">Athens Delphi*/}
-                                                                {/*            </option>*/}
-                                                                {/*            <option value="gemma2">Athens Heracles*/}
-                                                                {/*            </option>*/}
-
-                                                                {/*        </select>*/}
-                                                                {/*        <label className="focus-label">Select your*/}
-                                                                {/*            Model</label>*/}
-                                                                {/*    </div>*/}
-                                                                {/*</div>*/}
                                                             </div>
                                                         </div>
                                                     </div>
