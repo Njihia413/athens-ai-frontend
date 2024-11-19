@@ -34,6 +34,8 @@ const linechartdata = [
 ];
 const AdminDashboardHome = () => {
     const [menu, setMenu] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [dataSources, setDatasources] = useState([]);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -48,6 +50,26 @@ const AdminDashboardHome = () => {
             }, 1000);
         }
     });
+
+
+    useEffect(() => {
+        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff")
+            .then((response) => response.json())
+            .then((data) => {
+                setUsers(data);
+                console.log(data);
+            });
+    }, []);
+
+    useEffect(() => {
+        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources")
+            .then((response) => response.json())
+            .then((data) => {
+                setDatasources(data);
+                console.log(data);
+            });
+    }, []);
+
 
     return (
         <>
@@ -76,7 +98,7 @@ const AdminDashboardHome = () => {
                                           <i className="fa fa-user" />
                                         </span>
                                         <div className="dash-widget-info">
-                                            <h3>27</h3>
+                                            <h3>{users.length}</h3>
                                             <span>Users</span>
                                         </div>
                                     </div>
@@ -115,7 +137,7 @@ const AdminDashboardHome = () => {
                                           <i className="fa fa-file" />
                                         </span>
                                         <div className="dash-widget-info">
-                                            <h3>56</h3>
+                                            <h3>{dataSources.length}</h3>
                                             <span>Datasources</span>
                                         </div>
                                     </div>

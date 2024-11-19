@@ -18,6 +18,7 @@ import Guest from "../components/guest/Guest";
 import User from "../components/user/User";
 import About from "../components/about/About";
 import Contact from "../components/contact/Contact";
+import Logs from "../components/logs/Logs";
 
 const App = () => {
     const store = configureStore({
@@ -53,6 +54,9 @@ const App = () => {
                       </Route>
                       <Route path="models">
                           <Route index element={<ModelList />} />
+                      </Route>
+                      <Route path="logs">
+                          <Route index element={<Logs />} />
                       </Route>
                       <Route path="settings">
                           <Route index element={<Settings />} />

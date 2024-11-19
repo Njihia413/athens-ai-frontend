@@ -5,7 +5,7 @@ const UsersTable = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("https://athens-ai-json-server-vercel.vercel.app/users")
+    fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff")
         .then((response) => response.json())
         .then((data) => {
           setUsers(data);

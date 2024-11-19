@@ -2,15 +2,11 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import React, {useEffect, useState} from "react";
-import { useSelector } from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/img/Logo2.png";
 
 const UserHeader = (props) => {
-    // const data = notifications.notifications;
-    // const datas = message.message;
-    const [notification, setNotifications] = useState(false);
     const layoutMode = document.body.getAttribute("data-layout-mode");
 
     const handlesidebar = () => {

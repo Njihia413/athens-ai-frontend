@@ -5,7 +5,7 @@ const UsersTable = () => {
   const [datasources, setDatasources] = useState([]);
 
   useEffect(() => {
-    fetch("https://athens-ai-json-server-vercel.vercel.app/datasources")
+    fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources")
         .then((response) => response.json())
         .then((data) => {
           setDatasources(data);

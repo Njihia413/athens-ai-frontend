@@ -12,7 +12,6 @@ const ResetPassword = () => {
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
 
     const showToast = (message, type) => {
         console.log(`Showing toast: ${message} - ${type}`); // Debug log

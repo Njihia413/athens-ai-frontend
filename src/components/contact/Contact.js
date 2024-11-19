@@ -1,16 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import GuestHeader from "../common/GuestHeader";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import Logo from "../../assets/img/Logo.png";
 
 const Contact = () => {
-    const [menu, setMenu] = useState(false);
-
-    const toggleMobileMenu = () => {
-        setMenu(!menu);
-    };
-
     return (
         <>
             <div className="account-page">
