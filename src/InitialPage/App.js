@@ -19,6 +19,7 @@ import User from "../components/user/User";
 import About from "../components/about/About";
 import Contact from "../components/contact/Contact";
 import Logs from "../components/logs/Logs";
+import Notifications from "../components/notifications/Notifications";
 
 const App = () => {
     const store = configureStore({
@@ -39,6 +40,7 @@ const App = () => {
                   <Route exact path="/user" element={<User/>} />
                   <Route exact path="/about" element={<About/>} />
                   <Route exact path="/contact" element={<Contact/>} />
+                  <Route exact path="/notifications" element={<Notifications/>} />
 
                   <Route path="admin">
                       <Route index element={<AdminDashboard />} />

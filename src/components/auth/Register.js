@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import Logo from "../../assets/img/Logo.png";
 import { ToastContainer, toast, Slide  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+const LogoPath = require('../../assets/img/Logo.png');
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -132,7 +133,7 @@ const Register = () => {
                             <div className="container">
                                 <div className="account-logo">
                                     <Link to="/">
-                                        <img src={Logo} alt="Athens AI"/>
+                                        <img src={LogoPath} alt="Athens AI"/>
                                     </Link>
                                 </div>
 

@@ -81,7 +81,7 @@ const Header = (props) => {
                         data-bs-toggle="dropdown"
                         onClick={() => setNotifications(!notification)}>
                         <i className="fa-regular fa-bell" />{" "}
-                        <span className="badge badge-pill">3</span>
+                        <span className="badge badge-pill">0</span>
                     </Link>
                     <div
                         className={`dropdown-menu dropdown-menu-end notifications ${
@@ -94,7 +94,7 @@ const Header = (props) => {
                                         onClick={() =>
                                             localStorage.setItem("minheight", "true")
                                         }
-                                        to="/app/administrator/activities">
+                                        to="/notifications">
                                         <div className="media d-flex">
                                           {/*<span className="avatar flex-shrink-0">*/}
                                           {/*  <img alt="" src={val.image} />*/}
@@ -121,7 +121,7 @@ const Header = (props) => {
                         <div className="topnav-dropdown-footer">
                             <Link
                                 onClick={() => localStorage.setItem("minheight", "true")}
-                                to="/app/administrator/activities">
+                                to="/notifications">
                                 View all Notifications
                             </Link>
                         </div>

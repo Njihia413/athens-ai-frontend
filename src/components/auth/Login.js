@@ -1,8 +1,9 @@
 import React, {useState} from "react"
 import {Link, useNavigate} from "react-router-dom";
 import {Helmet} from "react-helmet";
-import Logo from "../../assets/img/Logo.png"
 import {toast} from "react-toastify";
+
+const LogoPath = require('../../assets/img/Logo.png');
 
 const Login = () => {
     const [eye, setEye] = useState(true);
@@ -88,7 +89,7 @@ const Login = () => {
                         {/* Account Logo */}
                         <div className="account-logo">
                             <Link to="/">
-                                <img src={Logo} alt="Athens AI"/>
+                                <img src={LogoPath} alt="Athens AI"/>
                             </Link>
                         </div>
                         {/* /Account Logo */}

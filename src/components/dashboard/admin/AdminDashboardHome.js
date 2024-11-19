@@ -111,7 +111,7 @@ const AdminDashboardHome = () => {
                                           <i className="fa fa-exclamation-triangle" />
                                         </span>
                                         <div className="dash-widget-info">
-                                            <h3>10</h3>
+                                            <h3>0</h3>
                                             <span>Errors</span>
                                         </div>
                                     </div>
@@ -124,7 +124,7 @@ const AdminDashboardHome = () => {
                                           <i className="fa-regular fa-question-circle" />
                                         </span>
                                         <div className="dash-widget-info">
-                                            <h3>22</h3>
+                                            <h3>0</h3>
                                             <span>Queries</span>
                                         </div>
                                     </div>

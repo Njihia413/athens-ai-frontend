@@ -23,20 +23,20 @@ const ModelForm = () => {
                         </div>
                         <div className="modal-body">
                             <form noValidate>
-                                <div className="input-block">
-                                    <label>
-                                        ID <span className="text-danger">*</span>
-                                    </label>
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="modelId"
-                                        autoComplete="off"
-                                        required
-                                        defaultValue="mid5"
-                                        disabled={true}
-                                    />
-                                </div>
+                                {/*<div className="input-block">*/}
+                                {/*    <label>*/}
+                                {/*        ID <span className="text-danger">*</span>*/}
+                                {/*    </label>*/}
+                                {/*    <input*/}
+                                {/*        className="form-control"*/}
+                                {/*        type="text"*/}
+                                {/*        name="modelId"*/}
+                                {/*        autoComplete="off"*/}
+                                {/*        required*/}
+                                {/*        defaultValue="mid5"*/}
+                                {/*        disabled={true}*/}
+                                {/*    />*/}
+                                {/*</div>*/}
                                 <div className="input-block">
                                     <label>
                                         Name <span className="text-danger">*</span>
@@ -51,7 +51,7 @@ const ModelForm = () => {
                                 </div>
                                 <div className="input-block">
                                     <label>
-                                        Nickname <span className="text-danger">*</span>
+                                        Alias <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         className="form-control"
@@ -60,17 +60,17 @@ const ModelForm = () => {
                                         autoComplete="off"
                                     />
                                 </div>
-                                <div className="input-block">
-                                    <label>
-                                        Size <span className="text-danger">*</span>
-                                    </label>
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="size"
-                                        autoComplete="off"
-                                    />
-                                </div>
+                                {/*<div className="input-block">*/}
+                                {/*    <label>*/}
+                                {/*        Size <span className="text-danger">*</span>*/}
+                                {/*    </label>*/}
+                                {/*    <input*/}
+                                {/*        className="form-control"*/}
+                                {/*        type="text"*/}
+                                {/*        name="size"*/}
+                                {/*        autoComplete="off"*/}
+                                {/*    />*/}
+                                {/*</div>*/}
                                 <div className="input-block">
                                     <label>
                                         Status <span className="text-danger">*</span>

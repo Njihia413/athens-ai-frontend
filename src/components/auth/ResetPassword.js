@@ -1,9 +1,10 @@
 import React, {useState} from "react";
 import {ToastContainer, Slide, toast} from "react-toastify";
 import {Link} from "react-router-dom";
-import Logo from "../../assets/img/Logo.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEyeSlash, faEye } from '@fortawesome/free-solid-svg-icons';
+
+const LogoPath = require('../../assets/img/Logo.png');
 
 const ResetPassword = () => {
     const [showOldPassword, setShowOldPassword] = useState(false);
@@ -87,7 +88,7 @@ const ResetPassword = () => {
                             <div className='container'>
                                 <div className="account-logo">
                                     <Link to="/">
-                                        <img src={Logo} alt="Athens AI"/>
+                                        <img src={LogoPath} alt="Athens AI"/>
                                     </Link>
                                 </div>
 

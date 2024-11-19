@@ -3,6 +3,7 @@ import Header from "../common/Header";
 import Sidebar from "../common/Sidebar";
 import {Link} from "react-router-dom";
 import ModelForm from "./modelForm";
+import {format} from "date-fns";
 
 const ModelList = () => {
     const [menu, setMenu] = useState(false);
@@ -130,9 +131,9 @@ const ModelList = () => {
                                                 <table className="table table-striped custom-table datatable">
                                                     <thead>
                                                     <tr>
-                                                        <th>Model</th>
                                                         <th>Name</th>
-                                                        <th>Nickname</th>
+                                                        <th>Upload Date</th>
+                                                        <th>Alias</th>
                                                         <th>Size</th>
                                                         <th>Status</th>
                                                         <th className="text-end">Action</th>
@@ -141,8 +142,8 @@ const ModelList = () => {
                                                     <tbody>
                                                     {displayedModels.map(model => (
                                                         <tr>
-                                                            <td>{model.model}</td>
                                                             <td>{model.name}</td>
+                                                            <td>{format(new Date(model.addedOn), 'MMMM dd, yyyy')}</td>
                                                             <td>{model.nickName}</td>
                                                             <td>{model.size}</td>
                                                             <td>
