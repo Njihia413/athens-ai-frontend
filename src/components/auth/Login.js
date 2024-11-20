@@ -1,7 +1,7 @@
 import React, {useState} from "react"
 import {Link, useNavigate} from "react-router-dom";
 import {Helmet} from "react-helmet";
-import {toast} from "react-toastify";
+import {Slide, toast, ToastContainer} from "react-toastify";
 
 const LogoPath = '/Logo.png';
 
@@ -54,17 +54,24 @@ const Login = () => {
 
             if (response.ok) {
                 const responseData = await response.json();
-                // Assuming the response contains a token or user info on success
-                const { token } = responseData;
+                const { token, roles, firstName } = responseData;
 
                 if (token) {
-                    // Store token in localStorage/sessionStorage (or in context/store)
                     localStorage.setItem('authToken', token);
+                    localStorage.setItem('roles', JSON.stringify(roles));
+                    localStorage.setItem('firstName', firstName);
 
-                    showToast("Login successful!", "success");
+                    const welcomeMessage = roles.includes("Admin") ? "Welcome Admin" : `Welcome ${firstName}`;
+                    showToast(welcomeMessage, "success");
 
-                    // Redirect to dashboard after successful login
-                    navigate('/user');
+                    setTimeout(() => {
+                        // Redirect based on role after the delay
+                        if (roles && roles.includes("Admin")) {
+                            navigate('/admin/dashboard');
+                        } else {
+                            navigate('/user');
+                        }
+                    }, 1000);
                 } else {
                     showToast("Login failed. Please check your credentials.", "error");
                 }
@@ -76,88 +83,102 @@ const Login = () => {
         }
     };
 
-
     return (
-        <div className="account-page">
-            <div className="main-wrapper">
-                <Helmet>
-                    <title>Login - Athens AI</title>
-                    <meta name="description" content="Login page"/>
-                </Helmet>
-                <div className="account-content">
-                    <div className="container">
-                        {/* Account Logo */}
-                        <div className="account-logo">
-                            <Link to="/">
-                                <img src={LogoPath} alt="Athens AI"/>
-                            </Link>
-                        </div>
-                        {/* /Account Logo */}
-                        <div className="account-box">
-                            <div className="account-wrapper">
-                                <h3 className="account-title">Login</h3>
-                                {/*<p className="account-subtitle">Access to our dashboard</p>*/}
-                                {/* Account Form */}
-                                <div>
-                                    <form onSubmit={handleSubmit}>
-                                        <div className="input-block">
-                                            <label>Email Address</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Enter your email address"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)} // Capture email input
-                                            />
-                                        </div>
-                                        <div className="input-block">
-                                            <div className="row">
-                                                <div className="col">
-                                                    <label>Password</label>
-                                                </div>
-                                                <div className="col-auto">
-                                                    <Link className="text-muted" to="/reset-password">
-                                                        Forgot password?
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                            <div style={{position: "relative"}}>
+        <>
+            <div className="account-page">
+                <div className="main-wrapper">
+                    <Helmet>
+                        <title>Login - Athens AI</title>
+                        <meta name="description" content="Login page"/>
+                    </Helmet>
+                    <div className="account-content">
+                        <div className="container">
+                            {/* Account Logo */}
+                            <div className="account-logo">
+                                <Link to="/">
+                                    <img src={LogoPath} alt="Athens AI"/>
+                                </Link>
+                            </div>
+                            {/* /Account Logo */}
+                            <div className="account-box">
+                                <div className="account-wrapper">
+                                    <h3 className="account-title">Login</h3>
+                                    {/*<p className="account-subtitle">Access to our dashboard</p>*/}
+                                    {/* Account Form */}
+                                    <div>
+                                        <form onSubmit={handleSubmit}>
+                                            <div className="input-block">
+                                                <label>Email Address</label>
                                                 <input
-                                                    type={eye ? "password" : "text"}
+                                                    type="text"
                                                     className="form-control"
-                                                    placeholder="Enter your password"
-                                                    value={password}
-                                                    onChange={(e) => setPassword(e.target.value)} // Capture password input
-                                                />
-                                                <span
-                                                    style={{
-                                                        position: "absolute",
-                                                        right: "5%",
-                                                        top: "30%",
-                                                    }}
-                                                    onClick={onEyeClick}
-                                                    className={`toggles-password fa toggle-password ${eye ? "fa-eye-slash" : "fa-eye"}`}
+                                                    placeholder="Enter your email address"
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)} // Capture email input
                                                 />
                                             </div>
+                                            <div className="input-block">
+                                                <div className="row">
+                                                    <div className="col">
+                                                        <label>Password</label>
+                                                    </div>
+                                                    <div className="col-auto">
+                                                        <Link className="text-muted" to="/reset-password">
+                                                            Forgot password?
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                                <div style={{position: "relative"}}>
+                                                    <input
+                                                        type={eye ? "password" : "text"}
+                                                        className="form-control"
+                                                        placeholder="Enter your password"
+                                                        value={password}
+                                                        onChange={(e) => setPassword(e.target.value)} // Capture password input
+                                                    />
+                                                    <span
+                                                        style={{
+                                                            position: "absolute",
+                                                            right: "5%",
+                                                            top: "30%",
+                                                        }}
+                                                        onClick={onEyeClick}
+                                                        className={`toggles-password fa toggle-password ${eye ? "fa-eye-slash" : "fa-eye"}`}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <button className="btn btn-primary account-btn" type="submit">
+                                                Login
+                                            </button>
+                                        </form>
+                                        <div className="account-footer">
+                                            <p>
+                                                Don't have an account yet?{" "}
+                                                <Link to="/register">Register</Link>
+                                            </p>
                                         </div>
-                                        <button className="btn btn-primary account-btn" type="submit">
-                                            Login
-                                        </button>
-                                    </form>
-                                    <div className="account-footer">
-                                        <p>
-                                            Don't have an account yet?{" "}
-                                            <Link to="/register">Register</Link>
-                                        </p>
                                     </div>
+                                    {/* /Account Form */}
                                 </div>
-                                {/* /Account Form */}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
+        </>
     )
 }
 

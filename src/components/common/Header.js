@@ -23,14 +23,16 @@ const Header = (props) => {
     };
 
     const location = useLocation();
-    const { loginvalue } = useSelector((state) => state.user);
-    const UserName = loginvalue?.email?.split("@")[0];
-    const ProfileName = UserName?.charAt(0).toUpperCase() + UserName?.slice(1);
     const navigate = useNavigate();
+
+
+    const firstName = localStorage.getItem('firstName');
 
     // Logout handler
     const handleLogout = () => {
         localStorage.removeItem("authToken");
+        localStorage.removeItem("roles");
+        localStorage.removeItem("firstName");
         navigate("/login");
     };
 
@@ -135,29 +137,24 @@ const Header = (props) => {
                         className="dropdown-toggle nav-link"
                         data-bs-toggle="dropdown">
                         <span className="user-img me-1">
-                          <img src={Profile} alt="" />
+                          <img src={`https://ui-avatars.com/api/?name=${firstName}`} alt="" />
                           <span className="status online" />
                         </span>
-                        <span>{ProfileName ? ` ${ProfileName}` : "Admin"}</span>
+                        <span>
+                            {firstName && <span className="user-name">{firstName}</span>}
+                        </span>
                     </Link>
                     <div className="dropdown-menu dropdown-menu-end">
                         <Link className="dropdown-item" to="/admin/profile">
                             My Profile
                         </Link>
-                        <button
+                        <Link
+                            to="/login"
                             className="dropdown-item"
                             onClick={handleLogout}
-                            style={{
-                                background: "none",
-                                border: "none",
-                                padding: 0,
-                                color: "inherit",
-                                textAlign: "left",
-                                cursor: "pointer"
-                            }}
                         >
                             Logout
-                        </button>
+                        </Link>
                     </div>
                 </li>
             </ul>
@@ -175,7 +172,11 @@ const Header = (props) => {
                     <Link className="dropdown-item" to="/admin/profile">
                         My Profile
                     </Link>
-                    <Link className="dropdown-item" to="/login">
+                    <Link
+                        className="dropdown-item"
+                        to="/login"
+                        onClick={handleLogout}
+                    >
                         Logout
                     </Link>
                 </div>

@@ -3,6 +3,7 @@ import Header from '../common/Header.js';
 import Sidebar from "../common/Sidebar.js";
 import {Link} from "react-router-dom";
 import { format } from 'date-fns';
+import {Slide, toast, ToastContainer} from "react-toastify";
 
 const UserList = () => {
     const [menu, setMenu] = useState(false);
@@ -19,6 +20,20 @@ const UserList = () => {
         setMenu(!menu);
     };
 
+    const showToast = (message, type) => {
+        console.log(`Showing toast: ${message} - ${type}`); // Debug log
+        switch (type) {
+            case 'success':
+                toast.success(message);
+                break;
+            case 'error':
+                toast.error(message);
+                break;
+            default:
+                toast(message);
+        }
+    };
+
     useEffect(() => {
         fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff")
             .then((response) => response.json())
@@ -28,6 +43,7 @@ const UserList = () => {
                 setFilteredEntriesCount(data.length);
             });
     }, []);
+
 
     const handleEntriesChange = (e) => {
         const value = e.target.value;
@@ -45,8 +61,95 @@ const UserList = () => {
     // Filter users based on status and role if selected, otherwise show entriesPerPage limit
     const filteredUsers = users
         .filter((user) => (statusFilter ? user.status === statusFilter : true))
-        .filter((user) => (roleFilter ? user.role === roleFilter : true))
+        .filter((user) => (roleFilter ? user.roles.includes(roleFilter) : true)) // Check if roleFilter exists in roles array
         .slice(0, entriesPerPage);
+
+    useEffect(() => {
+        const count = users.filter((user) =>
+            (statusFilter ? user.status === statusFilter : true) &&
+            (roleFilter ? user.roles.includes(roleFilter) : true)
+        ).length;
+
+        setFilteredEntriesCount(count);
+    }, [users, statusFilter, roleFilter]);
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const dateOfBirthValue = form.elements.dateOfBirth.value;
+
+        const formData = {
+            firstName: form.elements.firstName.value,
+            middleName: form.elements.middleName.value,
+            lastName: form.elements.lastName.value,
+            gender: form.elements.gender.value,
+            phoneNumber: form.elements.phoneNumber.value,
+            dateOfBirth: new Date(dateOfBirthValue).toISOString(),
+            identificationNumber: form.elements.identificationNumber.value,
+            emailAddress: form.elements.emailAddress.value,
+            roles: [form.elements.role.value],
+            status: form.elements.status.value,
+        };
+
+        const authToken = localStorage.getItem("authToken");
+
+        try {
+            const response = await fetch(`https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/${selectedUser.username}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                showToast("User updated successfully!", "success");
+
+                // Optionally update the UI or take action after success
+                // For example, you can refresh the user data or close the modal
+                // and update the state to reflect the changes
+            } else {
+                throw new Error("User update failed.");
+            }
+        } catch (error) {
+            showToast("Failed to update user details. Please try again.", "error");
+        }
+    };
+
+    const handleDelete = async () => {
+        const authToken = localStorage.getItem("authToken");
+
+        if (!authToken) {
+            showToast("Authorization token missing, please log in again.", "error");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/${selectedUser.username}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                    },
+                }
+            );
+
+            if (response.ok) {
+                showToast("User deleted successfully!", "success");
+
+                setUsers((prevUsers) => prevUsers.filter((user) => user.username !== selectedUser.username));
+            } else {
+                throw new Error("User deletion failed.");
+            }
+        } catch (error) {
+            showToast("Failed to delete user. Please try again.", "error");
+        }
+    };
+
 
     return (
         <>
@@ -98,12 +201,9 @@ const UserList = () => {
                                                 onChange={handleRoleChange}
                                             >
                                                 <option value="">Select Role</option>
-                                                <option value="HR">HR</option>
                                                 <option value="Admin">Admin</option>
-                                                <option value="Finance">Finance</option>
-                                                <option value="Manager">Manager</option>
-                                                <option value="IT Support">IT Support</option>
-                                                <option value="Customer Service">Customer Service</option>
+                                                <option value="Guest">Guest</option>
+                                                <option value="UnverifiedUser">UnverifiedUser</option>
                                             </select>
                                             <label className="focus-label">Role</label>
                                         </div>
@@ -162,18 +262,21 @@ const UserList = () => {
                                                             <td>
                                                                 <div>
                                                                     <span
-                                                                        className="d-block text-black small font-weight-bold mb-1">
-                                                                        {user.lastLogin}
+                                                                        className="d-block text-primary text-sm  text-nowrap mb-1">
+                                                                        {format(new Date(user.lastLogin), 'MMMM dd, yyyy')}
                                                                     </span>
-                                                                    <span>
-
+                                                                    <span
+                                                                        className="d-block text-muted text-xs fw-medium">
+                                                                        {format(new Date(user.lastLogin), 'hh:mm:ss a')}
                                                                     </span>
                                                                 </div>
                                                             </td>
+
                                                             <td>
                                                                 <div className="dropdown action-label mt-2">
-                                                                    <Link to="#" className="btn btn-white btn-sm btn-rounded "
-                                                                        aria-expanded="false">
+                                                                    <Link to="#"
+                                                                          className="btn btn-white btn-sm btn-rounded "
+                                                                          aria-expanded="false">
                                                                         <i className={`fa-regular fa-circle-dot text-${user.status === 'active' ? 'success' : 'danger'}`}></i>
                                                                         {user.status === 'active' ? 'Active' : 'Inactive'}
                                                                     </Link>
@@ -183,7 +286,7 @@ const UserList = () => {
                                                                 <span
                                                                     className="badge bg-inverse-primary"
                                                                 >
-                                                                  {user.role}
+                                                                  {user.roles}
                                                                 </span>
                                                             </td>
                                                             <td>
@@ -201,7 +304,7 @@ const UserList = () => {
                                                                             to="#"
                                                                             data-bs-toggle="modal"
                                                                             data-bs-target="#edit_user"
-                                                                            onClick={() => setSelectedUser(user)} // Set the selected user data here
+                                                                            onClick={() => setSelectedUser(user)}
                                                                         >
                                                                             <i className="fa fa-pencil m-r-5"/> Edit
                                                                         </Link>
@@ -210,6 +313,7 @@ const UserList = () => {
                                                                             to="#"
                                                                             data-bs-toggle="modal"
                                                                             data-bs-target="#delete_user"
+                                                                            onClick={() => setSelectedUser(user)}
                                                                         >
                                                                             <i className="fa-regular fa-trash-can m-r-5"/> Delete
                                                                         </Link>
@@ -257,23 +361,23 @@ const UserList = () => {
                                             </button>
                                         </div>
                                         <div className="modal-body">
-                                            <form>
+                                            <form onSubmit={handleUpdate}>
                                                 <div className="row">
                                                     <h4 className="text-primary">Personal Details Section</h4>
-                                                    <div className="col-sm-6">
-                                                        <div className="input-block">
-                                                            <label>User ID</label>
-                                                            <input
-                                                                className="form-control"
-                                                                type="text"
-                                                                name="datasourceID"
-                                                                autoComplete="off"
-                                                                defaultValue={selectedUser?.id} // Prepopulate User ID
-                                                                disabled={true}
-                                                                required
-                                                            />
-                                                        </div>
-                                                    </div>
+                                                    {/*<div className="col-sm-6">*/}
+                                                    {/*    <div className="input-block">*/}
+                                                    {/*        <label>User ID</label>*/}
+                                                    {/*        <input*/}
+                                                    {/*            className="form-control"*/}
+                                                    {/*            type="text"*/}
+                                                    {/*            name="datasourceID"*/}
+                                                    {/*            autoComplete="off"*/}
+                                                    {/*            defaultValue={selectedUser?.id} // Prepopulate User ID*/}
+                                                    {/*            disabled={true}*/}
+                                                    {/*            required*/}
+                                                    {/*        />*/}
+                                                    {/*    </div>*/}
+                                                    {/*</div>*/}
                                                     <div className="col-sm-6">
                                                         <div className="input-block">
                                                             <label>First Name</label>
@@ -282,7 +386,7 @@ const UserList = () => {
                                                                 type="text"
                                                                 name="firstName"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.firstName} // Prepopulate First Name
+                                                                defaultValue={selectedUser?.firstName}
                                                             />
                                                         </div>
                                                     </div>
@@ -294,7 +398,7 @@ const UserList = () => {
                                                                 type="text"
                                                                 name="middleName"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.middleName} // Prepopulate Middle Name
+                                                                defaultValue={selectedUser?.middleName}
                                                             />
                                                         </div>
                                                     </div>
@@ -306,7 +410,7 @@ const UserList = () => {
                                                                 type="text"
                                                                 name="lastName"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.lastName} // Prepopulate Last Name
+                                                                defaultValue={selectedUser?.lastName}
                                                             />
                                                         </div>
                                                     </div>
@@ -316,7 +420,7 @@ const UserList = () => {
                                                             <select
                                                                 className="form-select form-control"
                                                                 name="gender"
-                                                                value={selectedUser?.gender} // Prepopulate Gender
+                                                                value={selectedUser?.gender}
                                                             >
                                                                 <option value="Male">Male</option>
                                                                 <option value="Female">Female</option>
@@ -341,12 +445,14 @@ const UserList = () => {
                                                             <label>Date of Birth (dd/mm/yyyy)</label>
                                                             <div className="cal-icon">
                                                                 <input
-                                                                    // dateFormat="dd/MM/yyyy"
                                                                     className="form-control datetimepicker"
                                                                     type="date"
-                                                                    defaultValue={selectedUser?.dateOfBirth} // Prepopulate Date of Birth
+                                                                    name="dateOfBirth"
+                                                                    id="dateOfBirth"
+                                                                    defaultValue={selectedUser?.dateOfBirth?.split("T")[0] || ""}
                                                                     required
                                                                 />
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -358,11 +464,11 @@ const UserList = () => {
                                                                 type="number"
                                                                 name="identificationNumber"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.identificationNumber} // Prepopulate Identification Number
+                                                                defaultValue={selectedUser?.identificationNumber}
                                                             />
                                                         </div>
                                                     </div>
-                                                    <div className="col-sm-12">
+                                                    <div className="col-sm-6">
                                                         <div className="input-block">
                                                             <label>Email Address</label>
                                                             <input
@@ -370,7 +476,7 @@ const UserList = () => {
                                                                 type="email"
                                                                 name="emailAddress"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.email} // Prepopulate Email
+                                                                defaultValue={selectedUser?.email}
                                                             />
                                                         </div>
                                                     </div>
@@ -382,15 +488,12 @@ const UserList = () => {
                                                             <select
                                                                 className="form-select form-control"
                                                                 name="role"
-                                                                value={selectedUser?.role}  // Controlled value
+                                                                value={selectedUser?.roles}
                                                                 onChange={(e) => setRole(e.target.value)}  // Update state on change
                                                             >
-                                                                <option value="HR">HR</option>
                                                                 <option value="Admin">Admin</option>
-                                                                <option value="Finance">Finance</option>
-                                                                <option value="Manager">Manager</option>
-                                                                <option value="IT Support">IT Support</option>
-                                                                <option value="Customer Service">Customer Service</option>
+                                                                <option value="Guest">Guest</option>
+                                                                <option value="UnverifiedUser">UnverifiedUser</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -402,7 +505,7 @@ const UserList = () => {
                                                             <select
                                                                 className="form-select form-control"
                                                                 name="status"
-                                                                value={selectedUser?.status} // Prepopulate Status
+                                                                value={selectedUser?.status}
                                                             >
                                                                 <option value="inactive">Inactive</option>
                                                                 <option value="active">Active</option>
@@ -456,8 +559,11 @@ const UserList = () => {
                                             <div className="modal-btn delete-action">
                                                 <div className="row">
                                                     <div className="col-6">
-                                                        <Link to="" className="btn btn-primary continue-btn"
-                                                              data-bs-dismiss="modal">
+                                                        <Link
+                                                            to=""
+                                                            className="btn btn-primary continue-btn"
+                                                            onClick={handleDelete}
+                                                            data-bs-dismiss="modal">
                                                             Delete
                                                         </Link>
                                                     </div>
@@ -480,6 +586,19 @@ const UserList = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
         </>
     )
 }

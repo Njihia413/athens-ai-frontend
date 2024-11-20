@@ -23,7 +23,7 @@ const UserHeader = (props) => {
 
     useEffect(() => {
         // Retrieve the user's first name from localStorage
-        const storedName = localStorage.getItem("userFirstName");
+        const storedName = localStorage.getItem("firstName");
         if (storedName) {
             setProfileName(storedName);
         }
@@ -31,7 +31,8 @@ const UserHeader = (props) => {
 
     const handleLogout = () => {
         localStorage.removeItem("authToken");
-        localStorage.removeItem("userFirstName");
+        localStorage.removeItem("roles");
+        localStorage.removeItem("firstName");
         navigate("/login");
     };
 
@@ -83,7 +84,7 @@ const UserHeader = (props) => {
                         className="dropdown-toggle nav-link"
                         data-bs-toggle="dropdown">
                         <span className="user-img me-1">
-                          <img src={`https://api.dicebear.com/6.x/initials/svg?seed=${profileName}`} alt="" />
+                          <img src={`https://ui-avatars.com/api/?name=${profileName}`} alt="" />
                           <span className="status online" />
                         </span>
                         <span>{profileName || "User"}</span>

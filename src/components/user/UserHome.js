@@ -24,7 +24,45 @@ const UserHome = () => {
     const [sqlResult, setSqlResult] = useState('');
     const [mongoResult, setMongoResult] = useState('');
     const [sources, setSources] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // To handle loading state
+    const [isLoading, setIsLoading] = useState(false);
+    const [chat, setChat] = useState([
+        {
+            "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "sender": "us",
+            "recipient": "llm model",
+            "content": "Hello Athens AI",
+            "timeStamp": "1",
+            "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "conversation": "string"
+        },
+        {
+            "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "sender": "llm model",
+            "recipient": "us",
+            "content": "Hello Vincent, how can I help you today?",
+            "timeStamp": "2",
+            "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "conversation": "string"
+        },
+        {
+            "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "sender": "us",
+            "recipient": "llm model",
+            "content": "I wanted to ask you something",
+            "timeStamp": "3",
+            "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "conversation": "string"
+        },
+        {
+            "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "sender": "llm model",
+            "recipient": "us",
+            "content": "Go ahead, and ask.I'll be willing to assist",
+            "timeStamp": "4",
+            "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "conversation": "string"
+        }
+    ])
 
     const showToast = (message, type) => {
         console.log(`Showing toast: ${message} - ${type}`); // Debug log
@@ -86,6 +124,68 @@ const UserHome = () => {
         }
     };
 
+    function dummy(fail=false){
+        return new Promise((resolve, reject) => {
+                const result = {
+                    "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "sender": "llm model",
+                    "recipient": "us",
+                    "content": "I am doing great, thanks. And you?",
+                    "timeStamp": "2",
+                    "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "conversation": "string"
+                }
+
+            if(fail){
+                reject('Request failed')
+            } else {
+                resolve(result)
+            }
+        }, 8000)
+    }
+
+
+    async function handleSubmit(e) {
+        // setQuery("");
+        setChat(chat => [
+            ...chat,
+            {
+                "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "sender": "us",
+                "recipient": "llm model",
+                "content": query,
+                "timeStamp": chat.length + 1,
+                "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "conversation": "string"
+            },
+        ])
+        setIsLoading(true);
+
+        try {
+            const result = await dummy()
+
+            setChat(chat => {
+                const newMessage = result
+                result.timestamp = chat.length
+                return [ ...chat, newMessage ]
+            })
+
+            // let data = res.data.message;
+            // if (res.data) {
+            //     //console.log(data.message);
+            //     setVectorResult(data.vector_result);
+            //     setLLMResult(data.llm_chat_result);
+            //     setSqlResult(data.sql_result);
+            //     setMongoResult(data.mongo_result);
+            //     setSources(res.data.sources || 'No sources available');
+            // }
+        } catch (error) {
+            console.error('Error querying:', error);
+            showToast('Error querying', "error");
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <>
@@ -134,7 +234,7 @@ const UserHome = () => {
                                         <div className="chat-wrap-inner">
                                             <div className="chat-box">
                                                 <div className="chats">
-                                                    {!query && (
+                                                    {!chat.length && (
                                                         <div className="container-fluid">
                                                             <div className="row align-items-center mt-5">
                                                                 <div className="welcome-message text-center">
@@ -161,18 +261,52 @@ const UserHome = () => {
                                                         </div>
                                                     )}
 
-
-                                                    {query && (
-                                                        <div className="chat chat-right">
-                                                            <div className="chat-body">
-                                                                <div className="chat-bubble">
-                                                                    <div className="chat-content">
-                                                                        <p>{query}</p>
+                                                    {chat.sort((a, b) => a.timestamp - b.timestamp).map(message => {
+                                                        return (
+                                                            message.sender === 'us' ?
+                                                                <div className="chat chat-right">
+                                                                    <div className="chat-body">
+                                                                        <div className="chat-bubble">
+                                                                            <div className="chat-content">
+                                                                                <p>{message.content}</p>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                                :
+                                                                <div className="chat chat-left">
+                                                                    <div className="chat-avatar">
+                                                                        <Link to="/" className="avatar">
+                                                                            <img alt="Athens Profile" src={LogoPath}/>
+                                                                        </Link>
+                                                                    </div>
+                                                                    <div className="chat-body">
+                                                                        <div className="chat-bubble">
+                                                                            <div className="chat-content">
+                                                                                <p>
+                                                                                    {message.content}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                        )
+                                                    })
+                                                    }
+
+
+                                                    {/*{query && (*/}
+                                                    {/*    <div className="chat chat-right">*/}
+                                                    {/*        <div className="chat-body">*/}
+                                                    {/*            <div className="chat-bubble">*/}
+                                                    {/*                <div className="chat-content">*/}
+                                                    {/*                    <p></p>*/}
+                                                    {/*                </div>*/}
+                                                    {/*            </div>*/}
+                                                    {/*        </div>*/}
+                                                    {/*    </div>*/}
+                                                    {/*)}*/}
 
                                                     {/* Combined results */}
                                                     {(llmResult || vectorResult || sqlResult || mongoResult || sources) && (
@@ -189,14 +323,19 @@ const UserHome = () => {
                                                                             <strong>Results:</strong>
                                                                         </p>
                                                                         <ul className="result-list">
-                                                                            {llmResult && <li><strong>AI Result:</strong> {llmResult}</li>}
-                                                                            {vectorResult && <li><strong>Vector Result:</strong> {vectorResult}</li>}
-                                                                            {sqlResult && <li><strong>SQL Result:</strong> {sqlResult}</li>}
-                                                                            {mongoResult && <li><strong>Mongo Result:</strong> {mongoResult}</li>}
+                                                                            {llmResult && <li><strong>AI
+                                                                                Result:</strong> {llmResult}</li>}
+                                                                            {vectorResult && <li><strong>Vector
+                                                                                Result:</strong> {vectorResult}</li>}
+                                                                            {sqlResult && <li><strong>SQL
+                                                                                Result:</strong> {sqlResult}</li>}
+                                                                            {mongoResult && <li><strong>Mongo
+                                                                                Result:</strong> {mongoResult}</li>}
                                                                         </ul>
                                                                         {sources && (
                                                                             <p className="sources">
-                                                                                <em><strong>Sources:</strong> <span className="highlight">{sources}</span></em>
+                                                                                <em><strong>Sources:</strong> <span
+                                                                                    className="highlight">{sources}</span></em>
                                                                             </p>
                                                                         )}
                                                                     </div>
@@ -222,16 +361,17 @@ const UserHome = () => {
                                                 <img src={Attachment} alt=""/>
                                             </Link>
                                             <div className="message-area">
-                                                <div className="input-group">
+                                                <form onSubmit={handleSubmit}>
+                                                    <div className="input-group">
                                                     <textarea
                                                         value={query}
                                                         onChange={(e) => setQuery(e.target.value)}
                                                         className="form-control"
                                                         placeholder="Message Athens AI"
                                                     />
-                                                    <span className="input-group-append">
+                                                        <span className="input-group-append">
                                                         <button
-                                                            onClick={handleQuery}
+                                                            onClick={handleSubmit}
                                                             className="btn btn-primary"
                                                             type="button"
                                                             disabled={isLoading}
@@ -243,7 +383,8 @@ const UserHome = () => {
                                                             )}
                                                         </button>
                                                     </span>
-                                                </div>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>

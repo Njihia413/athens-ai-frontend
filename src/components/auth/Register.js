@@ -92,9 +92,6 @@ const Register = () => {
                 // Check if the response status is 200 or 201
                 showToast("Registration successful!", "success");
 
-                // Save user's first name to localStorage
-                localStorage.setItem('userFirstName', formData.firstName);
-
                 setTimeout(() => {
                     // Clear form fields by resetting the state
                     setFormData({

@@ -51,6 +51,9 @@ const AdminDashboardHome = () => {
         }
     });
 
+    const roles = JSON.parse(localStorage.getItem("roles"));
+    const role = roles && roles.length > 0 ? roles[0] : "User";
+
 
     useEffect(() => {
         fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff")
@@ -82,7 +85,7 @@ const AdminDashboardHome = () => {
                         <div className="page-header">
                             <div className="row">
                                 <div className="col-sm-12">
-                                    <h3 className="page-title">Welcome Admin!</h3>
+                                    <h3 className="page-title">Welcome {role}!</h3>
                                     <ul className="breadcrumb">
                                         <li className="breadcrumb-item active">Dashboard</li>
                                     </ul>
