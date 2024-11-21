@@ -44,7 +44,7 @@ const DataSourceForm = ({ addNewDataSource }) => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${authToken}`,
+                        'Authorization': `Bearer ${authToken}`,
                     },
                     body: JSON.stringify(payload),
                 }

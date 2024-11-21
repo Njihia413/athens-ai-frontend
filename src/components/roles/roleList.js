@@ -5,6 +5,8 @@ import {Link} from "react-router-dom";
 import RoleForm from "./roleForm";
 import Select from "react-select";
 import fetchWithAuth from "../../utils/FetchWithAuth";
+import {format} from "date-fns";
+import {toast} from "react-toastify";
 
 const RoleList = () => {
     const [menu, setMenu] = useState(false);
@@ -18,6 +20,20 @@ const RoleList = () => {
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
+    };
+
+    const showToast = (message, type) => {
+        console.log(`Showing toast: ${message} - ${type}`); // Debug log
+        switch (type) {
+            case 'success':
+                toast.success(message);
+                break;
+            case 'error':
+                toast.error(message);
+                break;
+            default:
+                toast(message);
+        }
     };
 
     const handleEntriesChange = (e) => {
@@ -72,6 +88,114 @@ const RoleList = () => {
         setFilteredRoles(filtered);
         setEntriesCount(filtered.length);
     }, [searchInput, roles]);
+
+    const addNewRole = (newRole) => {
+        // Update the `roles` state to include the new role
+        setRoles((prevRoles) => {
+            const updatedRoles = [newRole, ...prevRoles];
+            // Update filtered roles to include the new role if it matches the current search input
+            setFilteredRoles(
+                updatedRoles.filter((role) =>
+                    role.name.toLowerCase().includes(searchInput.toLowerCase())
+                )
+            );
+            // Update the entries count
+            setEntriesCount(updatedRoles.length);
+            return updatedRoles;
+        });
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+
+        // Prepare the formData
+        const formData = {
+            name: form.elements.name.value,
+            dataSources: selectedRole?.dataSources.map(dataSource => dataSource.id) || [], // Extracting the data source IDs
+        };
+
+        console.log("formData:", formData); // Debugging
+
+        const authToken = localStorage.getItem("authToken");
+
+        if (!authToken) {
+            showToast("Authentication token missing. Please log in again.", "error");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles/${selectedRole.id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                    body: JSON.stringify(formData),
+                }
+            );
+
+            if (response.ok) {
+                showToast("Role updated successfully!", "success");
+
+                // Update the UI state
+                setRoles((prevRoles) =>
+                    prevRoles.map((role) =>
+                        role.id === selectedRole.id
+                            ? { ...role, ...formData } // Update the specific role
+                            : role
+                    )
+                );
+
+                // Optionally reset the selectedRole
+                setSelectedRole(null);
+            } else {
+                const errorData = await response.json();
+                console.error("Server error:", errorData);
+                throw new Error("Role update failed.");
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+            showToast("Failed to update role details. Please try again.", "error");
+        }
+    };
+
+    const handleDelete = async () => {
+        const authToken = localStorage.getItem("authToken");
+
+        if (!authToken) {
+            showToast("Authorization token missing, please log in again.", "error");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles/${selectedRole.id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                    },
+                }
+            );
+
+            if (response.ok) {
+                showToast("Role deleted successfully!", "success");
+
+                setRoles((prevRoles) => prevRoles.filter((role) => role.id !== selectedRole.id));
+            } else {
+                throw new Error("Role deletion failed.");
+            }
+        } catch (error) {
+            showToast("Failed to delete role. Please try again.", "error");
+        }
+    }
+
+
 
     // Get the roles to display based on pagination
     const displayedRoles = filteredRoles.slice(0, entriesPerPage);
@@ -176,7 +300,7 @@ const RoleList = () => {
                                                                     </Link>
                                                                 </td>
                                                                 <td>
-                                                                    {/*{role.dateCreated}*/}
+                                                                    {format(new Date(role.createdDate), 'MMMM dd, yyyy')}
                                                                 </td>
                                                                 <td>
                                                                     <div className="dropdown profile-action">
@@ -216,14 +340,13 @@ const RoleList = () => {
                                                             <tr className={`collapse row${role.id}`}>
                                                                 <td></td>
                                                                 <td>
-                                                                    {/*<div>*/}
-                                                                    {/*    <ul>*/}
-                                                                    {/*        /!* Map through the dataSources array and create a list item for each entry *!/*/}
-                                                                    {/*        {role.dataSources && role.dataSources.map((dataSource, index) => (*/}
-                                                                    {/*            <li key={index}>{dataSource}</li>*/}
-                                                                    {/*        ))}*/}
-                                                                    {/*    </ul>*/}
-                                                                    {/*</div>*/}
+                                                                    <div>
+                                                                        <ul>
+                                                                            {role.dataSources.map((dataSource) => (
+                                                                                <li key={dataSource.id}>{dataSource.name}</li>
+                                                                            ))}
+                                                                        </ul>
+                                                                    </div>
                                                                 </td>
                                                                 <td></td>
                                                             </tr>
@@ -245,7 +368,7 @@ const RoleList = () => {
                                 </div>
                             </div>
 
-                            <RoleForm/>
+                            <RoleForm addNewRole={addNewRole}/>
 
                             {/*Edit Role Form*/}
                             <div id="edit_role"
@@ -271,24 +394,8 @@ const RoleList = () => {
                                             </button>
                                         </div>
                                         <div className="modal-body">
-                                            <form>
+                                            <form onSubmit={handleUpdate}>
                                                 <div className="row">
-                                                    <div className="col-sm-12">
-                                                        <div className="input-block">
-                                                            <label>
-                                                                ID
-                                                            </label>
-                                                            <input
-                                                                className="form-control"
-                                                                type="text"
-                                                                name="roleId"
-                                                                autoComplete="off"
-                                                                required
-                                                                defaultValue={selectedRole?.id}
-                                                                disabled={true}
-                                                            />
-                                                        </div>
-                                                    </div>
                                                     <div className="col-sm-12">
                                                         <div className="input-block">
                                                             <label>
@@ -297,8 +404,13 @@ const RoleList = () => {
                                                             <input
                                                                 className="form-control"
                                                                 type="text"
-                                                                name="roleName"
+                                                                name="name"
+                                                                id="name"
                                                                 defaultValue={selectedRole?.name}
+                                                                onChange={(e) => setSelectedRole(prev => ({
+                                                                    ...prev,
+                                                                    name: e.target.value
+                                                                }))}
                                                                 autoComplete="off"
                                                             />
                                                         </div>
@@ -308,19 +420,29 @@ const RoleList = () => {
                                                             <label>
                                                                 Datasources
                                                             </label>
-                                                            {/*<Select*/}
-                                                            {/*    isMulti*/}
-                                                            {/*    name="datasources"*/}
-                                                            {/*    options={dataSources.map(dataSource => ({*/}
-                                                            {/*        value: dataSource.name,*/}
-                                                            {/*        label: dataSource.name*/}
-                                                            {/*    }))}*/}
-                                                            {/*    value={selectedRole?.dataSources.map((ds) => ({*/}
-                                                            {/*        value: ds,*/}
-                                                            {/*        label: ds.charAt(0).toUpperCase() + ds.slice(1),*/}
-                                                            {/*    }))}*/}
-                                                            {/*    required*/}
-                                                            {/*/>*/}
+                                                            <Select
+                                                                isMulti
+                                                                name="dataSources"
+                                                                id="dataSources"
+                                                                options={dataSources.map(dataSource => ({
+                                                                    value: dataSource.id,
+                                                                    label: dataSource.name,
+                                                                }))}
+                                                                value={selectedRole?.dataSources.map(dataSource => ({
+                                                                    value: dataSource.id,
+                                                                    label: dataSource.name,
+                                                                })) || []}
+                                                                onChange={(selected) =>
+                                                                    setSelectedRole((prevRole) => ({
+                                                                        ...prevRole,
+                                                                        dataSources: selected.map((s) => ({
+                                                                            id: s.value,
+                                                                            name: s.label,
+                                                                        })),
+                                                                    }))
+                                                                }
+                                                                required
+                                                            />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -355,7 +477,11 @@ const RoleList = () => {
                                             <div className="modal-btn delete-action">
                                                 <div className="row">
                                                     <div className="col-6">
-                                                        <Link to="" className="btn btn-primary continue-btn" data-bs-dismiss="modal">
+                                                        <Link
+                                                            to=""
+                                                            className="btn btn-primary continue-btn"
+                                                            onClick={handleDelete}
+                                                            data-bs-dismiss="modal">
                                                             Delete
                                                         </Link>
                                                     </div>

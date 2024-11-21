@@ -4,6 +4,7 @@ import Sidebar from "../common/Sidebar";
 import {Link} from "react-router-dom";
 import ModelForm from "./modelForm";
 import {format} from "date-fns";
+import fetchWithAuth from "../../utils/FetchWithAuth";
 
 const ModelList = () => {
     const [menu, setMenu] = useState(false);
@@ -30,13 +31,20 @@ const ModelList = () => {
 
     // Fetch models data
     useEffect(() => {
-        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels")
-            .then((response) => response.json())
-            .then((data) => {
+        const fetchModels = async () => {
+            try {
+                const data = await fetchWithAuth(
+                   "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels"
+                );
                 setModels(data);
                 console.log(data);
-            });
+            } catch (error) {
+                console.error("Error fetching models:", error);
+            }
+        }
+        fetchModels();
     }, []);
+
 
     useEffect(() => {
         // Filter data based on the search input

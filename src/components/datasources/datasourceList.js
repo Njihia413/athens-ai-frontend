@@ -4,7 +4,7 @@ import Sidebar from "../common/Sidebar";
 import { Link } from "react-router-dom";
 import DatasourceForm from "./datasourceForm";
 import fetchWithAuth from "../../utils/FetchWithAuth";
-import {toast} from "react-toastify";
+import {Slide, toast, ToastContainer} from "react-toastify";
 
 const DatasourceList = () => {
     const [menu, setMenu] = useState(false);
@@ -407,6 +407,19 @@ const DatasourceList = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
         </>
     );
 };

@@ -1,14 +1,68 @@
 import React, {useEffect, useState} from "react"
 import Select from 'react-select'
 import fetchWithAuth from "../../utils/FetchWithAuth";
+import {Slide, toast, ToastContainer} from "react-toastify";
 
-const RoleForm = () => {
-    // const datasources = [
-    //     { value: 'statements', label: 'Profit/Loss Statements' },
-    //     { value: 'guidelines', label: 'Employee Guidelines' },
-    //     { value: 'database', label: 'Customer Database' }
-    // ]
-    const [dataSources, setDataSources] = useState([]);
+const RoleForm = ({ addNewRole }) => {
+    const [datasources, setDataSources] = useState([]);
+    const [formData, setFormData] = useState({
+        name: "",
+        dataSources: []
+    });
+
+    const showToast = (message, type) => {
+        console.log(`Showing toast: ${message} - ${type}`); // Debug log
+        switch (type) {
+            case 'success':
+                toast.success(message);
+                break;
+            case 'error':
+                toast.error(message);
+                break;
+            default:
+                toast(message);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const payload = {
+            name: formData.name,
+            dataSources: formData.dataSources,
+        };
+
+        console.log("Payload being sent:", payload);
+
+        try {
+            const authToken = localStorage.getItem("authToken");
+            const response = await fetch(
+                "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${authToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            showToast("Role added successfully:", "success");
+            addNewRole(result);
+            setFormData({ name: "", dataSources: [] });
+        } catch (error) {
+            console.error("Error adding role:", error);
+            showToast("Error adding role. Please try again.", "error");
+        }
+    };
+
+
     useEffect(() => {
         const fetchDataSources = async () => {
             try {
@@ -23,6 +77,14 @@ const RoleForm = () => {
 
         fetchDataSources();
     }, []);
+
+    // const handleDataSourcesChange = (selectedOptions) => {
+    //     setFormData((prevData) => ({
+    //         ...prevData,
+    //         dataSources: selectedOptions.map((option) => option.value),
+    //     }));
+    // };
+
 
     return (
         <>
@@ -45,7 +107,7 @@ const RoleForm = () => {
                             </button>
                         </div>
                         <div className="modal-body">
-                            <form noValidate>
+                            <form onSubmit={handleSubmit}>
                                 <div className="input-block">
                                     <label>
                                         Name <span className="text-danger">*</span>
@@ -53,26 +115,49 @@ const RoleForm = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        name="roleName"
+                                        name="name"
+                                        id="name"
+                                        value={formData.name}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                name: e.target.value,
+                                            }))
+                                        }
                                         autoComplete="off"
                                         required
                                     />
                                 </div>
                                 <div className="input-block">
-                                    <label>Select Datasources <span className="text-danger">*</span></label>
+                                    <label>
+                                        Select Datasources <span className="text-danger">*</span>
+                                    </label>
                                     <Select
                                         isMulti
-                                        name="datasources"
-                                        options={dataSources.map(dataSource => ({
-                                            value: dataSource.name,
-                                            label: dataSource.name
+                                        name="dataSources"
+                                        id="dataSources"
+                                        value={formData.dataSources.map((ds) => ({
+                                            value: ds,
+                                            label: ds,
+                                        }))}
+                                        onChange={(selectedOptions) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                dataSources: selectedOptions.map((option) => option.value),
+                                            }))
+                                        }
+                                        options={datasources.map((datasource) => ({
+                                            value: datasource.id,
+                                            label: datasource.name,
                                         }))}
                                         required
                                     />
                                 </div>
                                 <div className="submit-section">
-                                    <button className="btn btn-primary submit-btn" data-bs-dismiss="modal"
-                                            type="submit">
+                                    <button
+                                        className="btn btn-primary submit-btn"
+                                        data-bs-dismiss="modal"
+                                        type="submit">
                                         Submit
                                     </button>
                                 </div>
@@ -82,6 +167,19 @@ const RoleForm = () => {
                 </div>
             </div>
             {/* /Add Role Modal */}
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
         </>
     )
 }
