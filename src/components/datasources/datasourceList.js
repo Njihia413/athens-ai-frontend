@@ -3,6 +3,7 @@ import Header from "../common/Header";
 import Sidebar from "../common/Sidebar";
 import { Link } from "react-router-dom";
 import DatasourceForm from "./datasourceForm";
+import fetchWithAuth from "../../utils/FetchWithAuth";
 
 const DatasourceList = () => {
     const [menu, setMenu] = useState(false);
@@ -27,25 +28,44 @@ const DatasourceList = () => {
         setSearchInput(value);
     };
 
+
     useEffect(() => {
-        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources")
-            .then((response) => response.json())
-            .then((data) => {
+        const fetchDataSources = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
+                );
                 setDataSources(data);
-            });
+            } catch (error) {
+                console.error("Failed to fetch data sources:", error);
+            }
+        };
+
+        fetchDataSources();
     }, []);
+
+
 
     useEffect(() => {
         // Filter data based on the search input
         const filteredData = dataSources.filter((dataSource) =>
             dataSource.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-            dataSource.type.toLowerCase().includes(searchInput.toLowerCase()) ||
-            dataSource.link.toLowerCase().includes(searchInput.toLowerCase())
+            dataSource.description.toLowerCase().includes(searchInput.toLowerCase()) ||
+            dataSource.url.toLowerCase().includes(searchInput.toLowerCase())
         );
 
         // Apply pagination to filtered data
         setDisplayedDataSources(filteredData.slice(0, entriesPerPage));
     }, [searchInput, entriesPerPage, dataSources]);
+
+
+    const addNewDataSource = (newDataSource) => {
+        setDataSources((prevDataSources) => {
+            const updatedDataSources = [...prevDataSources, newDataSource];
+            setDisplayedDataSources(updatedDataSources.slice(0, entriesPerPage));
+            return updatedDataSources;
+        });
+    };
 
     return (
         <>
@@ -128,8 +148,8 @@ const DatasourceList = () => {
                                                     <thead>
                                                     <tr>
                                                         <th>Name</th>
-                                                        <th>Type</th>
-                                                        <th>Link</th>
+                                                        <th>Description</th>
+                                                        <th>Url</th>
                                                         <th className="text-end">Action</th>
                                                     </tr>
                                                     </thead>
@@ -137,8 +157,8 @@ const DatasourceList = () => {
                                                     {displayedDataSources.map(dataSource => (
                                                         <tr key={dataSource.id}>
                                                             <td>{dataSource.name}</td>
-                                                            <td>{dataSource.type}</td>
-                                                            <td>{dataSource.link}</td>
+                                                            <td>{dataSource.description}</td>
+                                                            <td>{dataSource.url}</td>
                                                             <td>
                                                                 <div className="dropdown profile-action">
                                                                     <Link
@@ -188,7 +208,7 @@ const DatasourceList = () => {
                                 </div>
                             </div>
 
-                            <DatasourceForm />
+                            <DatasourceForm addNewDataSource={addNewDataSource}/>
 
                             {/*Edit Datasource Form*/}
                             <div id="edit_datasource" className="modal custom-modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -196,7 +216,8 @@ const DatasourceList = () => {
                                     <div className="modal-content">
                                         <div className="modal-header">
                                             <h5 className="modal-title">Edit Datasource</h5>
-                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <button type="button" className="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close">
                                                 <span aria-hidden="true">×</span>
                                             </button>
                                         </div>
@@ -205,25 +226,12 @@ const DatasourceList = () => {
                                                 <div className="row">
                                                     <div className="col-sm-12">
                                                         <div className="input-block">
-                                                            <label>ID</label>
-                                                            <input
-                                                                className="form-control"
-                                                                type="text"
-                                                                name="datasourceID"
-                                                                autoComplete="off"
-                                                                defaultValue={selectedDataSource?.id}
-                                                                disabled={true}
-                                                                required
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-sm-12">
-                                                        <div className="input-block">
                                                             <label>Name</label>
                                                             <input
                                                                 className="form-control"
                                                                 type="text"
-                                                                name="datasourceName"
+                                                                name="name"
+                                                                id="name"
                                                                 autoComplete="off"
                                                                 defaultValue={selectedDataSource?.name}
                                                                 required
@@ -232,37 +240,49 @@ const DatasourceList = () => {
                                                     </div>
                                                     <div className="col-sm-12">
                                                         <div className="input-block">
-                                                            <label>Type</label>
-                                                            <select className="form-select form-control" name="datasourceType" value={selectedDataSource?.type}>
-                                                                <option value="Postgres">Postgres</option>
-                                                                <option value="MongoDB">Mongodb</option>
-                                                                <option value="IP Address">IP Address</option>
-                                                            </select>
+                                                            <label>Description</label>
+                                                            <input
+                                                                className="form-control"
+                                                                type="text"
+                                                                name="description"
+                                                                id="description"
+                                                                autoComplete="off"
+                                                                defaultValue={selectedDataSource?.description}
+                                                                required
+                                                            />
                                                         </div>
                                                     </div>
                                                     <div className="col-sm-12">
                                                         <div className="input-block">
-                                                            <label>Link</label>
-                                                            <input className="form-control" type="text" name="datasourceLink" defaultValue={selectedDataSource?.link} autoComplete="off" />
+                                                            <label>Url</label>
+                                                            <input
+                                                                className="form-control"
+                                                                type="text"
+                                                                name="url"
+                                                                id="url"
+                                                                defaultValue={selectedDataSource?.url}
+                                                                autoComplete="off"
+                                                            />
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div className="submit-section">
+                                                    <button className="btn btn-primary submit-btn"
+                                                            data-bs-dismiss="modal">
+                                                        Update
+                                                    </button>
+                                                </div>
                                             </form>
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                                                Close
-                                            </button>
-                                            <button type="button" className="btn btn-primary">Save</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/*Delete Datasource Form*/}
-                            <div id="delete_datasource" className="modal custom-modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
+                            <div id="delete_datasource" className="modal custom-modal fade" role="dialog"
+                                 data-bs-backdrop="static" data-bs-keyboard="false">
                                 <div className="modal-dialog modal-dialog-centered " role="document">
-                                    <div className="modal-content">
+                                <div className="modal-content">
                                         <div className="modal-header">
                                             <h5 className="modal-title">Delete Datasource</h5>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">

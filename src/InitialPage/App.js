@@ -21,6 +21,7 @@ import Contact from "../components/contact/Contact";
 import Logs from "../components/logs/Logs";
 import Notifications from "../components/notifications/Notifications";
 import ProtectedRoute from "./ProtectedRoute"
+import ChangePassword from "../components/settings/ChangePassword";
 
 const App = () => {
     const store = configureStore({
@@ -43,72 +44,34 @@ const App = () => {
                     <Route exact path="/contact" element={<Contact />} />
                     <Route exact path="/notifications" element={<Notifications />} />
 
-                    <Route
-                        path="/user"
-                        element={
-                            <ProtectedRoute>
-                                <User />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/admin"
-                        element={
-                            <ProtectedRoute>
-                                <AdminDashboard />
-                            </ProtectedRoute>
-                        }
-                    >
+                    <Route path="user" element={<User/>} >
+                        <Route index element={<User />} />
+                        <Route path="change-password" >
+                            <Route index element={<ChangePassword />} />
+                        </Route>
+                    </Route>
+
+                    <Route path="admin">
                         <Route index element={<AdminDashboard />} />
                         <Route path="dashboard" element={<AdminDashboard />} />
-                        <Route
-                            path="users"
-                            element={
-                                <ProtectedRoute>
-                                    <UserList />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="datasources"
-                            element={
-                                <ProtectedRoute>
-                                    <DatasourceList />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="roles"
-                            element={
-                                <ProtectedRoute>
-                                    <RoleList />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="models"
-                            element={
-                                <ProtectedRoute>
-                                    <ModelList />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="logs"
-                            element={
-                                <ProtectedRoute>
-                                    <Logs />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="settings"
-                            element={
-                                <ProtectedRoute>
-                                    <Settings />
-                                </ProtectedRoute>
-                            }
-                        />
+                        <Route path="users">
+                            <Route index element={<UserList />} />
+                        </Route>
+                        <Route path="datasources">
+                            <Route index element={<DatasourceList />} />
+                        </Route>
+                        <Route path="roles">
+                            <Route index element={<RoleList />} />
+                        </Route>
+                        <Route path="models">
+                            <Route index element={<ModelList />} />
+                        </Route>
+                        <Route path="logs">
+                            <Route index element={<Logs />} />
+                        </Route>
+                        <Route path="settings">
+                            <Route index element={<Settings />} />
+                        </Route>
                     </Route>
                 </Routes>
             </Router>

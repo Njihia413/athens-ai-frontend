@@ -4,6 +4,7 @@ import Sidebar from "../common/Sidebar.js";
 import {Link} from "react-router-dom";
 import { format } from 'date-fns';
 import {Slide, toast, ToastContainer} from "react-toastify";
+import fetchWithAuth from "../../utils/FetchWithAuth";
 
 const UserList = () => {
     const [menu, setMenu] = useState(false);
@@ -35,13 +36,20 @@ const UserList = () => {
     };
 
     useEffect(() => {
-        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff")
-            .then((response) => response.json())
-            .then((data) => {
+        const fetchStaff = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff"
+                );
                 setUsers(data);
                 setEntriesCount(data.length);
                 setFilteredEntriesCount(data.length);
-            });
+            } catch (error) {
+                console.error("Error fetching staff:", error);
+            }
+        };
+
+        fetchStaff();
     }, []);
 
 
@@ -107,9 +115,17 @@ const UserList = () => {
             if (response.ok) {
                 showToast("User updated successfully!", "success");
 
-                // Optionally update the UI or take action after success
-                // For example, you can refresh the user data or close the modal
-                // and update the state to reflect the changes
+                // Update the UI state to reflect the updated user details
+                setUsers((prevUsers) =>
+                    prevUsers.map((user) =>
+                        user.username === selectedUser.username
+                            ? { ...user, ...formData }  // Update the user with new data
+                            : user
+                    )
+                );
+
+                // Optionally close the modal or reset form state
+                // setSelectedUser(null); // If you want to clear the selected user
             } else {
                 throw new Error("User update failed.");
             }
@@ -117,6 +133,7 @@ const UserList = () => {
             showToast("Failed to update user details. Please try again.", "error");
         }
     };
+
 
     const handleDelete = async () => {
         const authToken = localStorage.getItem("authToken");
@@ -474,7 +491,8 @@ const UserList = () => {
                                                             <input
                                                                 className="form-control"
                                                                 type="email"
-                                                                name="emailAddress"
+                                                                name="email"
+                                                                id="email"
                                                                 autoComplete="off"
                                                                 defaultValue={selectedUser?.email}
                                                             />

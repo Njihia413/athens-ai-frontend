@@ -64,14 +64,14 @@ const AdminDashboardHome = () => {
             });
     }, []);
 
-    useEffect(() => {
-        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources")
-            .then((response) => response.json())
-            .then((data) => {
-                setDatasources(data);
-                console.log(data);
-            });
-    }, []);
+    // useEffect(() => {
+    //     fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources")
+    //         .then((response) => response.json())
+    //         .then((data) => {
+    //             setDatasources(data);
+    //             console.log(data);
+    //         });
+    // }, []);
 
 
     return (

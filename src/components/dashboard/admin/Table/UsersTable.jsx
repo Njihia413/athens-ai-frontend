@@ -14,7 +14,7 @@ const UsersTable = () => {
   }, []);
 
   // Filter to get only inactive users and limit to 4
-  const inactiveUsers = users.filter((user) => user.status === "inactive").slice(0, 4);
+  const unverifiedUsers = users.filter((user) => user.roles === "UnverifiedUser").slice(0, 4);
 
   return (
       <div className="col-md-6 d-flex">
@@ -33,7 +33,7 @@ const UsersTable = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {inactiveUsers.map((user) => (
+                {unverifiedUsers.map((user) => (
                     <tr key={user.id}>
                       <td>
                         <h2 className="table-avatar">

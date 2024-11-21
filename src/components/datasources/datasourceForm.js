@@ -1,6 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
+import {Slide, toast, ToastContainer} from "react-toastify";
 
-const DataSourceForm = (props) => {
+const DataSourceForm = ({ addNewDataSource }) => {
+    const [formData, setFormData] = useState({
+        name: "",
+        description: "",
+        url: "",
+    });
+
+    const showToast = (message, type) => {
+        console.log(`Showing toast: ${message} - ${type}`); // Debug log
+        switch (type) {
+            case 'success':
+                toast.success(message);
+                break;
+            case 'error':
+                toast.error(message);
+                break;
+            default:
+                toast(message);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const payload = {
+            name: formData.name,
+            description: formData.description,
+            url: formData.url,
+        };
+
+        try {
+            const authToken = localStorage.getItem("authToken");
+            const response = await fetch(
+                "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            showToast("Datasource added successfully:", "success");
+            addNewDataSource(result);
+
+            setFormData({ name: "", description: "", url: "" });
+        } catch (error) {
+            console.error("Error adding datasource:", error);
+            showToast("Error adding datasource:", error);
+        }
+    };
+
     return (
         <>
             {/* Add Datasource Modal */}
@@ -8,7 +72,8 @@ const DataSourceForm = (props) => {
                 id="add_datasource"
                 className="modal custom-modal fade"
                 data-bs-backdrop="static"
-                role="dialog">
+                role="dialog"
+            >
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -17,26 +82,13 @@ const DataSourceForm = (props) => {
                                 type="button"
                                 className="close"
                                 data-bs-dismiss="modal"
-                                aria-label="Close">
+                                aria-label="Close"
+                            >
                                 <span aria-hidden="true">×</span>
                             </button>
                         </div>
                         <div className="modal-body">
-                            <form noValidate>
-                                <div className="input-block">
-                                    <label>
-                                        ID <span className="text-danger">*</span>
-                                    </label>
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="datasourceID"
-                                        autoComplete="off"
-                                        defaultValue="11"
-                                        disabled={true}
-                                        required
-                                    />
-                                </div>
+                            <form noValidate onSubmit={handleSubmit}>
                                 <div className="input-block">
                                     <label>
                                         Name <span className="text-danger">*</span>
@@ -44,39 +96,50 @@ const DataSourceForm = (props) => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        name="datasourceName"
+                                        name="name"
+                                        id="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
                                         autoComplete="off"
                                         required
                                     />
                                 </div>
                                 <div className="input-block">
                                     <label>
-                                        Type <span className="text-danger">*</span>
-                                    </label>
-                                    <select
-                                        className="form-select form-control"
-                                        name="datasourceType"
-                                    >
-                                        <option value>Postgres</option>
-                                        <option value={1}>Mongodb</option>
-                                        <option value={2}>IP Address</option>
-                                    </select>
-                                </div>
-                                <div className="input-block">
-                                    <label>
-                                        Link <span className="text-danger">*</span>
+                                        Description <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         className="form-control"
                                         type="text"
-                                        name="datasourceLink"
+                                        name="description"
+                                        id="description"
+                                        value={formData.description}
+                                        onChange={handleInputChange}
+                                        autoComplete="off"
+                                        required
+                                    />
+                                </div>
+                                <div className="input-block">
+                                    <label>
+                                        Url <span className="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="url"
+                                        id="url"
+                                        value={formData.url}
+                                        onChange={handleInputChange}
                                         autoComplete="off"
                                         required
                                     />
                                 </div>
                                 <div className="submit-section">
-                                    <button className="btn btn-primary submit-btn" data-bs-dismiss="modal"
-                                            type="submit">
+                                    <button
+                                        className="btn btn-primary submit-btn"
+                                        data-bs-dismiss="modal"
+                                        type="submit"
+                                    >
                                         Submit
                                     </button>
                                 </div>
@@ -85,9 +148,21 @@ const DataSourceForm = (props) => {
                     </div>
                 </div>
             </div>
-            {/* /Add Department Modal */}
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
         </>
-    )
-}
+    );
+};
 
 export default DataSourceForm;
