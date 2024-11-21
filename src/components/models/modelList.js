@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import ModelForm from "./modelForm";
 import {format} from "date-fns";
 import fetchWithAuth from "../../utils/FetchWithAuth";
+import {toast} from "react-toastify";
 
 const ModelList = () => {
     const [menu, setMenu] = useState(false);
@@ -16,6 +17,20 @@ const ModelList = () => {
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
+    };
+
+    const showToast = (message, type) => {
+        console.log(`Showing toast: ${message} - ${type}`); // Debug log
+        switch (type) {
+            case 'success':
+                toast.success(message);
+                break;
+            case 'error':
+                toast.error(message);
+                break;
+            default:
+                toast(message);
+        }
     };
 
     const handleEntriesChange = (e) => {
@@ -59,6 +74,79 @@ const ModelList = () => {
         // Apply pagination to filtered data
         setDisplayedModels(filteredData.slice(0, entriesPerPage));
     }, [searchInput, entriesPerPage, models]);
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = {
+
+        }
+
+        const authToken = localStorage.getItem("authToken");
+
+        try {
+            const response = await fetch(`https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels/${selectedModel.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                showToast("Model updated successfully!", "success");
+
+                // Update the UI state to reflect the updated model details
+                setModels((prevModels) =>
+                    prevModels.map((model) =>
+                        model.id === selectedModel.id
+                            ? {...model, ...formData}
+                            : model
+                    )
+                );
+
+            } else {
+                throw new Error("Model update failed.");
+            }
+        } catch (error) {
+            showToast("Failed to update model details. Please try again.", "error");
+        }
+    }
+
+
+    const handleDelete = async () => {
+        const authToken = localStorage.getItem("authToken");
+
+        if (!authToken) {
+            showToast("Authorization token missing, please log in again.", "error");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels/${selectedModel.id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                    },
+                }
+            );
+
+            if (response.ok) {
+                showToast("Model deleted successfully!", "success");
+
+                setModels((prevModels) => prevModels.filter((model) => model.id !== selectedModel.id));
+            } else {
+                throw new Error("Model deletion failed.");
+            }
+        } catch (error) {
+            showToast("Failed to delete model. Please try again.", "error");
+        }
+    }
 
     return (
         <>
@@ -139,7 +227,7 @@ const ModelList = () => {
                                                 <table className="table table-striped custom-table datatable">
                                                     <thead>
                                                     <tr>
-                                                        <th>Name</th>
+                                                        <th>Model</th>
                                                         <th>Upload Date</th>
                                                         <th>Alias</th>
                                                         <th>Size</th>
@@ -190,7 +278,7 @@ const ModelList = () => {
                                                                             to="#"
                                                                             data-bs-toggle="modal"
                                                                             data-bs-target="#delete_model"
-                                                                            // onClick={() => setEditEmployeeId(employee.id)}
+                                                                            onClick={() => setSelectedModel(model)}
                                                                         >
                                                                             <i className="fa-regular fa-trash-can m-r-5"/> Delete
                                                                         </Link>
@@ -241,7 +329,7 @@ const ModelList = () => {
                                             </button>
                                         </div>
                                         <div className="modal-body">
-                                            <form>
+                                            <form onSubmit={handleUpdate}>
                                                 <div className="row">
                                                     <div className="col-sm-12">
                                                         <div className="input-block">
@@ -355,7 +443,11 @@ const ModelList = () => {
                                             <div className="modal-btn delete-action">
                                                 <div className="row">
                                                     <div className="col-6">
-                                                        <Link to="" className="btn btn-primary continue-btn" data-bs-dismiss="modal">
+                                                        <Link
+                                                            to=""
+                                                            className="btn btn-primary continue-btn"
+                                                            onClick={handleDelete}
+                                                            data-bs-dismiss="modal">
                                                             Delete
                                                         </Link>
                                                     </div>

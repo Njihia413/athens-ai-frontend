@@ -43,7 +43,7 @@ const DatasourceList = () => {
         setSearchInput(value);
     };
 
-
+    // Fetch datasources data
     useEffect(() => {
         const fetchDataSources = async () => {
             try {

@@ -37,18 +37,18 @@ const ModelForm = () => {
                                 {/*        disabled={true}*/}
                                 {/*    />*/}
                                 {/*</div>*/}
-                                <div className="input-block">
-                                    <label>
-                                        Name <span className="text-danger">*</span>
-                                    </label>
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="modelName"
-                                        autoComplete="off"
-                                        required
-                                    />
-                                </div>
+                                {/*<div className="input-block">*/}
+                                {/*    <label>*/}
+                                {/*        Name <span className="text-danger">*</span>*/}
+                                {/*    </label>*/}
+                                {/*    <input*/}
+                                {/*        className="form-control"*/}
+                                {/*        type="text"*/}
+                                {/*        name="modelName"*/}
+                                {/*        autoComplete="off"*/}
+                                {/*        required*/}
+                                {/*    />*/}
+                                {/*</div>*/}
                                 <div className="input-block">
                                     <label>
                                         Alias <span className="text-danger">*</span>
