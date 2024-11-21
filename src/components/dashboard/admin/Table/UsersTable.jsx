@@ -1,20 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import fetchWithAuth from "../../../../utils/FetchWithAuth";
+import {format} from "date-fns";
 
 const UsersTable = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff")
-        .then((response) => response.json())
-        .then((data) => {
-          setUsers(data);
-          console.log(data);
-        });
+    const fetchStaff = async () => {
+      try {
+        const data = await fetchWithAuth(
+            "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff"
+        );
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching staff:", error);
+      }
+    };
+
+    fetchStaff();
   }, []);
 
-  // Filter to get only inactive users and limit to 4
-  const unverifiedUsers = users.filter((user) => user.roles === "UnverifiedUser").slice(0, 4);
+  // Filter to get only unverified users and limit to 4
+  const unverifiedUsers = users
+      .filter((user) => user.roles.includes("UnverifiedUser"))
+      .slice(0, 4);
 
   return (
       <div className="col-md-6 d-flex">
@@ -28,8 +38,8 @@ const UsersTable = () => {
                 <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Email</th>
-                  <th>Status</th>
+                  <th>Date Joined</th>
+                  <th>Role</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -40,18 +50,15 @@ const UsersTable = () => {
                           {user.firstName} {user.lastName}
                         </h2>
                       </td>
-                      <td>{user.email}</td>
                       <td>
-                        <div className="dropdown action-label">
-                          <Link
-                              to="#"
-                              className="btn btn-white btn-sm btn-rounded"
-                              aria-expanded="false"
-                          >
-                            <i className={`fa-regular fa-circle-dot text-${user.status === 'active' ? 'success' : 'danger'}`}></i>
-                            {user.status === 'active' ? 'Active' : 'Inactive'}
-                          </Link>
-                        </div>
+                        {format(new Date(user.createdOn), 'MMMM dd, yyyy')}
+                      </td>
+                      <td>
+                        <span
+                            className="badge bg-inverse-primary"
+                        >
+                          {user.roles}
+                        </span>
                       </td>
                     </tr>
                 ))}

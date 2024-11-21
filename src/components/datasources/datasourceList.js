@@ -4,6 +4,7 @@ import Sidebar from "../common/Sidebar";
 import { Link } from "react-router-dom";
 import DatasourceForm from "./datasourceForm";
 import fetchWithAuth from "../../utils/FetchWithAuth";
+import {toast} from "react-toastify";
 
 const DatasourceList = () => {
     const [menu, setMenu] = useState(false);
@@ -15,6 +16,20 @@ const DatasourceList = () => {
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
+    };
+
+    const showToast = (message, type) => {
+        console.log(`Showing toast: ${message} - ${type}`); // Debug log
+        switch (type) {
+            case 'success':
+                toast.success(message);
+                break;
+            case 'error':
+                toast.error(message);
+                break;
+            default:
+                toast(message);
+        }
     };
 
     const handleEntriesChange = (e) => {
@@ -66,6 +81,80 @@ const DatasourceList = () => {
             return updatedDataSources;
         });
     };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = {
+            name: form.elements.name.value,
+            description: form.elements.description.value,
+            url: form.elements.url.value,
+        }
+
+        const authToken = localStorage.getItem("authToken");
+
+        try {
+            const response = await fetch(`https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/datasources/${selectedDataSource.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                showToast("Datasource updated successfully!", "success");
+
+                // Update the UI state to reflect the updated datasource details
+                setDataSources((prevDatasources) =>
+                    prevDatasources.map((datasource) =>
+                        datasource.id === selectedDataSource.id
+                            ? {...datasource, ...formData}
+                            : datasource
+                    )
+                );
+
+            } else {
+                throw new Error("Datasource update failed.");
+            }
+        } catch (error) {
+            showToast("Failed to update datasource details. Please try again.", "error");
+        }
+    }
+
+    const handleDelete = async () => {
+        const authToken = localStorage.getItem("authToken");
+
+        if (!authToken) {
+            showToast("Authorization token missing, please log in again.", "error");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/datasources/${selectedDataSource.id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                    },
+                }
+            );
+
+            if (response.ok) {
+                showToast("Datasource deleted successfully!", "success");
+
+                setDataSources((prevDatasources) => prevDatasources.filter((datasource) => datasource.id !== selectedDataSource.id));
+            } else {
+                throw new Error("Datasource deletion failed.");
+            }
+        } catch (error) {
+            showToast("Failed to delete datasource. Please try again.", "error");
+        }
+    }
 
     return (
         <>
@@ -184,6 +273,7 @@ const DatasourceList = () => {
                                                                             to="#"
                                                                             data-bs-toggle="modal"
                                                                             data-bs-target="#delete_datasource"
+                                                                            onClick={() => setSelectedDataSource(dataSource)}
                                                                         >
                                                                             <i className="fa-regular fa-trash-can m-r-5" /> Delete
                                                                         </Link>
@@ -222,7 +312,7 @@ const DatasourceList = () => {
                                             </button>
                                         </div>
                                         <div className="modal-body">
-                                            <form>
+                                            <form onSubmit={handleUpdate}>
                                                 <div className="row">
                                                     <div className="col-sm-12">
                                                         <div className="input-block">
@@ -282,23 +372,33 @@ const DatasourceList = () => {
                             <div id="delete_datasource" className="modal custom-modal fade" role="dialog"
                                  data-bs-backdrop="static" data-bs-keyboard="false">
                                 <div className="modal-dialog modal-dialog-centered " role="document">
-                                <div className="modal-content">
-                                        <div className="modal-header">
-                                            <h5 className="modal-title">Delete Datasource</h5>
-                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">×</span>
-                                            </button>
-                                        </div>
+                                    <div className="modal-content">
                                         <div className="modal-body">
-                                            <p>Are you sure you want to delete this datasource?</p>
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                                                Close
-                                            </button>
-                                            <button type="button" className="btn btn-danger">
-                                                Delete
-                                            </button>
+                                            <div className="form-header">
+                                                <h3>Delete Datasource</h3>
+                                                <p>Are you sure want to delete?</p>
+                                            </div>
+                                            <div className="modal-btn delete-action">
+                                                <div className="row">
+                                                    <div className="col-6">
+                                                        <Link
+                                                            to=""
+                                                            className="btn btn-primary continue-btn"
+                                                            onClick={handleDelete}
+                                                            data-bs-dismiss="modal">
+                                                            Delete
+                                                        </Link>
+                                                    </div>
+                                                    <div className="col-6">
+                                                        <Link
+                                                            to=""
+                                                            data-bs-dismiss="modal"
+                                                            className="btn btn-primary cancel-btn">
+                                                            Cancel
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -4,6 +4,7 @@ import Sidebar from "../common/Sidebar";
 import {Link} from "react-router-dom";
 import RoleForm from "./roleForm";
 import Select from "react-select";
+import fetchWithAuth from "../../utils/FetchWithAuth";
 
 const RoleList = () => {
     const [menu, setMenu] = useState(false);
@@ -30,29 +31,43 @@ const RoleList = () => {
 
     // Fetch roles data
     useEffect(() => {
-        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles")
-            .then((response) => response.json())
-            .then((data) => {
+        const fetchRoles = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles"
+                );
                 setRoles(data);
-                setFilteredRoles(data); // Set initial filtered roles
+                setFilteredRoles(data);
                 setEntriesCount(data.length);
-            });
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+            }
+        };
+
+        fetchRoles();
     }, []);
+
 
     // Fetch datasources data
     useEffect(() => {
-        fetch("https://athens-ai-json-server-vercel.vercel.app/datasources")
-            .then((response) => response.json())
-            .then((data) => {
+        const fetchDataSources = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
+                );
                 setDataSources(data);
-            });
+            } catch (error) {
+                console.error("Failed to fetch data sources:", error);
+            }
+        };
+
+        fetchDataSources();
     }, []);
 
     // Filter roles based on search term
     useEffect(() => {
         const filtered = roles.filter(role =>
-            role.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-            role.dateCreated.toLowerCase().includes(searchInput.toLowerCase())
+            role.name.toLowerCase().includes(searchInput.toLowerCase())
         );
         setFilteredRoles(filtered);
         setEntriesCount(filtered.length);
@@ -189,7 +204,7 @@ const RoleList = () => {
                                                                                 to="#"
                                                                                 data-bs-toggle="modal"
                                                                                 data-bs-target="#delete_role"
-                                                                                // onClick={() => setEditEmployeeId(employee.id)}
+                                                                                onClick={() => setSelectedRole(role)}
                                                                             >
                                                                                 <i className="fa-regular fa-trash-can m-r-5"/> Delete
                                                                             </Link>

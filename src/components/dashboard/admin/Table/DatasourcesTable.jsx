@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import fetchWithAuth from "../../../../utils/FetchWithAuth";
 
 const UsersTable = () => {
-  const [datasources, setDatasources] = useState([]);
+  const [datasources, setDataSources] = useState([]);
 
-  // useEffect(() => {
-  //   fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources")
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         setDatasources(data);
-  //         console.log(data);
-  //       });
-  // }, []);
+  useEffect(() => {
+    const fetchDataSources = async () => {
+      try {
+        const data = await fetchWithAuth(
+            "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
+        );
+        setDataSources(data);
+      } catch (error) {
+        console.error("Failed to fetch data sources:", error);
+      }
+    };
+
+    fetchDataSources();
+  }, []);
 
   const displayedDatasources = datasources.slice(0, 4);
 
@@ -27,7 +34,7 @@ const UsersTable = () => {
                 <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Type</th>
+                  <th>Description</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -38,7 +45,7 @@ const UsersTable = () => {
                           {datasource.name}
                         </h2>
                       </td>
-                      <td>{datasource.type}</td>
+                      <td>{datasource.description}</td>
                     </tr>
                 ))}
                 </tbody>

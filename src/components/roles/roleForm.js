@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react"
 import Select from 'react-select'
+import fetchWithAuth from "../../utils/FetchWithAuth";
 
 const RoleForm = () => {
     // const datasources = [
@@ -9,11 +10,18 @@ const RoleForm = () => {
     // ]
     const [dataSources, setDataSources] = useState([]);
     useEffect(() => {
-        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources")
-            .then((response) => response.json())
-            .then((data) => {
+        const fetchDataSources = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
+                );
                 setDataSources(data);
-            });
+            } catch (error) {
+                console.error("Failed to fetch data sources:", error);
+            }
+        };
+
+        fetchDataSources();
     }, []);
 
     return (

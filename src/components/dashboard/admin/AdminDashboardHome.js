@@ -16,6 +16,7 @@ import Sidebar from "../../common/Sidebar";
 import "../../../index.css";
 import UsersTable from "./Table/UsersTable.jsx";
 import DatasourcesTable from "./Table/DatasourcesTable";
+import fetchWithAuth from "../../../utils/FetchWithAuth";
 
 const barchartdata = [
     { y: "Athens Alpha", "October Users": 100, "November Users": 90 },
@@ -35,7 +36,7 @@ const linechartdata = [
 const AdminDashboardHome = () => {
     const [menu, setMenu] = useState(false);
     const [users, setUsers] = useState([]);
-    const [dataSources, setDatasources] = useState([]);
+    const [dataSources, setDataSources] = useState([]);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -56,22 +57,35 @@ const AdminDashboardHome = () => {
 
 
     useEffect(() => {
-        fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff")
-            .then((response) => response.json())
-            .then((data) => {
+        const fetchStaff = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff"
+                );
                 setUsers(data);
-                console.log(data);
-            });
+            } catch (error) {
+                console.error("Error fetching staff:", error);
+            }
+        };
+
+        fetchStaff();
     }, []);
 
-    // useEffect(() => {
-    //     fetch("https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources")
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             setDatasources(data);
-    //             console.log(data);
-    //         });
-    // }, []);
+
+    useEffect(() => {
+        const fetchDataSources = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
+                );
+                setDataSources(data);
+            } catch (error) {
+                console.error("Failed to fetch data sources:", error);
+            }
+        };
+
+        fetchDataSources();
+    }, []);
 
 
     return (
