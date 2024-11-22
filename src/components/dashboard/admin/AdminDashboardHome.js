@@ -37,6 +37,8 @@ const AdminDashboardHome = () => {
     const [menu, setMenu] = useState(false);
     const [users, setUsers] = useState([]);
     const [dataSources, setDataSources] = useState([]);
+    const [roles, setRoles] = useState([]);
+
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -52,8 +54,8 @@ const AdminDashboardHome = () => {
         }
     });
 
-    const roles = JSON.parse(localStorage.getItem("roles"));
-    const role = roles && roles.length > 0 ? roles[0] : "User";
+    const rolesArray = JSON.parse(localStorage.getItem("roles"));
+    const role = rolesArray && rolesArray.length > 0 ? rolesArray[0] : "User";
 
 
     useEffect(() => {
@@ -85,6 +87,22 @@ const AdminDashboardHome = () => {
         };
 
         fetchDataSources();
+    }, []);
+
+
+    useEffect(() => {
+        const fetchRoles = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles"
+                );
+                setRoles(data);
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+            }
+        };
+
+        fetchRoles();
     }, []);
 
 
@@ -138,11 +156,11 @@ const AdminDashboardHome = () => {
                                 <div className="card dash-widget">
                                     <div className="card-body">
                                         <span className="dash-widget-icon">
-                                          <i className="fa-regular fa-question-circle" />
+                                          <i className="fa-regular fa-ticket" />
                                         </span>
                                         <div className="dash-widget-info">
-                                            <h3>0</h3>
-                                            <span>Queries</span>
+                                            <h3>{roles.length}</h3>
+                                            <span>Roles</span>
                                         </div>
                                     </div>
                                 </div>

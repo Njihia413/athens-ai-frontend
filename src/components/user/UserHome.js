@@ -23,6 +23,7 @@ const UserHome = () => {
     const [llmResult, setLLMResult] = useState('');
     const [sqlResult, setSqlResult] = useState('');
     const [mongoResult, setMongoResult] = useState('');
+    const [conversation, setConversation] = useState([]);
     const [sources, setSources] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [chat, setChat] = useState([
@@ -101,27 +102,55 @@ const UserHome = () => {
         }
     };
 
+    // const handleQuery = async () => {
+    //     setQuery("");
+    //     setIsLoading(true);
+    //
+    //     try {
+    //         const res = await axios.post('http://localhost:8000/query', { query, role, model });
+    //         let data = res.data.message;
+    //         if (res.data) {
+    //             console.log(data.message);
+    //             setVectorResult(data.vector_result);
+    //             setLLMResult(data.llm_chat_result);
+    //             setSqlResult(data.sql_result);
+    //             setMongoResult(data.mongo_result);
+    //             setSources(res.data.sources || 'No sources available');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error querying:', error);
+    //         showToast('Error querying', "error");
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
+
     const handleQuery = async () => {
-        setQuery("");
+        if (!query) return;
+
         setIsLoading(true);
 
+        // Add user's query to the conversation
+        const userMessage = { sender: 'user', text: query };
+        setConversation((prev) => [...prev, userMessage]);
+
         try {
-            const res = await axios.post('http://localhost:8000/query', { query, role, model });
-            let data = res.data.message;
-            if (res.data) {
-                console.log(data.message);
-                setVectorResult(data.vector_result);
-                setLLMResult(data.llm_chat_result);
-                setSqlResult(data.sql_result);
-                setMongoResult(data.mongo_result);
-                setSources(res.data.sources || 'No sources available');
-            }
+            const res = await axios.post('http://localhost:8000/process', {
+                text: query,
+                thread_id: 'conversation-2',
+            });
+
+            // Add the LLM's response to the conversation
+            const llmResponse = { sender: 'llm', text: res.data.response };
+            setConversation((prev) => [...prev, llmResponse]);
         } catch (error) {
             console.error('Error querying:', error);
             showToast('Error querying', "error");
-        } finally {
-            setIsLoading(false);
         }
+
+        // Clear the input box
+        setQuery('');
+        setIsLoading(false);
     };
 
     function dummy(fail=false){
@@ -261,39 +290,51 @@ const UserHome = () => {
                                                         </div>
                                                     )}
 
-                                                    {chat.sort((a, b) => a.timestamp - b.timestamp).map(message => {
-                                                        return (
-                                                            message.sender === 'us' ?
-                                                                <div className="chat chat-right">
-                                                                    <div className="chat-body">
-                                                                        <div className="chat-bubble">
-                                                                            <div className="chat-content">
-                                                                                <p>{message.content}</p>
-                                                                            </div>
-                                                                        </div>
+                                                    {conversation.map((message, index) =>(
+                                                        <div
+                                                            key={index}
+                                                            className={`mb-4 ${message.sender === 'user' ? 'chat chat-right' : 'chat chat-left'
+                                                            }`}
+                                                        >
+                                                            <div className="chat-body">
+                                                                <div className="chat-bubble">
+                                                                    <div className="chat-content">
+                                                                        <p>{message.text}</p>
                                                                     </div>
                                                                 </div>
-                                                                :
-                                                                <div className="chat chat-left">
-                                                                    <div className="chat-avatar">
-                                                                        <Link to="/" className="avatar">
-                                                                            <img alt="Athens Profile" src={LogoPath}/>
-                                                                        </Link>
-                                                                    </div>
-                                                                    <div className="chat-body">
-                                                                        <div className="chat-bubble">
-                                                                            <div className="chat-content">
-                                                                                <p>
-                                                                                    {message.content}
-                                                                                </p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                        {/*return (*/}
+                                                        {/*    message.sender === 'us' ?*/}
+                                                        {/*        <div className="chat chat-right">*/}
+                                                        {/*            <div className="chat-body">*/}
+                                                        {/*                <div className="chat-bubble">*/}
+                                                        {/*                    <div className="chat-content">*/}
+                                                        {/*                        <p>{message.content}</p>*/}
+                                                        {/*                    </div>*/}
+                                                        {/*                </div>*/}
+                                                        {/*            </div>*/}
+                                                        {/*        </div>*/}
+                                                        {/*        :*/}
+                                                        {/*        <div className="chat chat-left">*/}
+                                                        {/*            <div className="chat-avatar">*/}
+                                                        {/*                <Link to="/" className="avatar">*/}
+                                                        {/*                    <img alt="Athens Profile" src={LogoPath}/>*/}
+                                                        {/*                </Link>*/}
+                                                        {/*            </div>*/}
+                                                        {/*            <div className="chat-body">*/}
+                                                        {/*                <div className="chat-bubble">*/}
+                                                        {/*                    <div className="chat-content">*/}
+                                                        {/*                        <p>*/}
+                                                        {/*                            {message.content}*/}
+                                                        {/*                        </p>*/}
+                                                        {/*                    </div>*/}
+                                                        {/*                </div>*/}
+                                                        {/*            </div>*/}
+                                                        {/*        </div>*/}
 
-                                                        )
-                                                    })
-                                                    }
+                                                        {/*)*/}
 
 
                                                     {/*{query && (*/}
@@ -309,40 +350,40 @@ const UserHome = () => {
                                                     {/*)}*/}
 
                                                     {/* Combined results */}
-                                                    {(llmResult || vectorResult || sqlResult || mongoResult || sources) && (
-                                                        <div className="chat chat-left">
-                                                            <div className="chat-avatar">
-                                                                <Link to="/" className="avatar">
-                                                                    <img alt="Athens Profile" src={LogoPath}/>
-                                                                </Link>
-                                                            </div>
-                                                            <div className="chat-body">
-                                                                <div className="chat-bubble">
-                                                                    <div className="chat-content">
-                                                                        <p>
-                                                                            <strong>Results:</strong>
-                                                                        </p>
-                                                                        <ul className="result-list">
-                                                                            {llmResult && <li><strong>AI
-                                                                                Result:</strong> {llmResult}</li>}
-                                                                            {vectorResult && <li><strong>Vector
-                                                                                Result:</strong> {vectorResult}</li>}
-                                                                            {sqlResult && <li><strong>SQL
-                                                                                Result:</strong> {sqlResult}</li>}
-                                                                            {mongoResult && <li><strong>Mongo
-                                                                                Result:</strong> {mongoResult}</li>}
-                                                                        </ul>
-                                                                        {sources && (
-                                                                            <p className="sources">
-                                                                                <em><strong>Sources:</strong> <span
-                                                                                    className="highlight">{sources}</span></em>
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                    {/*{(llmResult || vectorResult || sqlResult || mongoResult || sources) && (*/}
+                                                    {/*    <div className="chat chat-left">*/}
+                                                    {/*        <div className="chat-avatar">*/}
+                                                    {/*            <Link to="/" className="avatar">*/}
+                                                    {/*                <img alt="Athens Profile" src={LogoPath}/>*/}
+                                                    {/*            </Link>*/}
+                                                    {/*        </div>*/}
+                                                    {/*        <div className="chat-body">*/}
+                                                    {/*            <div className="chat-bubble">*/}
+                                                    {/*                <div className="chat-content">*/}
+                                                    {/*                    <p>*/}
+                                                    {/*                        <strong>Results:</strong>*/}
+                                                    {/*                    </p>*/}
+                                                    {/*                    <ul className="result-list">*/}
+                                                    {/*                        {llmResult && <li><strong>AI*/}
+                                                    {/*                            Result:</strong> {llmResult}</li>}*/}
+                                                    {/*                        {vectorResult && <li><strong>Vector*/}
+                                                    {/*                            Result:</strong> {vectorResult}</li>}*/}
+                                                    {/*                        {sqlResult && <li><strong>SQL*/}
+                                                    {/*                            Result:</strong> {sqlResult}</li>}*/}
+                                                    {/*                        {mongoResult && <li><strong>Mongo*/}
+                                                    {/*                            Result:</strong> {mongoResult}</li>}*/}
+                                                    {/*                    </ul>*/}
+                                                    {/*                    {sources && (*/}
+                                                    {/*                        <p className="sources">*/}
+                                                    {/*                            <em><strong>Sources:</strong> <span*/}
+                                                    {/*                                className="highlight">{sources}</span></em>*/}
+                                                    {/*                        </p>*/}
+                                                    {/*                    )}*/}
+                                                    {/*                </div>*/}
+                                                    {/*            </div>*/}
+                                                    {/*        </div>*/}
+                                                    {/*    </div>*/}
+                                                    {/*)}*/}
                                                 </div>
                                             </div>
                                         </div>
@@ -361,7 +402,7 @@ const UserHome = () => {
                                                 <img src={Attachment} alt=""/>
                                             </Link>
                                             <div className="message-area">
-                                                <form onSubmit={handleSubmit}>
+                                                <form>
                                                     <div className="input-group">
                                                     <textarea
                                                         value={query}
@@ -371,7 +412,7 @@ const UserHome = () => {
                                                     />
                                                         <span className="input-group-append">
                                                         <button
-                                                            onClick={handleSubmit}
+                                                            onClick={handleQuery}
                                                             className="btn btn-primary"
                                                             type="button"
                                                             disabled={isLoading}
