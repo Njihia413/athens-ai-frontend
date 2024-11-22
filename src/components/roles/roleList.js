@@ -113,7 +113,7 @@ const RoleList = () => {
         // Prepare the formData
         const formData = {
             name: form.elements.name.value,
-            dataSources: selectedRole?.dataSources.map(dataSource => dataSource.id) || [], // Extracting the data source IDs
+            dataSources: selectedRole.dataSources.map(dataSource => dataSource.id),
         };
 
         console.log("formData:", formData); // Debugging
@@ -132,7 +132,7 @@ const RoleList = () => {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${authToken}`,
+                        'Authorization': `Bearer ${authToken}`,
                     },
                     body: JSON.stringify(formData),
                 }
@@ -150,8 +150,6 @@ const RoleList = () => {
                     )
                 );
 
-                // Optionally reset the selectedRole
-                setSelectedRole(null);
             } else {
                 const errorData = await response.json();
                 console.error("Server error:", errorData);
@@ -431,7 +429,7 @@ const RoleList = () => {
                                                                 value={selectedRole?.dataSources.map(dataSource => ({
                                                                     value: dataSource.id,
                                                                     label: dataSource.name,
-                                                                })) || []}
+                                                                }))}
                                                                 onChange={(selected) =>
                                                                     setSelectedRole((prevRole) => ({
                                                                         ...prevRole,
