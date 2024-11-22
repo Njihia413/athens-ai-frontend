@@ -263,32 +263,32 @@ const UserHome = () => {
                                         <div className="chat-wrap-inner">
                                             <div className="chat-box">
                                                 <div className="chats">
-                                                    {!chat.length && (
-                                                        <div className="container-fluid">
-                                                            <div className="row align-items-center mt-5">
-                                                                <div className="welcome-message text-center">
-                                                                    <h2>
-                                                                        <TypeAnimation
-                                                                            sequence={[
-                                                                                'What can I help you with today?',
-                                                                            ]}
-                                                                            cursor={false}
-                                                                            wrapper="div"
-                                                                            easing="ease-in-out"
-                                                                            speed={50}
-                                                                            repeat={0}
-                                                                        />
-                                                                    </h2>
-                                                                    <div className="prompt-container">
-                                                                        <p>Here are some things you can ask me:</p>
-                                                                        <div>
-                                                                            <ActionButtons/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                    {/*{!chat.length && (*/}
+                                                    {/*    <div className="container-fluid">*/}
+                                                    {/*        <div className="row align-items-center mt-5">*/}
+                                                    {/*            <div className="welcome-message text-center">*/}
+                                                    {/*                <h2>*/}
+                                                    {/*                    <TypeAnimation*/}
+                                                    {/*                        sequence={[*/}
+                                                    {/*                            'What can I help you with today?',*/}
+                                                    {/*                        ]}*/}
+                                                    {/*                        cursor={false}*/}
+                                                    {/*                        wrapper="div"*/}
+                                                    {/*                        easing="ease-in-out"*/}
+                                                    {/*                        speed={50}*/}
+                                                    {/*                        repeat={0}*/}
+                                                    {/*                    />*/}
+                                                    {/*                </h2>*/}
+                                                    {/*                <div className="prompt-container">*/}
+                                                    {/*                    <p>Here are some things you can ask me:</p>*/}
+                                                    {/*                    <div>*/}
+                                                    {/*                        <ActionButtons/>*/}
+                                                    {/*                    </div>*/}
+                                                    {/*                </div>*/}
+                                                    {/*            </div>*/}
+                                                    {/*        </div>*/}
+                                                    {/*    </div>*/}
+                                                    {/*)}*/}
 
                                                     {conversation.map((message, index) =>(
                                                         <div
