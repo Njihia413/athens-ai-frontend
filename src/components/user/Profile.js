@@ -13,6 +13,8 @@ const Profile = () => {
         setMenu(!menu);
     };
 
+    console.log(user)
+
     const showToast = (message, type) => {
         switch (type) {
             case "success":

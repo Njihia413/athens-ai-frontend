@@ -17,17 +17,22 @@ const UserHeader = (props) => {
     const navigate = useNavigate();
     const [profileName, setProfileName] = useState(null);
     const [username, setUsername] = useState(null);
+    const [roles, setRoles] = useState([]);  // New state to store roles
 
     useEffect(() => {
         // Retrieve the user's details from localStorage
         const storedName = localStorage.getItem("firstName");
         const storedUsername = localStorage.getItem("username");
+        const storedRoles = JSON.parse(localStorage.getItem("roles")) || [];  // Assuming roles is stored as a JSON array
 
         if (storedName) {
             setProfileName(storedName);
         }
         if (storedUsername) {
             setUsername(storedUsername);
+        }
+        if (storedRoles.length > 0) {
+            setRoles(storedRoles);  // Set the roles in state
         }
     }, []);
 
@@ -89,6 +94,9 @@ const UserHeader = (props) => {
                           <span className="status online" />
                         </span>
                         <span>{profileName || "User"}</span>
+                        <span className="text-xs">
+                            ({roles})
+                        </span>
                     </Link>
                     <div className="dropdown-menu dropdown-menu-end">
                         {/* Dynamic Profile Route */}
@@ -111,6 +119,8 @@ const UserHeader = (props) => {
                 </li>
             </ul>
             {/* /Header Menu */}
+
+
             {/* Mobile Menu */}
             <div className="dropdown mobile-user-menu">
                 <Link

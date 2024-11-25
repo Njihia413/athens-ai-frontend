@@ -1,9 +1,19 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Link, useLocation} from "react-router-dom";
 
 const SettingsSidebar = () => {
-
     const location = useLocation();
+    const [username, setUsername] = useState(null);
+    const storedUsername = localStorage.getItem("username");
+
+    useEffect(() => {
+        // Retrieve the user's username from localStorage
+        const storedUsername = localStorage.getItem("username");
+
+        if (storedUsername) {
+            setUsername(storedUsername);
+        }
+    }, []);
 
 
     return (
@@ -18,7 +28,7 @@ const SettingsSidebar = () => {
                                     <span>Back to Home</span></Link>
                             </li>
                             <li className={location.pathname.includes('profile') ? "active" : ""}>
-                                <Link to="/user/profile"><i className="la la-user"/>
+                                <Link to={`/user/profile/${username || "default"}`}><i className="la la-user"/>
                                     <span>Profile</span></Link>
                             </li>
                             <li className={location.pathname.includes('-password') ? "active" : ""}>
