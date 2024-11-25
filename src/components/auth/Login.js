@@ -16,6 +16,7 @@ const Login = () => {
         setEye(!eye);
     };
 
+
     const showToast = (message, type) => {
         console.log(`Showing toast: ${message} - ${type}`); // Debug log
         switch (type) {
@@ -55,12 +56,13 @@ const Login = () => {
 
             if (response.ok) {
                 const responseData = await response.json();
-                const { token, roles, firstName } = responseData;
+                const { token, roles, firstName, username } = responseData;
 
                 if (token) {
                     localStorage.setItem('authToken', token);
                     localStorage.setItem('roles', JSON.stringify(roles));
                     localStorage.setItem('firstName', firstName);
+                    localStorage.setItem('username', username);
 
                     const welcomeMessage = roles.includes("Admin") ? "Welcome Admin" : `Welcome ${firstName}`;
                     showToast(welcomeMessage, "success");

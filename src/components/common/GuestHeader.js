@@ -1,14 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
 
 const LogoPath = '/Logo2.png';
 
 const GuestHeader = (props) => {
     const location = useLocation();
-    const { loginvalue } = useSelector((state) => state.user);
-    const UserName = loginvalue?.email?.split("@")[0];
-    const ProfileName = UserName?.charAt(0).toUpperCase() + UserName?.slice(1);
 
     return (
         <div className="header" style={{right: "0px"}}>

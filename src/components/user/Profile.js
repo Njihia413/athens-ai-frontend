@@ -1,25 +1,24 @@
-import React, {useEffect, useState} from "react";
-import {toast} from "react-toastify";
+import React, {useContext, useEffect, useState} from "react";
+import { toast } from "react-toastify";
 import UserHeader from "../common/UserHeader";
 import SettingsSidebar from "../common/SettingsSidebar";
-import {Link} from "react-router-dom";
-import fetchWithAuth from "../../utils/FetchWithAuth";
+import { Link } from "react-router-dom";
+import {UserContext} from "../../InitialPage/App";
 
 const Profile = () => {
+    const { user, loading } = useContext(UserContext);
     const [menu, setMenu] = useState(false);
-    const [profileName, setProfileName] = useState(null);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
     };
 
     const showToast = (message, type) => {
-        console.log(`Showing toast: ${message} - ${type}`); // Debug log
         switch (type) {
-            case 'success':
+            case "success":
                 toast.success(message);
                 break;
-            case 'error':
+            case "error":
                 toast.error(message);
                 break;
             default:
@@ -27,21 +26,14 @@ const Profile = () => {
         }
     };
 
-    useEffect(() => {
-        // Retrieve the user's first name from localStorage
-        const storedName = localStorage.getItem("firstName");
-        if (storedName) {
-            setProfileName(storedName);
-        }
-    }, []);
 
     return (
         <>
             <div className={`main-wrapper ${menu ? "slide-nav" : ""}`}>
                 <div className="app-container">
-                    <UserHeader onMenuClick={() => toggleMobileMenu()}/>
+                    <UserHeader onMenuClick={toggleMobileMenu} />
                     <div className="main-content">
-                        <SettingsSidebar/>
+                        <SettingsSidebar />
                         <div className="page-wrapper">
                             <div className="content container-fluid">
                                 <div className="page-header">
@@ -53,7 +45,7 @@ const Profile = () => {
                                                     <Link to="/admin/dashboard">Dashboard</Link>
                                                 </li>
                                                 <li className="breadcrumb-item active">
-                                                    <Link to="/user/profile">Profile</Link>
+                                                    Profile
                                                 </li>
                                             </ul>
                                         </div>
@@ -62,79 +54,62 @@ const Profile = () => {
 
                                 <div className="card mb-0">
                                     <div className="card-body">
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <div className="profile-view">
-                                                    <div className="profile-img-wrap">
-                                                        <div className="profile-img">
-                                                            <Link to="#">
-                                                                <img
-                                                                    src={`https://ui-avatars.com/api/?name=${profileName}`}
-                                                                    alt=""/>
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                    <div className="profile-basic">
-                                                        <div className="row">
-                                                            <div className="col-md-5">
-                                                                <div className="profile-info-left">
-                                                                    <h3 className="user-name m-t-0 mb-0">
-                                                                        {profileName ? `${profileName}` : "John Doe"}
-                                                                    </h3>
-                                                                    <h6 className="text-muted"></h6>
-                                                                    <small className="text-muted"></small>
-                                                                    <div className="staff-id">
-
-                                                                    </div>
-                                                                    <div className="small doj text-muted">
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-7">
-                                                                <ul className="personal-info">
-                                                                    <li>
-                                                                        <div className="title">Phone:</div>
-                                                                        <div className="text">
-                                                                            <Link to="#"></Link>
-                                                                        </div>
-                                                                    </li>
-                                                                    <li>
-                                                                        <div className="title">Email:</div>
-                                                                        <div className="text">
-                                                                            <Link to="#"></Link>
-                                                                        </div>
-                                                                    </li>
-                                                                    <li>
-                                                                        <div className="title">Date of Birth:</div>
-                                                                        <div className="text"></div>
-                                                                    </li>
-                                                                    <li>
-                                                                        <div className="title">Address:</div>
-                                                                        <div className="text">
-
-                                                                        </div>
-                                                                    </li>
-                                                                    <li>
-                                                                        <div className="title">Gender:</div>
-                                                                        <div className="text"></div>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="pro-edit">
-                                                        <Link
-                                                            data-bs-target="#profile_info"
-                                                            data-bs-toggle="modal"
-                                                            className="edit-icon"
-                                                            to="#">
-                                                            <i className="fa fa-pencil"/>
+                                        {loading ? (
+                                            <p>Loading...</p>
+                                        ) : user ? (
+                                            <div className="profile-view">
+                                                <div className="profile-img-wrap">
+                                                    <div className="profile-img">
+                                                        <Link to="#">
+                                                            <img
+                                                                src={`https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}`}
+                                                                alt=""
+                                                            />
                                                         </Link>
                                                     </div>
                                                 </div>
+                                                <div className="profile-basic">
+                                                    <div className="row">
+                                                        <div className="col-md-5">
+                                                            <div className="profile-info-left">
+                                                                <h3 className="user-name m-t-0 mb-0">
+                                                                    {user.firstName} {user.lastName}
+                                                                </h3>
+                                                                <small className="text-muted">
+                                                                    {user.role || "N/A"}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-md-7">
+                                                            <ul className="personal-info">
+                                                                <li>
+                                                                    <div className="title">Phone:</div>
+                                                                    <div className="text">{user.phone || "N/A"}</div>
+                                                                </li>
+                                                                <li>
+                                                                    <div className="title">Email:</div>
+                                                                    <div className="text">{user.email || "N/A"}</div>
+                                                                </li>
+                                                                <li>
+                                                                    <div className="title">Date of Birth:</div>
+                                                                    <div className="text">{user.dob || "N/A"}</div>
+                                                                </li>
+                                                                <li>
+                                                                    <div className="title">Address:</div>
+                                                                    <div className="text">{user.address || "N/A"}</div>
+                                                                </li>
+                                                                <li>
+                                                                    <div className="title">Gender:</div>
+                                                                    <div className="text">{user.gender || "N/A"}</div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            <p>User not found</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -143,7 +118,7 @@ const Profile = () => {
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
 export default Profile;

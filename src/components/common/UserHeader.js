@@ -1,9 +1,5 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/no-unescaped-entities */
-
-import React, {useEffect, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 
 const LogoPath = '/Logo2.png';
 
@@ -20,12 +16,18 @@ const UserHeader = (props) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [profileName, setProfileName] = useState(null);
+    const [username, setUsername] = useState(null);
 
     useEffect(() => {
-        // Retrieve the user's first name from localStorage
+        // Retrieve the user's details from localStorage
         const storedName = localStorage.getItem("firstName");
+        const storedUsername = localStorage.getItem("username");
+
         if (storedName) {
             setProfileName(storedName);
+        }
+        if (storedUsername) {
+            setUsername(storedUsername);
         }
     }, []);
 
@@ -33,6 +35,7 @@ const UserHeader = (props) => {
         localStorage.removeItem("authToken");
         localStorage.removeItem("roles");
         localStorage.removeItem("firstName");
+        localStorage.removeItem("username");
         navigate("/login");
     };
 
@@ -76,8 +79,6 @@ const UserHeader = (props) => {
             </Link>
             {/* Header Menu */}
             <ul className="nav user-menu">
-                {/* Notifications */}
-                {/* /Notifications */}
                 <li className="nav-item dropdown has-arrow main-drop">
                     <Link
                         to="#"
@@ -90,7 +91,10 @@ const UserHeader = (props) => {
                         <span>{profileName || "User"}</span>
                     </Link>
                     <div className="dropdown-menu dropdown-menu-end">
-                        <Link className="dropdown-item" to="/user/profile">
+                        {/* Dynamic Profile Route */}
+                        <Link
+                            className="dropdown-item"
+                            to={`/user/profile/${username || "default"}`}>
                             My Profile
                         </Link>
                         <Link className="dropdown-item" to="/user/change-password">
@@ -117,7 +121,9 @@ const UserHeader = (props) => {
                     <i className="fa fa-ellipsis-v" />
                 </Link>
                 <div className="dropdown-menu dropdown-menu-end dropdown-menu-right">
-                    <Link className="dropdown-item" to="/user/profile">
+                    <Link
+                        className="dropdown-item"
+                        to={`/user/profile/${username || "default"}`}>
                         My Profile
                     </Link>
                     <Link className="dropdown-item" to="/user/change-password">
