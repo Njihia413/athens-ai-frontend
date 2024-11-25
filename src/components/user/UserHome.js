@@ -8,8 +8,6 @@ import {
 import axios from "axios";
 import { ToastContainer, toast, Slide  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {TypeAnimation} from "react-type-animation";
-import ActionButtons from "../guest/ActionButtons";
 import { FaSpinner } from "react-icons/fa";
 
 const LogoPath = '/Logo.png';
@@ -20,51 +18,8 @@ const UserHome = () => {
     const [role, setRole] = useState('');
     const [model, setModel] = useState('');
     const [threadId, setThreadId] = useState('');
-    const [vectorResult, setVectorResult] = useState('');
-    const [llmResult, setLLMResult] = useState('');
-    const [sqlResult, setSqlResult] = useState('');
-    const [mongoResult, setMongoResult] = useState('');
     const [conversation, setConversation] = useState([]);
-    const [sources, setSources] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [chat, setChat] = useState([
-        {
-            "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "sender": "us",
-            "recipient": "llm model",
-            "content": "Hello Athens AI",
-            "timeStamp": "1",
-            "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "conversation": "string"
-        },
-        {
-            "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "sender": "llm model",
-            "recipient": "us",
-            "content": "Hello Vincent, how can I help you today?",
-            "timeStamp": "2",
-            "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "conversation": "string"
-        },
-        {
-            "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "sender": "us",
-            "recipient": "llm model",
-            "content": "I wanted to ask you something",
-            "timeStamp": "3",
-            "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "conversation": "string"
-        },
-        {
-            "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "sender": "llm model",
-            "recipient": "us",
-            "content": "Go ahead, and ask.I'll be willing to assist",
-            "timeStamp": "4",
-            "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "conversation": "string"
-        }
-    ])
 
     const showToast = (message, type) => {
         console.log(`Showing toast: ${message} - ${type}`); // Debug log
@@ -80,10 +35,6 @@ const UserHome = () => {
         }
     };
 
-    const handleFileChange = (e) => {
-        setFiles(e.target.files);
-    };
-
     // Generate unique thread ID on component mount
     useEffect(() => {
         const generateThreadId = () => {
@@ -93,6 +44,38 @@ const UserHome = () => {
         };
         setThreadId(generateThreadId());
     }, []);
+
+
+    // Handle message query
+    const handleQuery = async () => {
+        if (!query) return;
+
+        setQuery('');
+        setIsLoading(true);
+
+        // Add user's query to the conversation
+        const userMessage = { sender: "user", text: query };
+        setConversation((prev) => [...prev, userMessage]);
+
+        try {
+            const res = await axios.post("http://localhost:8000/process", {
+                text: query,
+                thread_id: "conversation-2",
+                model: "llama3.2",
+                role: "hr",
+            });
+
+            // Add the LLM's response to the conversation
+            const llmResponse = { sender: "llm", text: res.data.response };
+            setConversation((prev) => [...prev, llmResponse]);
+        } catch (error) {
+            console.error("Error querying:", error);
+            showToast("Error querying", "error");
+        }
+
+        setIsLoading(false);
+
+    };
 
     // Handle file upload
     const handleFileUpload = async () => {
@@ -116,100 +99,6 @@ const UserHome = () => {
             showToast("Error uploading files", "error");
         }
     };
-
-    // Handle message query
-    const handleQuery = async () => {
-        if (!query) return;
-
-        setQuery('');
-        setIsLoading(true);
-
-        // Add user's query to the conversation
-        const userMessage = { sender: "user", text: query };
-        setConversation((prev) => [...prev, userMessage]);
-
-        try {
-            const res = await axios.post("http://localhost:8000/process", {
-                text: query,
-                thread_id: threadId, // Use the unique thread ID
-                role, // Include the role in the query
-                model, // Include model in the payload
-            });
-
-            // Add the LLM's response to the conversation
-            const llmResponse = { sender: "llm", text: res.data.response };
-            setConversation((prev) => [...prev, llmResponse]);
-        } catch (error) {
-            console.error("Error querying:", error);
-            showToast("Error querying", "error");
-        }
-
-        setIsLoading(false);
-
-    };
-
-    function dummy(fail=false){
-        return new Promise((resolve, reject) => {
-                const result = {
-                    "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "sender": "llm model",
-                    "recipient": "us",
-                    "content": "I am doing great, thanks. And you?",
-                    "timeStamp": "2",
-                    "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "conversation": "string"
-                }
-
-            if(fail){
-                reject('Request failed')
-            } else {
-                resolve(result)
-            }
-        }, 8000)
-    }
-
-
-    async function handleSubmit(e) {
-        // setQuery("");
-        setChat(chat => [
-            ...chat,
-            {
-                "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                "sender": "us",
-                "recipient": "llm model",
-                "content": query,
-                "timeStamp": chat.length + 1,
-                "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                "conversation": "string"
-            },
-        ])
-        setIsLoading(true);
-
-        try {
-            const result = await dummy()
-
-            setChat(chat => {
-                const newMessage = result
-                result.timestamp = chat.length
-                return [ ...chat, newMessage ]
-            })
-
-            // let data = res.data.message;
-            // if (res.data) {
-            //     //console.log(data.message);
-            //     setVectorResult(data.vector_result);
-            //     setLLMResult(data.llm_chat_result);
-            //     setSqlResult(data.sql_result);
-            //     setMongoResult(data.mongo_result);
-            //     setSources(res.data.sources || 'No sources available');
-            // }
-        } catch (error) {
-            console.error('Error querying:', error);
-            showToast('Error querying', "error");
-        } finally {
-            setIsLoading(false);
-        }
-    }
 
     return (
         <>
@@ -273,33 +162,6 @@ const UserHome = () => {
                                         <div className="chat-wrap-inner">
                                             <div className="chat-box">
                                                 <div className="chats">
-                                                    {/*{!chat.length && (*/}
-                                                    {/*    <div className="container-fluid">*/}
-                                                    {/*        <div className="row align-items-center mt-5">*/}
-                                                    {/*            <div className="welcome-message text-center">*/}
-                                                    {/*                <h2>*/}
-                                                    {/*                    <TypeAnimation*/}
-                                                    {/*                        sequence={[*/}
-                                                    {/*                            'What can I help you with today?',*/}
-                                                    {/*                        ]}*/}
-                                                    {/*                        cursor={false}*/}
-                                                    {/*                        wrapper="div"*/}
-                                                    {/*                        easing="ease-in-out"*/}
-                                                    {/*                        speed={50}*/}
-                                                    {/*                        repeat={0}*/}
-                                                    {/*                    />*/}
-                                                    {/*                </h2>*/}
-                                                    {/*                <div className="prompt-container">*/}
-                                                    {/*                    <p>Here are some things you can ask me:</p>*/}
-                                                    {/*                    <div>*/}
-                                                    {/*                        <ActionButtons/>*/}
-                                                    {/*                    </div>*/}
-                                                    {/*                </div>*/}
-                                                    {/*            </div>*/}
-                                                    {/*        </div>*/}
-                                                    {/*    </div>*/}
-                                                    {/*)}*/}
-
                                                     {conversation.map((message, index) =>(
                                                         <div
                                                             key={index}
@@ -315,36 +177,6 @@ const UserHome = () => {
                                                             </div>
                                                         </div>
                                                     ))}
-                                                        {/*return (*/}
-                                                        {/*    message.sender === 'us' ?*/}
-                                                        {/*        <div className="chat chat-right">*/}
-                                                        {/*            <div className="chat-body">*/}
-                                                        {/*                <div className="chat-bubble">*/}
-                                                        {/*                    <div className="chat-content">*/}
-                                                        {/*                        <p>{message.content}</p>*/}
-                                                        {/*                    </div>*/}
-                                                        {/*                </div>*/}
-                                                        {/*            </div>*/}
-                                                        {/*        </div>*/}
-                                                        {/*        :*/}
-                                                        {/*        <div className="chat chat-left">*/}
-                                                        {/*            <div className="chat-avatar">*/}
-                                                        {/*                <Link to="/" className="avatar">*/}
-                                                        {/*                    <img alt="Athens Profile" src={LogoPath}/>*/}
-                                                        {/*                </Link>*/}
-                                                        {/*            </div>*/}
-                                                        {/*            <div className="chat-body">*/}
-                                                        {/*                <div className="chat-bubble">*/}
-                                                        {/*                    <div className="chat-content">*/}
-                                                        {/*                        <p>*/}
-                                                        {/*                            {message.content}*/}
-                                                        {/*                        </p>*/}
-                                                        {/*                    </div>*/}
-                                                        {/*                </div>*/}
-                                                        {/*            </div>*/}
-                                                        {/*        </div>*/}
-
-                                                        {/*)*/}
                                                 </div>
                                             </div>
                                         </div>
