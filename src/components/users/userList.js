@@ -11,11 +11,13 @@ const UserList = () => {
     const [entriesCount, setEntriesCount] = useState(0);
     const [filteredEntriesCount, setFilteredEntriesCount] = useState(0);
     const [entriesPerPage, setEntriesPerPage] = useState(10);
-    const [role, setRole] = useState('customer_service');
     const [statusFilter, setStatusFilter] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [roles, setRoles] = useState([]);
+    const [selectedRole, setRole] = useState("");
+    const [searchInput, setSearchInput] = useState('');
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -35,6 +37,7 @@ const UserList = () => {
         }
     };
 
+    // Fetch users data
     useEffect(() => {
         const fetchStaff = async () => {
             try {
@@ -53,9 +56,31 @@ const UserList = () => {
     }, []);
 
 
+    // Fetch roles data
+    useEffect(() => {
+        const fetchRoles = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles"
+                );
+                setRoles(data);
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+            }
+        };
+
+        fetchRoles();
+    }, []);
+
+
     const handleEntriesChange = (e) => {
         const value = e.target.value;
         setEntriesPerPage(value === 'all' ? entriesCount : parseInt(value));
+    };
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchInput(value);
     };
 
     const handleStatusChange = (e) => {
@@ -66,20 +91,38 @@ const UserList = () => {
         setRoleFilter(e.target.value);
     };
 
-    // Filter users based on status and role if selected, otherwise show entriesPerPage limit
+    // Filter users based on status, role, and search input
     const filteredUsers = users
         .filter((user) => (statusFilter ? user.status === statusFilter : true))
-        .filter((user) => (roleFilter ? user.roles.includes(roleFilter) : true)) // Check if roleFilter exists in roles array
+        .filter((user) => (roleFilter ? user.roles.includes(roleFilter) : true))
+        .filter((user) => {
+            return user.firstName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.middleName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.lastName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.createdOn.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.lastLogin.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.status.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.roles.some(role => role.toLowerCase().includes(searchInput.toLowerCase()))
+        })
         .slice(0, entriesPerPage);
 
     useEffect(() => {
         const count = users.filter((user) =>
             (statusFilter ? user.status === statusFilter : true) &&
-            (roleFilter ? user.roles.includes(roleFilter) : true)
+            (roleFilter ? user.roles.includes(roleFilter) : true) &&
+            (user.firstName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.middleName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.lastName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.createdOn.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.lastLogin.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.status.toLowerCase().includes(searchInput.toLowerCase()) ||
+                user.roles.some(role => role.toLowerCase().includes(searchInput.toLowerCase()))
+            )
         ).length;
 
         setFilteredEntriesCount(count);
-    }, [users, statusFilter, roleFilter]);
+    }, [users, statusFilter, roleFilter, searchInput]);
+
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -95,7 +138,7 @@ const UserList = () => {
             phoneNumber: form.elements.phoneNumber.value,
             dateOfBirth: new Date(dateOfBirthValue).toISOString(),
             identificationNumber: form.elements.identificationNumber.value,
-            emailAddress: form.elements.emailAddress.value,
+            email: form.elements.email.value,
             roles: [form.elements.role.value],
             status: form.elements.status.value,
         };
@@ -113,7 +156,7 @@ const UserList = () => {
             });
 
             if (response.ok) {
-                showToast("User updated successfully!", "success");
+                showToast("User details updated successfully!", "success");
 
                 // Update the UI state to reflect the updated user details
                 setUsers((prevUsers) =>
@@ -218,9 +261,15 @@ const UserList = () => {
                                                 onChange={handleRoleChange}
                                             >
                                                 <option value="">Select Role</option>
-                                                <option value="Admin">Admin</option>
-                                                <option value="Guest">Guest</option>
-                                                <option value="UnverifiedUser">UnverifiedUser</option>
+                                                {roles.length > 0 ? (
+                                                    roles.map((role) => (
+                                                        <option key={role.id} value={role.name}>
+                                                            {role.name}
+                                                        </option>
+                                                    ))
+                                                ) : (
+                                                    <option value="">Loading roles...</option> // Loading state if roles are not fetched
+                                                )}
                                             </select>
                                             <label className="focus-label">Role</label>
                                         </div>
@@ -231,7 +280,7 @@ const UserList = () => {
                                     <div className="col-md-12">
                                         <div className="table-header">
                                             <div className="row">
-                                                <div className="col-sm-12 col-md-6">
+                                                <div className="col-sm-6 col-md-6">
                                                     <div className="dataTables_length">
                                                         <label>
                                                             Show
@@ -251,6 +300,19 @@ const UserList = () => {
                                                         </label>
                                                     </div>
                                                 </div>
+
+                                                <div className="col-sm-6 col-md-6">
+                                                    <div className="dataTables_filter">
+                                                        <label>
+                                                            Search:
+                                                            <input
+                                                                className="form-control form-control-sm"
+                                                                value={searchInput}
+                                                                onChange={handleSearchChange}
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -259,6 +321,8 @@ const UserList = () => {
                                                 <table className="table table-striped custom-table datatable">
                                                     <thead>
                                                     <tr>
+                                                        <th>#</th>
+                                                        {/* Added serial number column */}
                                                         <th>First Name</th>
                                                         <th>Middle Name</th>
                                                         <th>Last Name</th>
@@ -270,40 +334,38 @@ const UserList = () => {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    {filteredUsers.map(user => (
+                                                    {filteredUsers.map((user, index) => (
                                                         <tr key={user.identificationNumber}>
+                                                            <td>{index + 1}</td> {/* Display serial number starting from 1 */}
                                                             <td>{user.firstName}</td>
                                                             <td>{user.middleName}</td>
                                                             <td>{user.lastName}</td>
                                                             <td>{format(new Date(user.createdOn), 'MMMM dd, yyyy')}</td>
                                                             <td>
                                                                 <div>
-                                                                    <span
-                                                                        className="d-block text-primary text-sm  text-nowrap mb-1">
+                                                                    <span className="d-block text-primary text-sm text-nowrap mb-1">
                                                                         {format(new Date(user.lastLogin), 'MMMM dd, yyyy')}
                                                                     </span>
-                                                                    <span
-                                                                        className="d-block text-muted text-xs fw-medium">
+                                                                                                        <span className="d-block text-muted text-xs fw-medium">
                                                                         {format(new Date(user.lastLogin), 'hh:mm:ss a')}
                                                                     </span>
                                                                 </div>
                                                             </td>
-
                                                             <td>
                                                                 <div className="dropdown action-label mt-2">
-                                                                    <Link to="#"
-                                                                          className="btn btn-white btn-sm btn-rounded "
-                                                                          aria-expanded="false">
+                                                                    <Link
+                                                                        to="#"
+                                                                        className="btn btn-white btn-sm btn-rounded"
+                                                                        aria-expanded="false"
+                                                                    >
                                                                         <i className={`fa-regular fa-circle-dot text-${user.status === 'active' ? 'success' : 'danger'}`}></i>
                                                                         {user.status === 'active' ? 'Active' : 'Inactive'}
                                                                     </Link>
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <span
-                                                                    className="badge bg-inverse-primary"
-                                                                >
-                                                                  {user.roles}
+                                                                <span className="badge bg-inverse-primary">
+                                                                    {user.roles}
                                                                 </span>
                                                             </td>
                                                             <td>
@@ -312,7 +374,8 @@ const UserList = () => {
                                                                         to="#"
                                                                         className="action-icon dropdown-toggle"
                                                                         data-bs-toggle="dropdown"
-                                                                        aria-expanded="false">
+                                                                        aria-expanded="false"
+                                                                    >
                                                                         <i className="material-icons">more_vert</i>
                                                                     </Link>
                                                                     <div className="dropdown-menu dropdown-menu-right">
@@ -506,12 +569,19 @@ const UserList = () => {
                                                             <select
                                                                 className="form-select form-control"
                                                                 name="role"
-                                                                value={selectedUser?.roles}
+                                                                value={selectedRole || selectedUser?.roles}
                                                                 onChange={(e) => setRole(e.target.value)}  // Update state on change
                                                             >
-                                                                <option value="Admin">Admin</option>
-                                                                <option value="Guest">Guest</option>
-                                                                <option value="UnverifiedUser">UnverifiedUser</option>
+                                                                {/* Map over roles and create option elements dynamically */}
+                                                                {roles.length > 0 ? (
+                                                                    roles.map((role) => (
+                                                                        <option key={role.id} value={role.name}>
+                                                                            {role.name}
+                                                                        </option>
+                                                                    ))
+                                                                ) : (
+                                                                    <option value="">Loading roles...</option> // Loading state if roles are not fetched
+                                                                )}
                                                             </select>
                                                         </div>
                                                     </div>
@@ -519,7 +589,7 @@ const UserList = () => {
                                                     <h4 className="text-primary">Status Section</h4>
                                                     <div className="col-sm-12">
                                                         <div className="input-block">
-                                                        <label>Status</label>
+                                                            <label>Status</label>
                                                             <select
                                                                 className="form-select form-control"
                                                                 name="status"
