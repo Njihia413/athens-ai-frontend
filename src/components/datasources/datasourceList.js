@@ -236,16 +236,20 @@ const DatasourceList = () => {
                                                 <table className="table table-striped custom-table datatable">
                                                     <thead>
                                                     <tr>
+                                                        <th>#</th>
                                                         <th>Name</th>
+                                                        <th>Type</th>
                                                         <th>Description</th>
                                                         <th>Url</th>
                                                         <th className="text-end">Action</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    {displayedDataSources.map(dataSource => (
+                                                    {displayedDataSources.map((dataSource, index) => (
                                                         <tr key={dataSource.id}>
+                                                            <td>{index + 1}</td>
                                                             <td>{dataSource.name}</td>
+                                                            <td></td>
                                                             <td>{dataSource.description}</td>
                                                             <td>{dataSource.url}</td>
                                                             <td>
@@ -265,7 +269,7 @@ const DatasourceList = () => {
                                                                             data-bs-target="#edit_datasource"
                                                                             onClick={() => setSelectedDataSource(dataSource)}
                                                                         >
-                                                                            <i className="fa fa-pencil m-r-5" /> Edit
+                                                                            <i className="fa fa-pencil m-r-5"/> Edit
                                                                         </Link>
 
                                                                         <Link
@@ -275,7 +279,7 @@ const DatasourceList = () => {
                                                                             data-bs-target="#delete_datasource"
                                                                             onClick={() => setSelectedDataSource(dataSource)}
                                                                         >
-                                                                            <i className="fa-regular fa-trash-can m-r-5" /> Delete
+                                                                            <i className="fa-regular fa-trash-can m-r-5"/> Delete
                                                                         </Link>
                                                                     </div>
                                                                 </div>
