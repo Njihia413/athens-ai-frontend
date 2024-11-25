@@ -14,6 +14,7 @@ const ModelList = () => {
     const [displayedModels, setDisplayedModels] = useState([]);
     const [searchInput, setSearchInput] = useState('');
     const [selectedModel, setSelectedModel] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -52,6 +53,7 @@ const ModelList = () => {
                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels"
                 );
                 setModels(data);
+                setLoading(false);
                 console.log(data);
             } catch (error) {
                 console.error("Error fetching models:", error);
@@ -301,6 +303,17 @@ const ModelList = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {loading && (
+                                    <div className="text-center">
+                                        <div
+                                            className="spinner-border text-primary"
+                                            role="status"
+                                            style={{ width: "3rem", height: "3rem" }}
+                                        >
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <ModelForm/>

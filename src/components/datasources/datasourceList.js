@@ -13,6 +13,7 @@ const DatasourceList = () => {
     const [displayedDataSources, setDisplayedDataSources] = useState([]);
     const [selectedDataSource, setSelectedDataSource] = useState(null);
     const [searchInput, setSearchInput] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -51,6 +52,7 @@ const DatasourceList = () => {
                     "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
                 );
                 setDataSources(data);
+                setLoading(false);
             } catch (error) {
                 console.error("Failed to fetch data sources:", error);
             }
@@ -300,6 +302,17 @@ const DatasourceList = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {loading && (
+                                    <div className="text-center">
+                                        <div
+                                            className="spinner-border text-primary"
+                                            role="status"
+                                            style={{ width: "3rem", height: "3rem" }}
+                                        >
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <DatasourceForm addNewDataSource={addNewDataSource}/>

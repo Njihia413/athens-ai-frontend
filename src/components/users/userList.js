@@ -18,6 +18,7 @@ const UserList = () => {
     const [roles, setRoles] = useState([]);
     const [selectedRole, setRole] = useState("");
     const [searchInput, setSearchInput] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -47,6 +48,7 @@ const UserList = () => {
                 setUsers(data);
                 setEntriesCount(data.length);
                 setFilteredEntriesCount(data.length);
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching staff:", error);
             }
@@ -417,6 +419,17 @@ const UserList = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {loading && (
+                                    <div className="text-center">
+                                        <div
+                                            className="spinner-border text-primary"
+                                            role="status"
+                                            style={{ width: "3rem", height: "3rem" }}
+                                        >
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/*Edit User Form*/}
