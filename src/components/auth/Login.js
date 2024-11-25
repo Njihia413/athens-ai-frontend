@@ -2,6 +2,7 @@ import React, {useState} from "react"
 import {Link, useNavigate} from "react-router-dom";
 import {Helmet} from "react-helmet";
 import {Slide, toast, ToastContainer} from "react-toastify";
+import GuestHeader from "../common/GuestHeader";
 
 const LogoPath = '/Logo.png';
 
@@ -87,6 +88,7 @@ const Login = () => {
         <>
             <div className="account-page">
                 <div className="main-wrapper">
+                    <GuestHeader/>
                     <Helmet>
                         <title>Login - Athens AI</title>
                         <meta name="description" content="Login page"/>
@@ -94,11 +96,11 @@ const Login = () => {
                     <div className="account-content">
                         <div className="container">
                             {/* Account Logo */}
-                            <div className="account-logo">
-                                <Link to="/">
-                                    <img src={LogoPath} alt="Athens AI"/>
-                                </Link>
-                            </div>
+                            {/*<div className="account-logo">*/}
+                            {/*    <Link to="/">*/}
+                            {/*        <img src={LogoPath} alt="Athens AI"/>*/}
+                            {/*    </Link>*/}
+                            {/*</div>*/}
                             {/* /Account Logo */}
                             <div className="account-box">
                                 <div className="account-wrapper">
@@ -108,11 +110,11 @@ const Login = () => {
                                     <div>
                                         <form onSubmit={handleSubmit}>
                                             <div className="input-block">
-                                                <label>Email Address</label>
+                                                <label>Username</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
-                                                    placeholder="Enter your email address"
+                                                    placeholder="Enter your email address/identification number"
                                                     value={email}
                                                     onChange={(e) => setEmail(e.target.value)} // Capture email input
                                                 />
@@ -122,11 +124,11 @@ const Login = () => {
                                                     <div className="col">
                                                         <label>Password</label>
                                                     </div>
-                                                    <div className="col-auto">
-                                                        <Link className="text-muted" to="/reset-password">
-                                                            Forgot password?
-                                                        </Link>
-                                                    </div>
+                                                    {/*<div className="col-auto">*/}
+                                                    {/*    <Link className="text-muted" to="/reset-password">*/}
+                                                    {/*        Forgot password?*/}
+                                                    {/*    </Link>*/}
+                                                    {/*</div>*/}
                                                 </div>
                                                 <div style={{position: "relative"}}>
                                                     <input
