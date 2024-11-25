@@ -7,15 +7,15 @@ import {TypeAnimation} from "react-type-animation";
 const GuestHome = () => {
     return (
         <>
-            <div className="page-wrapper">
+            <div>
                 <Helmet>
                     <title>Guest - Athens AI</title>
                     <meta name="description" content="Chat" />
                 </Helmet>
                 {/* Chat Main Row */}
-                <div className="chat-main-row">
+                <div className="chat-main-row d-flex justify-content-center">
                     {/* Chat Main Wrapper */}
-                    <div className="chat-main-wrapper">
+                    <div className="chat-main-wrapper w-100" style={{ maxWidth: "800px" }}>
                         {/* Chats View */}
                         <div className="col-lg-12 message-view task-view">
                             <div className="chat-window">
@@ -25,17 +25,14 @@ const GuestHome = () => {
                                             <div className="chat-box">
                                                 <div className="chats">
                                                     <div className="container-fluid">
-                                                        <div className="row align-items-center mt-5">
-                                                            <div className="welcome-message text-center">
-                                                                {/*<h2>What can I help you with today?</h2>*/}
+                                                        <div className="row mt-5">
+                                                            <div className="welcome-message text-center mt-5">
                                                                 <h2>
                                                                     <TypeAnimation
-                                                                        sequence={[
-                                                                            'What can I help you with today?',
-                                                                        ]}
+                                                                        sequence={['What can I help you with today?']}
                                                                         cursor={false}
-                                                                        wrapper='div'
-                                                                        easing='ease-in-out'
+                                                                        wrapper="div"
+                                                                        easing="ease-in-out"
                                                                         speed={50}
                                                                         repeat={0}
                                                                     />
@@ -59,16 +56,16 @@ const GuestHome = () => {
                                         <div className="message-inner">
                                             <div className="message-area">
                                                 <div className="input-group">
-                                                  <textarea
-                                                      className="form-control"
-                                                      placeholder="Message Athens AI"
-                                                      defaultValue={""}
-                                                  />
+                  <textarea
+                      className="form-control"
+                      placeholder="Message Athens AI"
+                      defaultValue={""}
+                  />
                                                     <span className="input-group-append">
-                                                        <button className="btn btn-primary" type="button">
-                                                          <i className="fa-solid fa-paper-plane"/>
-                                                        </button>
-                                                      </span>
+                    <button className="btn btn-primary" type="button">
+                      <i className="fa-solid fa-paper-plane"/>
+                    </button>
+                  </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -80,7 +77,7 @@ const GuestHome = () => {
                     </div>
                     {/* /Chat Main Wrapper */}
                 </div>
-                {/* /Chat Main Row */}
+
                 {/* Modals would remain unchanged */}
             </div>
         </>

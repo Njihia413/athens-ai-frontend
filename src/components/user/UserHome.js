@@ -128,6 +128,8 @@ const UserHome = () => {
     const handleQuery = async () => {
         if (!query) return;
 
+
+        setQuery('');
         setIsLoading(true);
 
         // Add user's query to the conversation
@@ -148,8 +150,7 @@ const UserHome = () => {
             showToast('Error querying', "error");
         }
 
-        // Clear the input box
-        setQuery('');
+
         setIsLoading(false);
     };
 
