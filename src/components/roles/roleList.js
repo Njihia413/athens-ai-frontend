@@ -85,7 +85,8 @@ const RoleList = () => {
     // Filter roles based on search term
     useEffect(() => {
         const filtered = roles.filter(role =>
-            role.name.toLowerCase().includes(searchInput.toLowerCase())
+            role.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+            role.createdDate.toLowerCase().includes(searchInput.toLowerCase())
         );
         setFilteredRoles(filtered);
         setEntriesCount(filtered.length);
@@ -98,7 +99,8 @@ const RoleList = () => {
             // Update filtered roles to include the new role if it matches the current search input
             setFilteredRoles(
                 updatedRoles.filter((role) =>
-                    role.name.toLowerCase().includes(searchInput.toLowerCase())
+                    role.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+                    role.createdDate.toLowerCase().includes(searchInput.toLowerCase())
                 )
             );
             // Update the entries count
@@ -279,6 +281,7 @@ const RoleList = () => {
                                                 <table className="table table-striped custom-table datatable">
                                                     <thead>
                                                     <tr>
+                                                        <th>#</th>
                                                         <th>Name</th>
                                                         <th>Datasources</th>
                                                         <th>Date Created</th>
@@ -286,11 +289,12 @@ const RoleList = () => {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    {displayedRoles.map(role => (
+                                                    {displayedRoles.map((role, index) => (
                                                         <React.Fragment>
                                                             <tr className="clickable" data-toggle="collapse"
                                                                 id={`row${role.id}`}
                                                                 data-target={`.row${role.id}`} key={role.id}>
+                                                                <td>{index + 1}</td>
                                                                 <td>
                                                                     {role.name}
                                                                 </td>

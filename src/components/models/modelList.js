@@ -229,6 +229,7 @@ const ModelList = () => {
                                                 <table className="table table-striped custom-table datatable">
                                                     <thead>
                                                     <tr>
+                                                        <th>#</th>
                                                         <th>Model</th>
                                                         <th>Upload Date</th>
                                                         <th>Alias</th>
@@ -238,8 +239,9 @@ const ModelList = () => {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    {displayedModels.map(model => (
+                                                    {displayedModels.map((model, index) => (
                                                         <tr>
+                                                            <td>{index + 1}</td>
                                                             <td>{model.name}</td>
                                                             <td>{format(new Date(model.addedOn), 'MMMM dd, yyyy')}</td>
                                                             <td>{model.nickName}</td>
