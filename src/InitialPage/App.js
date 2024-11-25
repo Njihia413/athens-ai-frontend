@@ -22,65 +22,12 @@ import Logs from "../components/logs/Logs";
 import Notifications from "../components/notifications/Notifications";
 import ChangePassword from "../components/settings/ChangePassword";
 import Profile from "../components/user/Profile";
-import fetchWithAuth from "../utils/FetchWithAuth";
-
-export const UserContext = createContext();
+import {UserProvider} from "./context/UserContext";
 
 const App = () => {
-    const [user, setUser] = useState("");
-    const [loading, setLoading] = useState(true);
-
-    // Function to fetch user data from the API
-    const fetchUserDetails = async (username) => {
-        try {
-            const response = await fetchWithAuth(
-                `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/${username}`
-            );
-            if (user && response.ok) {
-                const userData = await response.json();
-
-                // Log the user details to the console
-                console.log("Fetched user details:", userData);
-
-                setUser(userData); // Update the context with user data
-            } else {
-                console.error("Failed to fetch user details");
-                setUser(null);
-            }
-        } catch (error) {
-            console.error("An error occurred while fetching user details:", error);
-        } finally {
-            setLoading(false); // Stop loading once the API call is done
-        }
-    };
-
-    // Effect to fetch data after login (if username is available)
-    useEffect(() => {
-        const storedUsername = localStorage.getItem("username");
-        console.log("LocalStorage username:", storedUsername);
-        if (storedUsername) {
-            setLoading(true); // Set loading true initially
-            fetchUserDetails(storedUsername)
-                .then((userData) => {
-                    setUser(userData);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error("Error fetching user details:", error);
-                    setLoading(false);
-                });
-        } else {
-            console.log("No stored username found.");
-            setLoading(false); // No username, set loading to false
-        }
-    }, []);
-
-
-
 
     return (
-        <UserContext.Provider value={{ user, loading }}>
-            {console.log("UserContext value:", { user, loading })}
+        <UserProvider>
             <Router>
                 <Routes>
                     {/* Public Routes */}
@@ -123,7 +70,7 @@ const App = () => {
                     </Route>
                 </Routes>
             </Router>
-        </UserContext.Provider>
+        </UserProvider>
     );
 };
 

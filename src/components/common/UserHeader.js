@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const LogoPath = '/Logo2.png';
 
@@ -18,29 +19,14 @@ const UserHeader = (props) => {
     const [profileName, setProfileName] = useState(null);
     const [username, setUsername] = useState(null);
     const [roles, setRoles] = useState([]);  // New state to store roles
+    const { user } = useContext(userContext);
 
     useEffect(() => {
-        // Retrieve the user's details from localStorage
-        const storedName = localStorage.getItem("firstName");
-        const storedUsername = localStorage.getItem("username");
-        const storedRoles = JSON.parse(localStorage.getItem("roles")) || [];  // Assuming roles is stored as a JSON array
 
-        if (storedName) {
-            setProfileName(storedName);
-        }
-        if (storedUsername) {
-            setUsername(storedUsername);
-        }
-        if (storedRoles.length > 0) {
-            setRoles(storedRoles);  // Set the roles in state
-        }
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("roles");
-        localStorage.removeItem("firstName");
-        localStorage.removeItem("username");
+        localStorage.clear();
         navigate("/login");
     };
 
@@ -90,19 +76,19 @@ const UserHeader = (props) => {
                         className="dropdown-toggle nav-link"
                         data-bs-toggle="dropdown">
                         <span className="user-img me-1">
-                          <img src={`https://ui-avatars.com/api/?name=${profileName}`} alt="" />
+                          <img src={`https://ui-avatars.com/api/?name=${user.firstName}`} alt="" />
                           <span className="status online" />
                         </span>
-                        <span>{profileName || "User"}</span>
+                        <span>{user.firstName || "User"}</span>
                         <span className="text-xs">
-                            ({roles})
+                            {user.roles}
                         </span>
                     </Link>
                     <div className="dropdown-menu dropdown-menu-end">
                         {/* Dynamic Profile Route */}
                         <Link
                             className="dropdown-item"
-                            to={`/user/profile/${username || "default"}`}>
+                            to={`/user/profile/${user.username || "default"}`}>
                             My Profile
                         </Link>
                         <Link className="dropdown-item" to="/user/change-password">
@@ -133,7 +119,7 @@ const UserHeader = (props) => {
                 <div className="dropdown-menu dropdown-menu-end dropdown-menu-right">
                     <Link
                         className="dropdown-item"
-                        to={`/user/profile/${username || "default"}`}>
+                        to={`/user/profile/${user.username || "default"}`}>
                         My Profile
                     </Link>
                     <Link className="dropdown-item" to="/user/change-password">

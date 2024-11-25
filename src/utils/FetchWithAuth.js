@@ -1,9 +1,9 @@
-const fetchWithAuth = async (url, options = {}) => {
-    const authToken = localStorage.getItem("authToken");
+
+const fetchWithAuth = async (url, options = {}, token) => {
 
     const headers = {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${authToken}`,
+        "Authorization": `Bearer ${token}`,
         ...options.headers,
     };
 

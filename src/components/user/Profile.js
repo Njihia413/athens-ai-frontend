@@ -3,11 +3,14 @@ import { toast } from "react-toastify";
 import UserHeader from "../common/UserHeader";
 import SettingsSidebar from "../common/SettingsSidebar";
 import { Link } from "react-router-dom";
-import {UserContext} from "../../InitialPage/App";
+import fetchWithAuth from "../../utils/FetchWithAuth";
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const Profile = () => {
-    const { user, loading } = useContext(UserContext);
+    const { user, updateUserDetails } = useContext(userContext);
     const [menu, setMenu] = useState(false);
+    const [loading, setLoading ] = useState(true);
+
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -27,6 +30,28 @@ const Profile = () => {
                 toast(message);
         }
     };
+
+    // Function to fetch user data from the API
+    const fetchUserDetails = async (username) => {
+        try {
+            const data = await fetchWithAuth(
+                `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/${username}`,
+                {}, user.token
+            );
+            console.log(data);
+            updateUserDetails(data);
+        } catch (error) {
+            console.error("An error occurred while fetching user details:", error);
+        } finally {
+            setLoading(false); // Stop loading once the API call is done
+        }
+    };
+
+    // Effect to fetch data after login (if username is available)
+    useEffect(() => {
+        fetchUserDetails(user.username)
+    }, []);
+
 
 
     return (
@@ -56,9 +81,6 @@ const Profile = () => {
 
                                 <div className="card mb-0">
                                     <div className="card-body">
-                                        {loading ? (
-                                            <p>Loading...</p>
-                                        ) : user ? (
                                             <div className="profile-view">
                                                 <div className="profile-img-wrap">
                                                     <div className="profile-img">
@@ -78,7 +100,7 @@ const Profile = () => {
                                                                     {user.firstName} {user.lastName}
                                                                 </h3>
                                                                 <small className="text-muted">
-                                                                    {user.role || "N/A"}
+                                                                    {user.roles || "N/A"}
                                                                 </small>
                                                             </div>
                                                         </div>
@@ -86,7 +108,7 @@ const Profile = () => {
                                                             <ul className="personal-info">
                                                                 <li>
                                                                     <div className="title">Phone:</div>
-                                                                    <div className="text">{user.phone || "N/A"}</div>
+                                                                    <div className="text">{user.phoneNumber || "N/A"}</div>
                                                                 </li>
                                                                 <li>
                                                                     <div className="title">Email:</div>
@@ -94,11 +116,7 @@ const Profile = () => {
                                                                 </li>
                                                                 <li>
                                                                     <div className="title">Date of Birth:</div>
-                                                                    <div className="text">{user.dob || "N/A"}</div>
-                                                                </li>
-                                                                <li>
-                                                                    <div className="title">Address:</div>
-                                                                    <div className="text">{user.address || "N/A"}</div>
+                                                                    <div className="text">{user.dateOfBirth || "N/A"}</div>
                                                                 </li>
                                                                 <li>
                                                                     <div className="title">Gender:</div>
@@ -109,9 +127,6 @@ const Profile = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                        ) : (
-                                            <p>User not found</p>
-                                        )}
                                     </div>
                                 </div>
                             </div>

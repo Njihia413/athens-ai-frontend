@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Slide, toast, ToastContainer } from "react-toastify";
 import GuestHeader from "../common/GuestHeader";
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const LogoPath = '/Logo.png';
 
@@ -12,6 +13,8 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    const { updateUserDetails } = useContext(userContext)
 
     const onEyeClick = () => {
         setEye(!eye);
@@ -58,14 +61,10 @@ const Login = () => {
 
             if (response.ok) {
                 const responseData = await response.json();
+                updateUserDetails(responseData);
                 const { token, roles, firstName, username } = responseData;
 
                 if (token) {
-                    localStorage.setItem('authToken', token);
-                    localStorage.setItem('roles', JSON.stringify(roles));
-                    localStorage.setItem('firstName', firstName);
-                    localStorage.setItem('username', username);
-
                     const welcomeMessage = roles.includes("Admin") ? "Welcome Admin" : `Welcome ${firstName}`;
                     showToast(welcomeMessage, "success");
 
@@ -78,7 +77,7 @@ const Login = () => {
                         }
                     }, 1000);
                 } else {
-                    showToast("Login failed. Please check your credentials.", "error");
+                    throw new Error("Login failed. Please check your credentials.");
                 }
             } else {
                 throw new Error("Login failed. Please check your credentials.");

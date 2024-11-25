@@ -106,6 +106,7 @@ const UserList = () => {
                 user.status.toLowerCase().includes(searchInput.toLowerCase()) ||
                 user.roles.some(role => role.toLowerCase().includes(searchInput.toLowerCase()))
         })
+        .sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn))
         .slice(0, entriesPerPage);
 
     useEffect(() => {
@@ -248,7 +249,7 @@ const UserList = () => {
                                             >
                                                 <option value="">Select Status</option>
                                                 <option value="active">Active</option>
-                                                <option value="inactive">Inactive</option>
+                                                <option value="pending">Pending</option>
                                                 <option value="archived">Archived</option>
                                             </select>
                                             <label className="focus-label">Status</label>
