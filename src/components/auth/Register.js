@@ -25,6 +25,7 @@ const Register = () => {
     const [eye, setEye] = useState(true);
     const [confirmEye, setConfirmEye] = useState(true);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const onEyeClick = () => {
         setEye(!eye);
@@ -81,6 +82,8 @@ const Register = () => {
             dateOfBirth: new Date(formData.dateOfBirth).toISOString()
         };
 
+        setLoading(true);
+
         try {
             const response = await fetch('https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/register', {
                 method: 'POST',
@@ -118,6 +121,8 @@ const Register = () => {
             }
         } catch (error) {
             showToast("Registration failed. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -381,8 +386,10 @@ const Register = () => {
                                             <div className="input-block text-center">
                                                 <button
                                                     className="btn btn-primary account-btn"
-                                                    type="submit">
-                                                    Register
+                                                    type="submit"
+                                                    disabled={loading}
+                                                >
+                                                    {loading ? "loading..." : "Register"}
                                                 </button>
                                             </div>
                                         </form>
