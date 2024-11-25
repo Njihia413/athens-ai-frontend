@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import {
@@ -17,8 +17,9 @@ const LogoPath = '/Logo.png';
 const UserHome = () => {
     const [files, setFiles] = useState([]);
     const [query, setQuery] = useState('');
-    const [role, setRole] = useState('customer_service');
-    const [model, setModel] = useState('mistral');
+    const [role, setRole] = useState('');
+    const [model, setModel] = useState('');
+    const [threadId, setThreadId] = useState('');
     const [vectorResult, setVectorResult] = useState('');
     const [llmResult, setLLMResult] = useState('');
     const [sqlResult, setSqlResult] = useState('');
@@ -83,75 +84,68 @@ const UserHome = () => {
         setFiles(e.target.files);
     };
 
-    const handleUpload = async () => {
-        const formData = new FormData();
-        for (let i = 0; i < files.length; i++) {
-            formData.append('files', files[i]);
+    // Generate unique thread ID on component mount
+    useEffect(() => {
+        const generateThreadId = () => {
+            const randomPart = Math.random().toString(36).substring(2, 8); // Random string
+            const timestampPart = Date.now().toString(36); // Timestamp
+            return `thread-${timestampPart}-${randomPart}`;
+        };
+        setThreadId(generateThreadId());
+    }, []);
+
+    // Handle file upload
+    const handleFileUpload = async () => {
+        if (!files.length || !role || !model) {
+            showToast("Please select files, a role, and a model.", "error");
+            return;
         }
 
+        const formData = new FormData();
+        files.forEach((file) => formData.append("files", file));
+        formData.append("role", role);
+        formData.append("model", model);
+
         try {
-            const res = await axios.post('http://localhost:8000/embed', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+            const res = await axios.post("http://localhost:8000/embed", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
             });
-            if (res.data.message) {
-                showToast("Files uploaded successfully!", "success");
-            }
+            showToast(res.data.message, "info");
         } catch (error) {
-            console.error('Error uploading files:', error);
+            console.error("Error uploading files:", error);
             showToast("Error uploading files", "error");
         }
     };
 
-    // const handleQuery = async () => {
-    //     setQuery("");
-    //     setIsLoading(true);
-    //
-    //     try {
-    //         const res = await axios.post('http://localhost:8000/query', { query, role, model });
-    //         let data = res.data.message;
-    //         if (res.data) {
-    //             console.log(data.message);
-    //             setVectorResult(data.vector_result);
-    //             setLLMResult(data.llm_chat_result);
-    //             setSqlResult(data.sql_result);
-    //             setMongoResult(data.mongo_result);
-    //             setSources(res.data.sources || 'No sources available');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error querying:', error);
-    //         showToast('Error querying', "error");
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
-
+    // Handle message query
     const handleQuery = async () => {
         if (!query) return;
-
 
         setQuery('');
         setIsLoading(true);
 
         // Add user's query to the conversation
-        const userMessage = { sender: 'user', text: query };
+        const userMessage = { sender: "user", text: query };
         setConversation((prev) => [...prev, userMessage]);
 
         try {
-            const res = await axios.post('http://localhost:8000/process', {
+            const res = await axios.post("http://localhost:8000/process", {
                 text: query,
-                thread_id: 'conversation-2',
+                thread_id: threadId, // Use the unique thread ID
+                role, // Include the role in the query
+                model, // Include model in the payload
             });
 
             // Add the LLM's response to the conversation
-            const llmResponse = { sender: 'llm', text: res.data.response };
+            const llmResponse = { sender: "llm", text: res.data.response };
             setConversation((prev) => [...prev, llmResponse]);
         } catch (error) {
-            console.error('Error querying:', error);
-            showToast('Error querying', "error");
+            console.error("Error querying:", error);
+            showToast("Error querying", "error");
         }
 
-
         setIsLoading(false);
+
     };
 
     function dummy(fail=false){
@@ -235,25 +229,40 @@ const UserHome = () => {
                                     <div className="navbar">
                                         <div className="user-details me-auto">
                                             <div className="float-start user-img">
-                                                {/*<div className="col-sm-12 col-md-12">*/}
-                                                {/*    <div*/}
-                                                {/*        className="input-block ">*/}
-                                                {/*        <select*/}
-                                                {/*            value={model}*/}
-                                                {/*            onChange={(e) => setModel(e.target.value)}*/}
-                                                {/*            className="form-select form-control"*/}
-                                                {/*        >*/}
-                                                {/*            <option value="mistral">Athens Alpha*/}
-                                                {/*            </option>*/}
-                                                {/*            <option value="llama3.2">Athens Delphi*/}
-                                                {/*            </option>*/}
-                                                {/*            <option value="gemma2">Athens Heracles*/}
-                                                {/*            </option>*/}
-
-                                                {/*        </select>*/}
-                                                {/*    </div>*/}
-                                                {/*</div>*/}
-
+                                                <div className="col-sm-12 col-md-12">
+                                                    <div
+                                                        className="input-block ">
+                                                        <select
+                                                            value={model}
+                                                            onChange={(e) => setModel(e.target.value)}
+                                                            className="form-select form-control"
+                                                        >
+                                                            <option value="llama3.2">
+                                                                Athens Delphi
+                                                            </option>
+                                                            <option value="gemma2">
+                                                                Athens Heracles
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="col-sm-12 col-md-12">
+                                                <div
+                                                    className="input-block ">
+                                                    <select
+                                                        value={role}
+                                                        onChange={(e) => setRole(e.target.value)}
+                                                        className="form-select form-control"
+                                                    >
+                                                        <option value="admin">Admin</option>
+                                                        <option value="hr">HR</option>
+                                                        <option value="manager">Manager</option>
+                                                        <option value="customer_service">Customer Service</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -336,55 +345,6 @@ const UserHome = () => {
                                                         {/*        </div>*/}
 
                                                         {/*)*/}
-
-
-                                                    {/*{query && (*/}
-                                                    {/*    <div className="chat chat-right">*/}
-                                                    {/*        <div className="chat-body">*/}
-                                                    {/*            <div className="chat-bubble">*/}
-                                                    {/*                <div className="chat-content">*/}
-                                                    {/*                    <p></p>*/}
-                                                    {/*                </div>*/}
-                                                    {/*            </div>*/}
-                                                    {/*        </div>*/}
-                                                    {/*    </div>*/}
-                                                    {/*)}*/}
-
-                                                    {/* Combined results */}
-                                                    {/*{(llmResult || vectorResult || sqlResult || mongoResult || sources) && (*/}
-                                                    {/*    <div className="chat chat-left">*/}
-                                                    {/*        <div className="chat-avatar">*/}
-                                                    {/*            <Link to="/" className="avatar">*/}
-                                                    {/*                <img alt="Athens Profile" src={LogoPath}/>*/}
-                                                    {/*            </Link>*/}
-                                                    {/*        </div>*/}
-                                                    {/*        <div className="chat-body">*/}
-                                                    {/*            <div className="chat-bubble">*/}
-                                                    {/*                <div className="chat-content">*/}
-                                                    {/*                    <p>*/}
-                                                    {/*                        <strong>Results:</strong>*/}
-                                                    {/*                    </p>*/}
-                                                    {/*                    <ul className="result-list">*/}
-                                                    {/*                        {llmResult && <li><strong>AI*/}
-                                                    {/*                            Result:</strong> {llmResult}</li>}*/}
-                                                    {/*                        {vectorResult && <li><strong>Vector*/}
-                                                    {/*                            Result:</strong> {vectorResult}</li>}*/}
-                                                    {/*                        {sqlResult && <li><strong>SQL*/}
-                                                    {/*                            Result:</strong> {sqlResult}</li>}*/}
-                                                    {/*                        {mongoResult && <li><strong>Mongo*/}
-                                                    {/*                            Result:</strong> {mongoResult}</li>}*/}
-                                                    {/*                    </ul>*/}
-                                                    {/*                    {sources && (*/}
-                                                    {/*                        <p className="sources">*/}
-                                                    {/*                            <em><strong>Sources:</strong> <span*/}
-                                                    {/*                                className="highlight">{sources}</span></em>*/}
-                                                    {/*                        </p>*/}
-                                                    {/*                    )}*/}
-                                                    {/*                </div>*/}
-                                                    {/*            </div>*/}
-                                                    {/*        </div>*/}
-                                                    {/*    </div>*/}
-                                                    {/*)}*/}
                                                 </div>
                                             </div>
                                         </div>
@@ -519,15 +479,19 @@ const UserHome = () => {
                                         <label className="text-primary">
                                             Please upload your files here
                                         </label>
-                                        <input className="form-control" type="file" multiple
-                                               onChange={handleFileChange}/>
+                                        <input
+                                            className="form-control"
+                                            type="file" multiple
+                                            onChange={(e) => setFiles(Array.from(e.target.files))}
+                                        />
                                         <p className="text-danger text-xs mt-2">
                                             *Ensure each file does not exceed the file limit of 5mb
                                         </p>
                                     </div>
                                 </form>
                                 <div className="submit-section">
-                                    <button onClick={handleUpload} className="btn btn-primary submit-btn">Upload Files
+                                    <button onClick={handleFileUpload} className="btn btn-primary submit-btn">
+                                        Upload Files
                                     </button>
                                 </div>
                             </div>
