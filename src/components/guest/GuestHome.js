@@ -15,7 +15,7 @@ const GuestHome = () => {
                 {/* Chat Main Row */}
                 <div className="chat-main-row d-flex justify-content-center">
                     {/* Chat Main Wrapper */}
-                    <div className="chat-main-wrapper w-100" style={{ maxWidth: "800px" }}>
+                    <div className="chat-main-wrapper w-100" style={{ maxWidth: "750px" }}>
                         {/* Chats View */}
                         <div className="col-lg-12 message-view task-view">
                             <div className="chat-window">
@@ -40,7 +40,7 @@ const GuestHome = () => {
                                                                 <div className="prompt-container">
                                                                     <p>Here are some things you can ask me:</p>
                                                                     <div>
-                                                                        <ActionButtons />
+                                                                        <ActionButtons/>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -55,22 +55,27 @@ const GuestHome = () => {
                                     <div className="message-bar">
                                         <div className="message-inner">
                                             <div className="message-area">
-                                                <div className="input-group">
-                  <textarea
-                      className="form-control"
-                      placeholder="Message Athens AI"
-                      defaultValue={""}
-                  />
-                                                    <span className="input-group-append">
-                    <button className="btn btn-primary" type="button">
-                      <i className="fa-solid fa-paper-plane"/>
-                    </button>
-                  </span>
-                                                </div>
+                                                <form>
+                                                    <div className="input-group">
+                                                      <textarea
+                                                          className="form-control"
+                                                          placeholder="Message Athens AI"
+                                                          defaultValue={""}
+                                                      />
+                                                        <span className="input-group-append">
+                                                        <button className="btn btn-primary btn-chat" type="button">
+                                                          <i className="fa-solid fa-paper-plane"/>
+                                                        </button>
+                                                      </span>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <p className="text-center mt-3">
+                                    © 2024 Athens AI. All rights reserved.
+                                </p>
                             </div>
                         </div>
                         {/* /Chats View */}

@@ -225,9 +225,9 @@ const UserHome = () => {
                     <meta name="description" content="Chat"/>
                 </Helmet>
                 {/* Chat Main Row */}
-                <div className="chat-main-row">
+                <div className="chat-main-row d-flex justify-content-center">
                     {/* Chat Main Wrapper */}
-                    <div className="chat-main-wrapper">
+                    <div className="chat-main-wrapper w-100" style={{ maxWidth: "750px" }}>
                         {/* Chats View */}
                         <div className="col-lg-12 message-view task-view">
                             <div className="chat-window">
@@ -414,7 +414,7 @@ const UserHome = () => {
                                                         <span className="input-group-append">
                                                         <button
                                                             onClick={handleQuery}
-                                                            className="btn btn-primary"
+                                                            className="btn btn-primary btn-chat"
                                                             type="button"
                                                             disabled={isLoading}
                                                         >
@@ -431,6 +431,9 @@ const UserHome = () => {
                                         </div>
                                     </div>
                                 </div>
+                                <p className="text-center mt-3">
+                                    © 2024 Athens AI. All rights reserved.
+                                </p>
                             </div>
                         </div>
                         {/* /Chats View */}

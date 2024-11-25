@@ -8645,6 +8645,8 @@ th.width-64 {
   background-color: #ffffff;
   border-top: 1px solid #eaeaea;
   padding: 15px;
+  margin-left: 15px;
+  margin-right: 15px;
 }
 .chat-footer .call-duration {
   display: inline-block;
@@ -10345,4 +10347,16 @@ option {
   background-color: #ffe9a3;
   padding: 2px 4px;
   border-radius: 4px;
+}
+
+.chat-footer .message-bar .message-inner .message-area form .input-group .form-control {
+  border: none;
+}
+
+.chat-footer {
+  border-radius: 40px;
+}
+
+.btn-chat {
+  border-radius: 50%;
 }
