@@ -17,8 +17,12 @@ const SettingsSidebar = () => {
                                       to="/user"><i className="la la-home"/>
                                     <span>Back to Home</span></Link>
                             </li>
+                            <li className={location.pathname.includes('profile') ? "active" : ""}>
+                                <Link to="/user/profile"><i className="la la-user"/>
+                                    <span>Profile</span></Link>
+                            </li>
                             <li className={location.pathname.includes('-password') ? "active" : ""}>
-                                <Link to="/settings/change-password"><i className="la la-lock"/>
+                                <Link to="/user/change-password"><i className="la la-lock"/>
                                     <span>Change Password</span></Link>
                             </li>
                         </ul>

@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import SettingsSidebar from "../common/SettingsSidebar";
-import Header from "../common/Header";
 import {Slide, toast, ToastContainer} from "react-toastify";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
+import UserHeader from "../common/UserHeader";
 
 const LogoPath = '/Logo.png';
 
@@ -92,7 +92,7 @@ const ChangePassword = () => {
         <>
             <div className={`main-wrapper ${menu ? "slide-nav" : ""}`}>
                 <div className="app-container">
-                    <Header onMenuClick={() => toggleMobileMenu()}/>
+                    <UserHeader onMenuClick={() => toggleMobileMenu()}/>
                     <div className="main-content">
                         <SettingsSidebar/>
                         <div className="page-wrapper">

@@ -22,6 +22,7 @@ import Logs from "../components/logs/Logs";
 import Notifications from "../components/notifications/Notifications";
 import ProtectedRoute from "./ProtectedRoute"
 import ChangePassword from "../components/settings/ChangePassword";
+import Profile from "../components/user/Profile";
 
 const App = () => {
     const store = configureStore({
@@ -44,11 +45,10 @@ const App = () => {
                     <Route exact path="/contact" element={<Contact />} />
                     <Route exact path="/notifications" element={<Notifications />} />
 
-                    <Route path="user" element={<User/>} >
+                    <Route path="user">
                         <Route index element={<User />} />
-                        <Route path="change-password" >
-                            <Route index element={<ChangePassword />} />
-                        </Route>
+                        <Route path="change-password" element={<ChangePassword />} />
+                        <Route path="profile" element={<Profile />} />
                     </Route>
 
                     <Route path="admin">
