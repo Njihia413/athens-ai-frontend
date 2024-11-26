@@ -74,9 +74,9 @@ const Sidebar = (props) => {
                     <i className="la la-dashboard"/> <span>Dashboard</span>
                   </Link>
                 </li>
-                <li className={location.pathname.includes("users") ? "active" : ""}>
-                  <Link to="/admin/users">
-                    <i className="la la-users"/> <span>Users</span>
+                <li className={location.pathname.includes("staff") ? "active" : ""}>
+                  <Link to="/admin/staff">
+                    <i className="la la-users"/> <span>Staff</span>
                   </Link>
                 </li>
                 <li className={location.pathname.includes("datasources") ? "active" : ""}>
@@ -524,9 +524,9 @@ const Sidebar = (props) => {
                     className="material-icons-outlined"
                     onClick={() =>
                         toggleSidebar(
-                            isSideMenu === "administrator/users"
+                            isSideMenu === "administrator/staff"
                                 ? ""
-                                : "administrator/users"
+                                : "administrator/staff"
                         )
                     }>
                   group_add
@@ -1778,7 +1778,7 @@ const Sidebar = (props) => {
                 ) : (
                     ""
                 )}
-                {isSideMenu === "administrator/users" ? (
+                {isSideMenu === "administrator/staff" ? (
                     <div
                         className="tab-pane fade show active"
                         id="v-pills-users"
@@ -1788,7 +1788,7 @@ const Sidebar = (props) => {
                       <ul>
                         <li
                             className={
-                              location.pathname.includes("administrator/users") ? "active" : ""
+                              location.pathname.includes("administrator/staff") ? "active" : ""
                             }>
                           <Link to="/app/administrator/users">
                             <i className="la la-user-plus" /> <span>Users</span>

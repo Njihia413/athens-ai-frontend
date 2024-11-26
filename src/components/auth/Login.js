@@ -45,49 +45,60 @@ const Login = () => {
 
         const data = {
             Username: email,
-            Password: password
+            Password: password,
         };
 
         setLoading(true);
 
         try {
-            const response = await fetch('https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
-            if (response.ok) {
-                const responseData = await response.json();
-                updateUserDetails(responseData);
-                const { token, roles, firstName, username } = responseData;
-
-                if (token) {
-                    const welcomeMessage = roles.includes("Admin") ? "Welcome Admin" : `Welcome ${firstName}`;
-                    showToast(welcomeMessage, "success");
-
-                    setTimeout(() => {
-                        // Redirect based on role after the delay
-                        if (roles && roles.includes("Admin")) {
-                            navigate('/admin/dashboard');
-                        } else {
-                            navigate('/user');
-                        }
-                    }, 1000);
-                } else {
-                    throw new Error("Login failed. Please check your credentials.");
+            const response = await fetch(
+                'https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/login',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
                 }
+            );
+
+            // Check response status
+            if (response.ok) {
+                const responseData = await response.json(); // Assume successful response is JSON
+                updateUserDetails(responseData);
+
+                const { roles, firstName } = responseData;
+                const welcomeMessage = roles.includes("Admin")
+                    ? "Welcome Admin"
+                    : `Welcome ${firstName || "User"}`;
+                showToast(welcomeMessage, "success");
+
+                setTimeout(() => {
+                    // Redirect based on role after the delay
+                    if (roles && roles.includes("Admin")) {
+                        navigate('/admin/dashboard');
+                    } else {
+                        navigate('/user');
+                    }
+                }, 1000);
             } else {
-                throw new Error("Login failed. Please check your credentials.");
+                // Handle non-JSON responses (plain text)
+                const contentType = response.headers.get('Content-Type');
+                const errorMessage = contentType && contentType.includes('application/json')
+                    ? (await response.json()).message || "Login failed. Please try again."
+                    : await response.text(); // Handle plain text response
+
+                showToast(errorMessage, "error");
             }
         } catch (error) {
-            showToast("An error occurred. Please try again.", "error");
+            // Handle unexpected errors
+            showToast(error.message || "An unexpected error occurred. Please try again.", "error");
         } finally {
             setLoading(false);
         }
     };
+
+
 
     return (
         <>

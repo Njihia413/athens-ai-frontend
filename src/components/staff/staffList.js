@@ -7,7 +7,7 @@ import {Slide, toast, ToastContainer} from "react-toastify";
 import fetchWithAuth from "../../utils/FetchWithAuth";
 import {userContext} from "../../InitialPage/context/UserContext";
 
-const UserList = () => {
+const StaffList = () => {
     const [menu, setMenu] = useState(false);
     const [entriesCount, setEntriesCount] = useState(0);
     const [filteredEntriesCount, setFilteredEntriesCount] = useState(0);
@@ -40,7 +40,7 @@ const UserList = () => {
         }
     };
 
-    // Fetch users data
+    // Fetch staff data
     useEffect(() => {
         const fetchStaff = async () => {
             try {
@@ -97,7 +97,7 @@ const UserList = () => {
         setRoleFilter(e.target.value);
     };
 
-    // Filter users based on status, role, and search input
+    // Filter staff based on status, role, and search input
     const filteredUsers = users
         .filter((user) => (statusFilter ? user.status === statusFilter : true))
         .filter((user) => (roleFilter ? user.roles.includes(roleFilter) : true))
@@ -157,13 +157,13 @@ const UserList = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`,
+                    'Authorization': `Bearer ${user.token}`,
                 },
                 body: JSON.stringify(formData),
             });
 
             if (response.ok) {
-                showToast("User details updated successfully!", "success");
+                showToast("Staff member details updated successfully!", "success");
 
                 // Update the UI state to reflect the updated user details
                 setUsers((prevUsers) =>
@@ -180,7 +180,7 @@ const UserList = () => {
                 throw new Error("User update failed.");
             }
         } catch (error) {
-            showToast("Failed to update user details. Please try again.", "error");
+            showToast("Failed to update staff details. Please try again.", "error");
         }
     };
 
@@ -200,20 +200,20 @@ const UserList = () => {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`,
+                        'Authorization': `Bearer ${user.token}`,
                     },
                 }
             );
 
             if (response.ok) {
-                showToast("User deleted successfully!", "success");
+                showToast("Staff member deleted successfully!", "success");
 
                 setUsers((prevUsers) => prevUsers.filter((user) => user.username !== selectedUser.username));
             } else {
                 throw new Error("User deletion failed.");
             }
         } catch (error) {
-            showToast("Failed to delete user. Please try again.", "error");
+            showToast("Failed to delete staff member. Please try again.", "error");
         }
     };
 
@@ -230,13 +230,13 @@ const UserList = () => {
                                 <div className="page-header">
                                     <div className="row align-items-center">
                                         <div className="col">
-                                            <h3 className="page-title">Users</h3>
+                                            <h3 className="page-title">Staff</h3>
                                             <ul className="breadcrumb">
                                                 <li className="breadcrumb-item">
                                                     <Link to="/admin/dashboard">Dashboard</Link>
                                                 </li>
                                                 <li className="breadcrumb-item active">
-                                                    <Link to="/admin/users">All Users</Link>
+                                                    <Link to="/admin/staff">All Staff</Link>
                                                 </li>
                                             </ul>
                                         </div>
@@ -254,6 +254,7 @@ const UserList = () => {
                                                 <option value="">Select Status</option>
                                                 <option value="active">Active</option>
                                                 <option value="pending">Pending</option>
+                                                <option value="inactive">Inactive</option>
                                                 <option value="archived">Archived</option>
                                             </select>
                                             <label className="focus-label">Status</label>
@@ -343,19 +344,28 @@ const UserList = () => {
                                                     <tbody>
                                                     {filteredUsers.map((user, index) => (
                                                         <tr key={user.identificationNumber}>
-                                                            <td>{index + 1}</td> {/* Display serial number starting from 1 */}
+                                                            <td>{index + 1}</td>
+                                                            {/* Display serial number starting from 1 */}
                                                             <td>{user.firstName}</td>
                                                             <td>{user.middleName}</td>
                                                             <td>{user.lastName}</td>
                                                             <td>{format(new Date(user.createdOn), 'MMMM dd, yyyy')}</td>
                                                             <td>
                                                                 <div>
-                                                                    <span className="d-block text-primary text-sm text-nowrap mb-1">
-                                                                        {format(new Date(user.lastLogin), 'MMMM dd, yyyy')}
-                                                                    </span>
-                                                                                                        <span className="d-block text-muted text-xs fw-medium">
-                                                                        {format(new Date(user.lastLogin), 'hh:mm:ss a')}
-                                                                    </span>
+                                                                    {user.lastLogin ? (
+                                                                        <>
+                                                                            <span className="d-block text-primary text-sm text-nowrap mb-1">
+                                                                                {format(new Date(user.lastLogin), 'MMMM dd, yyyy')}
+                                                                            </span>
+                                                                            <span
+                                                                                className="d-block text-muted text-xs fw-medium">
+                                                                                {format(new Date(user.lastLogin), 'hh:mm:ss a')}
+                                                                            </span>
+                                                                        </>
+                                                                    ) : (
+                                                                        <span
+                                                                            className="d-block text-muted text-xs fw-medium">Null</span>
+                                                                    )}
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -365,8 +375,24 @@ const UserList = () => {
                                                                         className="btn btn-white btn-sm btn-rounded"
                                                                         aria-expanded="false"
                                                                     >
-                                                                        <i className={`fa-regular fa-circle-dot text-${user.status === 'active' ? 'success' : 'danger'}`}></i>
-                                                                        {user.status === 'active' ? 'Active' : 'Inactive'}
+                                                                        <i
+                                                                            className={`fa-regular fa-circle-dot text-${
+                                                                                user.status === 'active'
+                                                                                    ? 'success'
+                                                                                    : user.status === 'inactive'
+                                                                                        ? 'danger'
+                                                                                        : user.status === 'pending'
+                                                                                            ? 'warning'
+                                                                                            : 'info'
+                                                                            }`}
+                                                                        ></i>
+                                                                        {user.status === 'active'
+                                                                            ? 'Active'
+                                                                            : user.status === 'inactive'
+                                                                                ? 'Inactive'
+                                                                                : user.status === 'pending'
+                                                                                    ? 'Pending'
+                                                                                    : 'Unknown'}
                                                                     </Link>
                                                                 </div>
                                                             </td>
@@ -417,7 +443,7 @@ const UserList = () => {
                                         <div className="table-footer">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info">
-                                                    Showing 1
+                                                Showing 1
                                                     to {Math.min(filteredUsers.length, entriesPerPage)} of {filteredEntriesCount} entries
                                                 </div>
                                             </div>
@@ -448,7 +474,7 @@ const UserList = () => {
                                 <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
                                     <div className="modal-content">
                                         <div className="modal-header">
-                                        <h5 className="modal-title">Edit User</h5>
+                                        <h5 className="modal-title">Edit Staff</h5>
                                             <button
                                                 type="button"
                                                 className="btn-close"
@@ -613,8 +639,9 @@ const UserList = () => {
                                                                 name="status"
                                                                 value={selectedUser?.status}
                                                             >
-                                                                <option value="inactive">Inactive</option>
                                                                 <option value="active">Active</option>
+                                                                <option value="pending">Pending</option>
+                                                                <option value="inactive">Inactive</option>
                                                                 <option value="archived">Archived</option>
                                                             </select>
                                                         </div>
@@ -659,7 +686,7 @@ const UserList = () => {
                                     <div className="modal-content">
                                         <div className="modal-body">
                                             <div className="form-header">
-                                                <h3>Delete User</h3>
+                                                <h3>Delete Staff</h3>
                                                 <p>Are you sure want to delete?</p>
                                             </div>
                                             <div className="modal-btn delete-action">
@@ -709,4 +736,4 @@ const UserList = () => {
     )
 }
 
-export default UserList;
+export default StaffList;

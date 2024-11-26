@@ -24,7 +24,7 @@ const UsersTable = () => {
     fetchStaff();
   }, []);
 
-  // Filter to get only unverified users and limit to 4
+  // Filter to get only unverified staff and limit to 4
   const unverifiedUsers = users
       .filter((user) => user.roles.includes("UnverifiedUser"))
       .slice(0, 4);
