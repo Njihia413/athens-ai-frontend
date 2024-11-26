@@ -79,9 +79,9 @@ const UserHeader = (props) => {
                           <img src={`https://ui-avatars.com/api/?name=${user.firstName}`} alt="" />
                           <span className="status online" />
                         </span>
-                        <span>{user.firstName || "User"}</span>
+                        <span>{user.firstName || "User"}</span>{" "}
                         <span className="text-xs">
-                            {user.roles}
+                            ({user.roles})
                         </span>
                     </Link>
                     <div className="dropdown-menu dropdown-menu-end">
@@ -89,6 +89,9 @@ const UserHeader = (props) => {
                         <Link
                             className="dropdown-item"
                             to={`/user/profile/${user.username || "default"}`}>
+                            {/*data-bs-target="#profile_info"*/}
+                            {/*data-bs-toggle="modal"*/}
+                            {/*to="#">*/}
                             My Profile
                         </Link>
                         <Link className="dropdown-item" to="/user/change-password">
