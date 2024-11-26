@@ -15,7 +15,7 @@ const RoleList = () => {
     const [entriesPerPage, setEntriesPerPage] = useState(10);
     const [roles, setRoles] = useState([]);
     const [dataSources, setDataSources] = useState([]);
-    const [selectedRole, setSelectedRole] = useState(null);
+    const [selectedRole, setSelectedRole] = useState("");
     const [filteredRoles, setFilteredRoles] = useState([]);
     const [searchInput, setSearchInput] = useState('');
     const [loading, setLoading] = useState(true);
@@ -39,10 +39,46 @@ const RoleList = () => {
         }
     };
 
+    const [editFormData, setEditFormData] = useState({
+        name: "",
+        dataSources: []
+    });
+
+    // Populate state with selectedRole when it changes
+    useEffect(() => {
+        if (selectedRole) {
+            setEditFormData({
+                name: selectedRole.name || "",
+                dataSources: selectedRole.dataSources || [] ,
+            });
+        }
+    }, [selectedRole]);
+
     const handleEntriesChange = (e) => {
         const value = e.target.value;
         setEntriesPerPage(value === "all" ? entriesCount : parseInt(value));
     };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value
+        }));
+    };
+
+    const handleSelectChange = (selected) => {
+        setSelectedRole((prevRole) => ({
+            ...prevRole,
+            dataSources: selected.map(s => ({
+                id: s.value,
+                name: s.label,
+            })),
+        }));
+        console.log(selected)
+        console.log(selectedRole);
+    };
+
 
     const handleSearchChange = (e) => {
         setSearchInput(e.target.value);
@@ -124,15 +160,6 @@ const RoleList = () => {
             dataSources: selectedRole.dataSources.map(dataSource => dataSource.id),
         };
 
-        console.log("formData:", formData); // Debugging
-
-        const authToken = localStorage.getItem("authToken");
-
-        if (!authToken) {
-            showToast("Authentication token missing. Please log in again.", "error");
-            return;
-        }
-
         try {
             const response = await fetch(
                 `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles/${selectedRole.id}`,
@@ -140,7 +167,7 @@ const RoleList = () => {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                        'Authorization': `Bearer ${authToken}`,
+                        'Authorization': `Bearer ${user.token}`,
                     },
                     body: JSON.stringify(formData),
                 }
@@ -170,13 +197,6 @@ const RoleList = () => {
     };
 
     const handleDelete = async () => {
-        const authToken = localStorage.getItem("authToken");
-
-        if (!authToken) {
-            showToast("Authorization token missing, please log in again.", "error");
-            return;
-        }
-
         try {
             const response = await fetch(
                 `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles/${selectedRole.id}`,
@@ -184,7 +204,7 @@ const RoleList = () => {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`,
+                        'Authorization': `Bearer ${user.token}`,
                     },
                 }
             );
@@ -200,7 +220,6 @@ const RoleList = () => {
             showToast("Failed to delete role. Please try again.", "error");
         }
     }
-
 
 
     // Get the roles to display based on pagination
@@ -347,7 +366,9 @@ const RoleList = () => {
 
                                                             <tr className={`collapse row${role.id}`}>
                                                                 <td></td>
+                                                                <td></td>
                                                                 <td>
+                                                                    {role.dataSources && (
                                                                     <div>
                                                                         <ul>
                                                                             {role.dataSources.map((dataSource) => (
@@ -355,6 +376,7 @@ const RoleList = () => {
                                                                             ))}
                                                                         </ul>
                                                                     </div>
+                                                                    )}
                                                                 </td>
                                                                 <td></td>
                                                             </tr>
@@ -425,11 +447,8 @@ const RoleList = () => {
                                                                 type="text"
                                                                 name="name"
                                                                 id="name"
-                                                                defaultValue={selectedRole?.name}
-                                                                onChange={(e) => setSelectedRole(prev => ({
-                                                                    ...prev,
-                                                                    name: e.target.value
-                                                                }))}
+                                                                value={editFormData.name}
+                                                                onChange={handleInputChange}
                                                                 autoComplete="off"
                                                             />
                                                         </div>
@@ -447,19 +466,11 @@ const RoleList = () => {
                                                                     value: dataSource.id,
                                                                     label: dataSource.name,
                                                                 }))}
-                                                                value={selectedRole?.dataSources.map(dataSource => ({
+                                                                value={editFormData.dataSources.map(dataSource => ({
                                                                     value: dataSource.id,
                                                                     label: dataSource.name,
                                                                 }))}
-                                                                onChange={(selected) =>
-                                                                    setSelectedRole((prevRole) => ({
-                                                                        ...prevRole,
-                                                                        dataSources: selected.map((s) => ({
-                                                                            id: s.value,
-                                                                            name: s.label,
-                                                                        })),
-                                                                    }))
-                                                                }
+                                                                onChange={handleSelectChange}
                                                                 required
                                                             />
                                                         </div>

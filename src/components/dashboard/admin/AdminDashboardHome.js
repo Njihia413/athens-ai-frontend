@@ -205,7 +205,7 @@ const AdminDashboardHome = () => {
                                                         <YAxis />
                                                         <Tooltip />
                                                         <Legend />
-                                                        <Bar dataKey="October Users" fill="#3A4DF1" />
+                                                        <Bar dataKey="October Users" fill="#3445d8" />
                                                         <Bar dataKey="November Users" fill="#233741" />
                                                     </BarChart>
                                                 </ResponsiveContainer>
@@ -228,7 +228,7 @@ const AdminDashboardHome = () => {
                                                         <Line
                                                             type="monotone"
                                                             dataKey="Errors"
-                                                            stroke="#3A4DF1"
+                                                            stroke="#3445d8"
                                                             fill="#00c5fb"
                                                             strokeWidth={3}
                                                             dot={{ r: 3 }}
