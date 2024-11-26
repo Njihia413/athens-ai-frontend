@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from "react"
+import React, {useContext, useEffect, useState} from "react"
 import Select from 'react-select'
 import fetchWithAuth from "../../utils/FetchWithAuth";
 import {Slide, toast, ToastContainer} from "react-toastify";
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const RoleForm = ({ addNewRole }) => {
+    const { user } = useContext(userContext);
     const [datasources, setDataSources] = useState([]);
     const [formData, setFormData] = useState({
         name: "",
@@ -35,14 +37,13 @@ const RoleForm = ({ addNewRole }) => {
         console.log("Payload being sent:", payload);
 
         try {
-            const authToken = localStorage.getItem("authToken");
             const response = await fetch(
                 "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles",
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        'Authorization': `Bearer ${authToken}`,
+                        'Authorization': `Bearer ${user.token}`,
                     },
                     body: JSON.stringify(payload),
                 }
@@ -67,7 +68,8 @@ const RoleForm = ({ addNewRole }) => {
         const fetchDataSources = async () => {
             try {
                 const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources",
+                    {}, user.token
                 );
                 setDataSources(data);
             } catch (error) {
@@ -77,14 +79,6 @@ const RoleForm = ({ addNewRole }) => {
 
         fetchDataSources();
     }, []);
-
-    // const handleDataSourcesChange = (selectedOptions) => {
-    //     setFormData((prevData) => ({
-    //         ...prevData,
-    //         dataSources: selectedOptions.map((option) => option.value),
-    //     }));
-    // };
-
 
     return (
         <>
@@ -136,10 +130,10 @@ const RoleForm = ({ addNewRole }) => {
                                         isMulti
                                         name="dataSources"
                                         id="dataSources"
-                                        value={formData.dataSources.map((ds) => ({
-                                            value: ds,
-                                            label: ds,
-                                        }))}
+                                        value={formData.dataSources.map((dsId) => {
+                                            const datasource = datasources.find((ds) => ds.id === dsId);
+                                            return {value: dsId, label: datasource?.name};
+                                        })}
                                         onChange={(selectedOptions) =>
                                             setFormData((prev) => ({
                                                 ...prev,
