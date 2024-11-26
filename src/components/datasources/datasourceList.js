@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Header from "../common/Header";
 import Sidebar from "../common/Sidebar";
 import { Link } from "react-router-dom";
 import DatasourceForm from "./datasourceForm";
 import fetchWithAuth from "../../utils/FetchWithAuth";
 import {Slide, toast, ToastContainer} from "react-toastify";
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const DatasourceList = () => {
     const [menu, setMenu] = useState(false);
@@ -14,6 +15,7 @@ const DatasourceList = () => {
     const [selectedDataSource, setSelectedDataSource] = useState(null);
     const [searchInput, setSearchInput] = useState('');
     const [loading, setLoading] = useState(true);
+    const { user } = useContext(userContext);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -49,7 +51,8 @@ const DatasourceList = () => {
         const fetchDataSources = async () => {
             try {
                 const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources",
+                    {}, user.token
                 );
                 setDataSources(data);
                 setLoading(false);

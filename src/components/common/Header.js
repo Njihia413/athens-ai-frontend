@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unescaped-entities */
 
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import { useSelector } from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
 import { Link } from "react-router-dom";
 import Profile from "../../assets/img/Profile.png"
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const LogoPath = '/Logo2.png';
 
@@ -24,15 +25,11 @@ const Header = (props) => {
 
     const location = useLocation();
     const navigate = useNavigate();
-
-
-    const firstName = localStorage.getItem('firstName');
+    const { user } = useContext(userContext);
 
     // Logout handler
     const handleLogout = () => {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("roles");
-        localStorage.removeItem("firstName");
+        localStorage.clear();
         navigate("/login");
     };
 
@@ -137,11 +134,12 @@ const Header = (props) => {
                         className="dropdown-toggle nav-link"
                         data-bs-toggle="dropdown">
                         <span className="user-img me-1">
-                          <img src={`https://ui-avatars.com/api/?name=${firstName}`} alt="" />
-                          <span className="status online" />
+                           <img src={`https://ui-avatars.com/api/?name=${user.firstName}`} alt=""/>
+                          <span className="status online"/>
                         </span>
-                        <span>
-                            {firstName && <span className="user-name">{firstName}</span>}
+                        <span>{user.firstName || "User"}</span>{" "}
+                        <span className="text-xs">
+                            ({user.roles})
                         </span>
                     </Link>
                     <div className="dropdown-menu dropdown-menu-end">

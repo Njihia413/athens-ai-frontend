@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import fetchWithAuth from "../../../../utils/FetchWithAuth";
+import {userContext} from "../../../../InitialPage/context/UserContext";
 
 const UsersTable = () => {
   const [datasources, setDataSources] = useState([]);
+  const { user } = useContext(userContext);
 
   useEffect(() => {
     const fetchDataSources = async () => {
       try {
         const data = await fetchWithAuth(
-            "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
+            "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources",
+            {}, user.token
         );
         setDataSources(data);
       } catch (error) {

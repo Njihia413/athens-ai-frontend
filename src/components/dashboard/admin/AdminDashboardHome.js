@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {
     BarChart,
     Bar,
@@ -17,6 +17,7 @@ import "../../../index.css";
 import UsersTable from "./Table/UsersTable.jsx";
 import DatasourcesTable from "./Table/DatasourcesTable";
 import fetchWithAuth from "../../../utils/FetchWithAuth";
+import {userContext} from "../../../InitialPage/context/UserContext";
 
 const barchartdata = [
     { y: "Athens Alpha", "October Users": 100, "November Users": 90 },
@@ -54,7 +55,8 @@ const AdminDashboardHome = () => {
         }
     });
 
-    const rolesArray = JSON.parse(localStorage.getItem("roles"));
+    const { user } = useContext(userContext);
+    const rolesArray = (user.roles);
     const role = rolesArray && rolesArray.length > 0 ? rolesArray[0] : "User";
 
 
@@ -62,7 +64,8 @@ const AdminDashboardHome = () => {
         const fetchStaff = async () => {
             try {
                 const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff"
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff",
+                    {}, user.token
                 );
                 setUsers(data);
             } catch (error) {
@@ -78,7 +81,8 @@ const AdminDashboardHome = () => {
         const fetchDataSources = async () => {
             try {
                 const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources"
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources",
+                    {}, user.token
                 );
                 setDataSources(data);
             } catch (error) {
@@ -94,7 +98,8 @@ const AdminDashboardHome = () => {
         const fetchRoles = async () => {
             try {
                 const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles"
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles",
+                    {}, user.token
                 );
                 setRoles(data);
             } catch (error) {

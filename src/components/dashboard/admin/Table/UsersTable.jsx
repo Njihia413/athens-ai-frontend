@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import fetchWithAuth from "../../../../utils/FetchWithAuth";
 import {format} from "date-fns";
+import {userContext} from "../../../../InitialPage/context/UserContext";
 
 const UsersTable = () => {
   const [users, setUsers] = useState([]);
+  const { user } = useContext(userContext);
 
   useEffect(() => {
     const fetchStaff = async () => {
       try {
         const data = await fetchWithAuth(
-            "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff"
+            "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff",
+            {}, user.token
         );
         setUsers(data);
       } catch (error) {

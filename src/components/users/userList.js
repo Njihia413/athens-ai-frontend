@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react"
+import React, {useContext, useEffect, useState} from "react"
 import Header from '../common/Header.js';
 import Sidebar from "../common/Sidebar.js";
 import {Link} from "react-router-dom";
 import { format } from 'date-fns';
 import {Slide, toast, ToastContainer} from "react-toastify";
 import fetchWithAuth from "../../utils/FetchWithAuth";
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const UserList = () => {
     const [menu, setMenu] = useState(false);
@@ -19,6 +20,7 @@ const UserList = () => {
     const [selectedRole, setRole] = useState("");
     const [searchInput, setSearchInput] = useState('');
     const [loading, setLoading] = useState(true);
+    const { user } = useContext(userContext);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -43,7 +45,8 @@ const UserList = () => {
         const fetchStaff = async () => {
             try {
                 const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff"
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff",
+                    {}, user.token
                 );
                 setUsers(data);
                 setEntriesCount(data.length);
@@ -63,7 +66,8 @@ const UserList = () => {
         const fetchRoles = async () => {
             try {
                 const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles"
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles",
+                    {}, user.token
                 );
                 setRoles(data);
             } catch (error) {

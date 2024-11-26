@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Header from "../common/Header";
 import Sidebar from "../common/Sidebar";
 import {Link} from "react-router-dom";
@@ -7,6 +7,7 @@ import Select from "react-select";
 import fetchWithAuth from "../../utils/FetchWithAuth";
 import {format} from "date-fns";
 import {toast} from "react-toastify";
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const RoleList = () => {
     const [menu, setMenu] = useState(false);
@@ -18,6 +19,7 @@ const RoleList = () => {
     const [filteredRoles, setFilteredRoles] = useState([]);
     const [searchInput, setSearchInput] = useState('');
     const [loading, setLoading] = useState(true);
+    const { user } = useContext(userContext);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -51,7 +53,8 @@ const RoleList = () => {
         const fetchRoles = async () => {
             try {
                 const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles"
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles",
+                    {}, user.token
                 );
                 setRoles(data);
                 setFilteredRoles(data);

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Header from "../common/Header";
 import Sidebar from "../common/Sidebar";
 import {Link} from "react-router-dom";
@@ -6,6 +6,7 @@ import ModelForm from "./modelForm";
 import {format} from "date-fns";
 import fetchWithAuth from "../../utils/FetchWithAuth";
 import {toast} from "react-toastify";
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const ModelList = () => {
     const [menu, setMenu] = useState(false);
@@ -15,6 +16,7 @@ const ModelList = () => {
     const [searchInput, setSearchInput] = useState('');
     const [selectedModel, setSelectedModel] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { user } = useContext(userContext);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -50,7 +52,8 @@ const ModelList = () => {
         const fetchModels = async () => {
             try {
                 const data = await fetchWithAuth(
-                   "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels"
+                   "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels",
+                    {}, user.token
                 );
                 setModels(data);
                 setLoading(false);
