@@ -35,10 +35,37 @@ const DatasourceList = () => {
         }
     };
 
+    const [editFormData, setEditFormData] = useState({
+        name: "",
+        type: "",
+        description: "",
+        url: ""
+    });
+
+    // Populate state with selectedDataSource when it changes
+    useEffect(() => {
+        if (selectedDataSource) {
+            setEditFormData({
+                name: selectedDataSource.name || "",
+                type: selectedDataSource.type || "",
+                description: selectedDataSource.description || "",
+                url: selectedDataSource.url || ""
+            });
+        }
+    }, [selectedDataSource]);
+
     const handleEntriesChange = (e) => {
         const value = e.target.value;
         const count = value === 'all' ? dataSources.length : parseInt(value);
         setEntriesPerPage(count);
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value
+        }));
     };
 
     const handleSearchChange = (e) => {
@@ -70,6 +97,7 @@ const DatasourceList = () => {
         // Filter data based on the search input
         const filteredData = dataSources.filter((dataSource) =>
             dataSource.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+            dataSource.type.toLowerCase().includes(searchInput.toLowerCase()) ||
             dataSource.description.toLowerCase().includes(searchInput.toLowerCase()) ||
             dataSource.url.toLowerCase().includes(searchInput.toLowerCase())
         );
@@ -93,6 +121,7 @@ const DatasourceList = () => {
         const form = e.target;
         const formData = {
             name: form.elements.name.value,
+            type: form.elements.type.value,
             description: form.elements.description.value,
             url: form.elements.url.value,
         }
@@ -334,9 +363,29 @@ const DatasourceList = () => {
                                                                 name="name"
                                                                 id="name"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedDataSource?.name}
+                                                                value={editFormData.name}
+                                                                onChange={handleInputChange}
                                                                 required
                                                             />
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-sm-12">
+                                                        <div className="input-block">
+                                                            <label>Type</label>
+                                                            <select
+                                                                className="form-select form-control"
+                                                                name="type"
+                                                                id="type"
+                                                                value={editFormData.type}
+                                                                onChange={handleInputChange}
+                                                            >
+                                                                <option value="">Select Type</option>
+                                                                <option value="postgres">Postgres</option>
+                                                                <option value="mongodb">MongoDB</option>
+                                                                <option value="sharedfiles">
+                                                                    Shared Folders/Files
+                                                                </option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                     <div className="col-sm-12">
@@ -348,7 +397,8 @@ const DatasourceList = () => {
                                                                 name="description"
                                                                 id="description"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedDataSource?.description}
+                                                                value={editFormData.description}
+                                                                onChange={handleInputChange}
                                                                 required
                                                             />
                                                         </div>
@@ -361,15 +411,18 @@ const DatasourceList = () => {
                                                                 type="text"
                                                                 name="url"
                                                                 id="url"
-                                                                defaultValue={selectedDataSource?.url}
                                                                 autoComplete="off"
+                                                                value={editFormData.url}
+                                                                onChange={handleInputChange}
                                                             />
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div className="submit-section">
-                                                    <button className="btn btn-primary submit-btn"
-                                                            data-bs-dismiss="modal">
+                                                    <button
+                                                        className="btn btn-primary submit-btn"
+                                                        data-bs-dismiss="modal"
+                                                    >
                                                         Update
                                                     </button>
                                                 </div>
