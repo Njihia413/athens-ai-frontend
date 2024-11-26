@@ -50,7 +50,6 @@ const DataSourceForm = ({ addNewDataSource }) => {
         };
 
         try {
-            const authToken = localStorage.getItem("authToken");
             const response = await fetch(
                 "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/dataSources",
                 {
@@ -74,7 +73,7 @@ const DataSourceForm = ({ addNewDataSource }) => {
             setFormData({ name: "", type: "", description: "", url: "" });
         } catch (error) {
             console.error("Error adding datasource:", error);
-            showToast("Error adding datasource:", error);
+            showToast("Error adding datasource:", "error");
         }
     };
 
