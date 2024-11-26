@@ -97,14 +97,12 @@ const DatasourceList = () => {
             url: form.elements.url.value,
         }
 
-        const authToken = localStorage.getItem("authToken");
-
         try {
             const response = await fetch(`https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/datasources/${selectedDataSource.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`,
+                    'Authorization': `Bearer ${user.token}`,
                 },
                 body: JSON.stringify(formData),
             });
@@ -130,13 +128,6 @@ const DatasourceList = () => {
     }
 
     const handleDelete = async () => {
-        const authToken = localStorage.getItem("authToken");
-
-        if (!authToken) {
-            showToast("Authorization token missing, please log in again.", "error");
-            return;
-        }
-
         try {
             const response = await fetch(
                 `https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/datasources/${selectedDataSource.id}`,
@@ -144,7 +135,7 @@ const DatasourceList = () => {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`,
+                        'Authorization': `Bearer ${user.token}`,
                     },
                 }
             );
@@ -254,7 +245,7 @@ const DatasourceList = () => {
                                                         <tr key={dataSource.id}>
                                                             <td>{index + 1}</td>
                                                             <td>{dataSource.name}</td>
-                                                            <td></td>
+                                                            <td>{dataSource.type}</td>
                                                             <td>{dataSource.description}</td>
                                                             <td>{dataSource.url}</td>
                                                             <td>

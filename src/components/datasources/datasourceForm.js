@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import {Slide, toast, ToastContainer} from "react-toastify";
+import {userContext} from "../../InitialPage/context/UserContext";
 
 const DataSourceForm = ({ addNewDataSource }) => {
+    const { user } = useContext(userContext);
     const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-        url: "",
+        name: '',
+        type: '',
+        description: '',
+        url: ''
     });
 
     const showToast = (message, type) => {
@@ -27,11 +30,21 @@ const DataSourceForm = ({ addNewDataSource }) => {
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
+    const handleSelectChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const payload = {
             name: formData.name,
+            type: formData.type,
             description: formData.description,
             url: formData.url,
         };
@@ -44,7 +57,7 @@ const DataSourceForm = ({ addNewDataSource }) => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        'Authorization': `Bearer ${authToken}`,
+                        'Authorization': `Bearer ${user.token}`,
                     },
                     body: JSON.stringify(payload),
                 }
@@ -58,7 +71,7 @@ const DataSourceForm = ({ addNewDataSource }) => {
             showToast("Datasource added successfully:", "success");
             addNewDataSource(result);
 
-            setFormData({ name: "", description: "", url: "" });
+            setFormData({ name: "", type: "", description: "", url: "" });
         } catch (error) {
             console.error("Error adding datasource:", error);
             showToast("Error adding datasource:", error);
@@ -106,6 +119,23 @@ const DataSourceForm = ({ addNewDataSource }) => {
                                 </div>
                                 <div className="input-block">
                                     <label>
+                                        Type <span className="text-danger">*</span>
+                                    </label>
+                                    <select
+                                        className="form-select form-control"
+                                        name="type"
+                                        id="type"
+                                        value={formData.type}
+                                        onChange={handleSelectChange}
+                                    >
+                                        <option value="">Select Type</option>
+                                        <option value="postgres">Postgres</option>
+                                        <option value="mongodb">MongoDB</option>
+                                        <option value="sharedfiles">Shared Folders/Files</option>
+                                    </select>
+                                </div>
+                                <div className="input-block">
+                                    <label>
                                         Description <span className="text-danger">*</span>
                                     </label>
                                     <input
@@ -148,6 +178,7 @@ const DataSourceForm = ({ addNewDataSource }) => {
                     </div>
                 </div>
             </div>
+
             <ToastContainer
                 position="top-right"
                 autoClose={3000}
