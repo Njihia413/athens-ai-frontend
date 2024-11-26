@@ -1,23 +1,23 @@
-import React, {useContext, useState} from "react";
-import {Slide, toast, ToastContainer} from "react-toastify";
-import {userContext} from "../../InitialPage/context/UserContext";
+import React, { useContext, useState } from "react";
+import { Slide, toast, ToastContainer } from "react-toastify";
+import { userContext } from "../../InitialPage/context/UserContext";
 
 const DataSourceForm = ({ addNewDataSource }) => {
     const { user } = useContext(userContext);
     const [formData, setFormData] = useState({
-        name: '',
-        type: '',
-        description: '',
-        url: ''
+        name: "",
+        type: "",
+        description: "",
+        url: "",
     });
 
     const showToast = (message, type) => {
-        console.log(`Showing toast: ${message} - ${type}`); // Debug log
+        console.log(`Showing toast: ${message} - ${type}`);
         switch (type) {
-            case 'success':
+            case "success":
                 toast.success(message);
                 break;
-            case 'error':
+            case "error":
                 toast.error(message);
                 break;
             default:
@@ -32,12 +32,23 @@ const DataSourceForm = ({ addNewDataSource }) => {
 
     const handleSelectChange = (e) => {
         const { name, value } = e.target;
+
+        // Determine URL prefix based on type
+        let urlPrefix = "";
+        if (value === "postgres") {
+            urlPrefix = "postgresql://";
+        } else if (value === "mongodb") {
+            urlPrefix = "mongodb://";
+        } else if (value === "") {
+            urlPrefix = ""
+        }
+
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
+            url: urlPrefix || prevFormData.url, // Preserve URL if not Postgres or MongoDB
         }));
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -56,7 +67,7 @@ const DataSourceForm = ({ addNewDataSource }) => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        'Authorization': `Bearer ${user.token}`,
+                        Authorization: `Bearer ${user.token}`,
                     },
                     body: JSON.stringify(payload),
                 }
@@ -130,7 +141,9 @@ const DataSourceForm = ({ addNewDataSource }) => {
                                         <option value="">Select Type</option>
                                         <option value="postgres">Postgres</option>
                                         <option value="mongodb">MongoDB</option>
-                                        <option value="sharedfiles">Shared Folders/Files</option>
+                                        <option value="sharedfiles">
+                                            Shared Folders/Files
+                                        </option>
                                     </select>
                                 </div>
                                 <div className="input-block">
