@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 import ModelForm from "./modelForm";
 import {format} from "date-fns";
 import fetchWithAuth from "../../utils/FetchWithAuth";
-import {toast} from "react-toastify";
+import {Slide, toast, ToastContainer} from "react-toastify";
 import {userContext} from "../../InitialPage/context/UserContext";
 
 const ModelList = () => {
@@ -57,7 +57,6 @@ const ModelList = () => {
                 );
                 setModels(data);
                 setLoading(false);
-                console.log(data);
             } catch (error) {
                 console.error("Error fetching models:", error);
             }
@@ -88,14 +87,12 @@ const ModelList = () => {
 
         }
 
-        const authToken = localStorage.getItem("authToken");
-
         try {
             const response = await fetch(`https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels/${selectedModel.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`,
+                    'Authorization': `Bearer ${user.token}`,
                 },
                 body: JSON.stringify(formData),
             });
@@ -122,12 +119,6 @@ const ModelList = () => {
 
 
     const handleDelete = async () => {
-        const authToken = localStorage.getItem("authToken");
-
-        if (!authToken) {
-            showToast("Authorization token missing, please log in again.", "error");
-            return;
-        }
 
         try {
             const response = await fetch(
@@ -136,7 +127,7 @@ const ModelList = () => {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`,
+                        'Authorization': `Bearer ${user.token}`,
                     },
                 }
             );
@@ -243,7 +234,7 @@ const ModelList = () => {
                                                     </thead>
                                                     <tbody>
                                                     {displayedModels.map((model, index) => (
-                                                        <tr>
+                                                        <tr key={model.id}>
                                                             <td>{index + 1}</td>
                                                             <td>{model.name}</td>
                                                             <td>{format(new Date(model.addedOn), 'MMMM dd, yyyy')}</td>
@@ -488,6 +479,19 @@ const ModelList = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
         </>
     )
 }
