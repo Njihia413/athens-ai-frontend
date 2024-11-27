@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import {
@@ -9,6 +9,7 @@ import axios from "axios";
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaSpinner } from "react-icons/fa";
+import { userContext } from "../../InitialPage/context/UserContext";
 
 const UserHome = () => {
     const [files, setFiles] = useState([]);
@@ -18,6 +19,7 @@ const UserHome = () => {
     const [threadId, setThreadId] = useState('');
     const [conversation, setConversation] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const { user } = useContext(userContext);
 
     const showToast = (message, type) => {
         console.log(`Showing toast: ${message} - ${type}`); // Debug log
@@ -55,12 +57,14 @@ const UserHome = () => {
         const userMessage = { sender: "user", text: query };
         setConversation((prev) => [...prev, userMessage]);
 
+
         try {
+            console.log("THe role is: ", user.roles[0]);
             const res = await axios.post("http://localhost:8000/process", {
                 text: query,
                 thread_id: threadId,
                 model: "llama3.2",
-                role: role,
+                role: user.roles[0],
             });
 
             // Add the LLM's response to the conversation
@@ -82,9 +86,10 @@ const UserHome = () => {
             return;
         }
 
+
         const formData = new FormData();
         files.forEach((file) => formData.append("files", file));
-        formData.append("role", role);
+        formData.append("role", user.roles[0]);
 
         try {
             const res = await axios.post("http://localhost:8000/embed", formData, {
