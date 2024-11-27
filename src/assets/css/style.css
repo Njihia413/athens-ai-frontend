@@ -10365,5 +10365,8 @@ option {
   margin-top: 100px;
 }
 
-
+.react-tel-input .form-control {
+  height: 35px;
+  width: 400px;
+}
 

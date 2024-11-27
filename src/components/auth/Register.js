@@ -58,8 +58,29 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!e.target.checkValidity()) {
-            showToast("Please fill in all required fields", "error");
+        // Check if the form is empty
+        const isEmpty = Object.values(formData).some((value) => value === '');
+        if (isEmpty) {
+            showToast("Required form field(s) cannot be empty", "error");
+            return;
+        }
+
+        // Validate identification number (minimum 8 characters)
+        if (formData.identificationNumber.length < 8) {
+            showToast("Identification number must be at least 8 characters long", "error");
+            return;
+        }
+
+        // Validate email address format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email validation regex
+        if (!emailRegex.test(formData.emailAddress)) {
+            showToast("Invalid email format", "error");
+            return;
+        }
+
+        // Validate phone number
+        if (formData.phoneNumber.length < 10) {
+            showToast('Phone Number cannot be less than 10 characters long', 'error');
             return;
         }
 
@@ -69,6 +90,7 @@ const Register = () => {
             return;
         }
 
+        // Prepare data for submission
         const data = {
             identificationType: formData.identificationType,
             identificationNumber: formData.identificationNumber,
@@ -79,22 +101,25 @@ const Register = () => {
             middleName: formData.middleName,
             lastName: formData.lastName,
             gender: formData.gender,
-            dateOfBirth: new Date(formData.dateOfBirth).toISOString()
+            dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
         };
 
         setLoading(true);
 
         try {
-            const response = await fetch('https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
+            const response = await fetch(
+                'https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/register',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                }
+            );
 
             if (response.ok) {
-                // Check if the response status is 200 or 201
+                // Show success toast
                 showToast("Registration successful!", "success");
 
                 setTimeout(() => {
@@ -128,6 +153,7 @@ const Register = () => {
 
 
 
+
     return (
         <>
             <div className="account-page">
@@ -148,7 +174,7 @@ const Register = () => {
                             <div className="account-box">
                                 <div className="account-wrapper">
                                     <h3 className="account-title">Register</h3>
-                                    {/*<p className="account-subtitle">Access to our dashboard</p>*/}
+                                    <p className="text-muted text-center">Please fill in all the fields marked with asterisk(*)</p>
 
                                     <div>
                                         <form onSubmit={handleSubmit} noValidate>
@@ -166,13 +192,16 @@ const Register = () => {
                                                             name="firstName"
                                                             value={formData.firstName}
                                                             onChange={handleInputChange}
+                                                            required
                                                         />
                                                     </div>
                                                 </div>
 
                                                 <div className="col-sm-6">
                                                     <div className="input-block">
-                                                        <label>Middle Name</label>
+                                                        <label>
+                                                            Middle Name <span className="text-danger">*</span>
+                                                        </label>
                                                         <input
                                                             type="text"
                                                             className="form-control"
@@ -181,6 +210,7 @@ const Register = () => {
                                                             name="middleName"
                                                             value={formData.middleName}
                                                             onChange={handleInputChange}
+                                                            required
                                                         />
                                                     </div>
                                                 </div>
@@ -198,6 +228,7 @@ const Register = () => {
                                                             name="lastName"
                                                             value={formData.lastName}
                                                             onChange={handleInputChange}
+                                                            required
                                                         />
                                                     </div>
                                                 </div>
@@ -213,6 +244,7 @@ const Register = () => {
                                                             id="gender"
                                                             value={formData.gender}
                                                             onChange={handleInputChange}
+                                                            required
                                                         >
                                                             <option value="">Select Gender</option>
                                                             <option value="Male">Male</option>
@@ -235,6 +267,7 @@ const Register = () => {
                                                             autoComplete="off"
                                                             value={formData.phoneNumber}
                                                             onChange={handleInputChange}
+                                                            placeholder="eg +0712345678"
                                                         />
                                                     </div>
                                                 </div>
@@ -272,6 +305,7 @@ const Register = () => {
                                                             autoComplete="off"
                                                             value={formData.emailAddress}
                                                             onChange={handleInputChange}
+                                                            placeholder="eg john@gmail.com"
                                                         />
                                                     </div>
                                                 </div>
@@ -355,7 +389,10 @@ const Register = () => {
                                                     <div className="input-block">
                                                         <div className="row">
                                                             <div className="col">
-                                                                <label>Confirm Password</label>
+                                                                <label>
+                                                                    Confirm Password <span
+                                                                    className="text-danger">*</span>
+                                                                </label>
                                                             </div>
                                                         </div>
                                                         <div style={{position: "relative"}}>
