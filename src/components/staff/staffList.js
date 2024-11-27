@@ -97,6 +97,14 @@ const StaffList = () => {
         setRoleFilter(e.target.value);
     };
 
+    const handleStatusDropChange = (newStatus) => {
+        setSelectedUser((prevUser) => ({
+            ...prevUser,
+            status: newStatus,
+        }));
+    };
+
+
     // Filter staff based on status, role, and search input
     const filteredUsers = users
         .filter((user) => (statusFilter ? user.status === statusFilter : true))
@@ -638,6 +646,7 @@ const StaffList = () => {
                                                                 className="form-select form-control"
                                                                 name="status"
                                                                 value={selectedUser?.status}
+                                                                onChange={(e) => handleStatusDropChange(e.target.value)} // Add the onChange handler
                                                             >
                                                                 <option value="active">Active</option>
                                                                 <option value="pending">Pending</option>
@@ -646,6 +655,7 @@ const StaffList = () => {
                                                             </select>
                                                         </div>
                                                     </div>
+
 
                                                     <h4 className="text-primary">Reset Password</h4>
                                                     <p className="text-muted">Click on the button below to reset the
