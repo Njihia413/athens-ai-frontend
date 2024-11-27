@@ -36,10 +36,37 @@ const ModelList = () => {
         }
     };
 
+    const [editFormData, setEditFormData] = useState({
+        name: "",
+        nickName: "",
+        size: "",
+        status: ""
+    });
+
+    // Populate state with selectedModel when it changes
+    useEffect(() => {
+        if (selectedModel) {
+            setEditFormData({
+                name: selectedModel.name || "",
+                nickName: selectedModel.nickName || "",
+                size: selectedModel.size || "",
+                status: selectedModel.status || ""
+            });
+        }
+    }, [selectedModel]);
+
     const handleEntriesChange = (e) => {
         const value = e.target.value;
         const count = value === 'all' ? models.length : parseInt(value);
         setEntriesPerPage(count);
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value
+        }));
     };
 
     const handleSearchChange = (e) => {
@@ -70,8 +97,8 @@ const ModelList = () => {
         const filteredData = models.filter((model) =>
             // model.model.toLowerCase().includes(searchInput.toLowerCase()) ||
             model.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-            model.nickName.toLowerCase().includes(searchInput.toLowerCase()) ||
-            model.size.toLowerCase().includes(searchInput.toLowerCase())
+            model.nickName.toLowerCase().includes(searchInput.toLowerCase())
+            // model.size.toLowerCase().includes(searchInput.toLowerCase())
             // model.status.toLowerCase.includes(searchInput.toLowerCase())
         );
 
@@ -79,12 +106,23 @@ const ModelList = () => {
         setDisplayedModels(filteredData.slice(0, entriesPerPage));
     }, [searchInput, entriesPerPage, models]);
 
+    const addNewModel = (newModel) => {
+        setModels((prevModels) => {
+            const updatedModels = [...prevModels, newModel];
+            setDisplayedModels(updatedModels.slice(0, entriesPerPage));
+            return updatedModels;
+        });
+    }
+
     const handleUpdate = async (e) => {
         e.preventDefault();
 
         const form = e.target;
         const formData = {
-
+            name: form.elements.name.value,
+            nickName: form.elements.nickName.value,
+            size: form.elements.size.value,
+            status: form.elements.status.value
         }
 
         try {
@@ -239,7 +277,7 @@ const ModelList = () => {
                                                             <td>{model.name}</td>
                                                             <td>{format(new Date(model.addedOn), 'MMMM dd, yyyy')}</td>
                                                             <td>{model.nickName}</td>
-                                                            <td>{model.size}</td>
+                                                            <td>{model.size} GB</td>
                                                             <td>
                                                                 <div className="dropdown action-label mt-2">
                                                                     <Link to="#"
@@ -312,7 +350,7 @@ const ModelList = () => {
                                 )}
                             </div>
 
-                            <ModelForm/>
+                            <ModelForm addNewModel={addNewModel}/>
 
                             {/*Edit Model Form*/}
                             <div id="edit_model"
@@ -343,29 +381,15 @@ const ModelList = () => {
                                                     <div className="col-sm-12">
                                                         <div className="input-block">
                                                             <label>
-                                                                ID
-                                                            </label>
-                                                            <input
-                                                                className="form-control"
-                                                                type="text"
-                                                                name="roleId"
-                                                                autoComplete="off"
-                                                                required
-                                                                defaultValue={selectedModel?.id}
-                                                                disabled={true}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-sm-12">
-                                                        <div className="input-block">
-                                                            <label>
                                                                 Name
                                                             </label>
                                                             <input
                                                                 className="form-control"
                                                                 type="text"
-                                                                name="modelName"
-                                                                defaultValue={selectedModel?.name}
+                                                                name="name"
+                                                                id="name"
+                                                                value={editFormData.name}
+                                                                onChange={handleInputChange}
                                                                 autoComplete="off"
                                                             />
                                                         </div>
@@ -379,7 +403,9 @@ const ModelList = () => {
                                                                 className="form-control"
                                                                 type="text"
                                                                 name="nickName"
-                                                                defaultValue={selectedModel?.nickName}
+                                                                id="nickName"
+                                                                value={editFormData.nickName}
+                                                                onChange={handleInputChange}
                                                                 autoComplete="off"
                                                             />
                                                         </div>
@@ -393,7 +419,9 @@ const ModelList = () => {
                                                                 className="form-control"
                                                                 type="text"
                                                                 name="size"
-                                                                defaultValue={selectedModel?.size}
+                                                                id="size"
+                                                                value={editFormData.size}
+                                                                onChange={handleInputChange}
                                                                 autoComplete="off"
                                                             />
                                                         </div>
@@ -404,20 +432,13 @@ const ModelList = () => {
                                                             <select
                                                                 className="form-select form-control"
                                                                 name="status"
-                                                                value={selectedModel?.status}
+                                                                id="status"
+                                                                value={editFormData.status}
+                                                                onChange={handleInputChange}
                                                             >
                                                                 <option value="active">Active</option>
                                                                 <option value="inactive">Inactive</option>
                                                             </select>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-sm-12">
-                                                        <div className="input-block">
-                                                            <label>Replace File</label>
-                                                            <input
-                                                                className="form-control"
-                                                                type="file"
-                                                            />
                                                         </div>
                                                     </div>
                                                 </div>

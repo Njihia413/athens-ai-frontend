@@ -1,6 +1,80 @@
-import React from "react";
+import React, {useContext, useState} from "react";
+import {userContext} from "../../InitialPage/context/UserContext";
+import { Slide, toast, ToastContainer } from "react-toastify";
 
-const ModelForm = () => {
+const ModelForm = ({ addNewModel }) => {
+    const { user } = useContext(userContext);
+    const [formData, setFormData] = useState({
+        name: "",
+        nickName: "",
+        size: "",
+    });
+
+    const showToast = (message, type) => {
+        console.log(`Showing toast: ${message} - ${type}`);
+        switch (type) {
+            case "success":
+                toast.success(message);
+                break;
+            case "error":
+                toast.error(message);
+                break;
+            default:
+                toast(message);
+        }
+    };
+
+    const toCamelCase = (str) => {
+        return str
+            .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) =>
+                index === 0 ? match.toLowerCase() : match.toUpperCase())
+            .replace(/\s+/g, '')
+            .replace(/[^a-zA-Z0-9]/g, '');
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const payload = {
+            name: formData.name,
+            nickName: formData.nickName,
+            size: formData.size,
+        };
+
+        try {
+            const response = await fetch(
+                "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            showToast("Model added successfully:", "success");
+            addNewModel(result);
+
+            setFormData({ name: "", nickName: "", size: "" });
+        } catch (error) {
+            console.error("Error adding model", error);
+            showToast("Error adding model", "error");
+        }
+    };
+
+
     return (
         <>
             {/* Add Model Modal */}
@@ -22,25 +96,18 @@ const ModelForm = () => {
                             </button>
                         </div>
                         <div className="modal-body">
-                            <form noValidate>
+                            <form noValidate onSubmit={handleSubmit}>
                                 <div className="input-block">
                                     <label>
                                         Model <span className="text-danger">*</span>
                                     </label>
-                                    {/*<select*/}
-                                    {/*    className="form-select form-control"*/}
-                                    {/*    name="name"*/}
-                                    {/*    id="name"*/}
-                                    {/*>*/}
-                                    {/*    <option value="">Select Model</option>*/}
-                                    {/*    <option value="llama3.2">Llama 3.2</option>*/}
-                                    {/*    <option value="gemma2">Gemma 2</option>*/}
-                                    {/*</select>*/}
                                     <input
                                         className="form-control"
                                         type="text"
                                         name="name"
                                         id="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
                                         autoComplete="off"
                                         required
                                     />
@@ -54,6 +121,8 @@ const ModelForm = () => {
                                         type="text"
                                         name="nickName"
                                         id="nickName"
+                                        value={formData.nickName}
+                                        onChange={handleInputChange}
                                         autoComplete="off"
                                     />
                                 </div>
@@ -63,9 +132,11 @@ const ModelForm = () => {
                                     </label>
                                     <input
                                         className="form-control"
-                                        type="text"
+                                        type="number"
                                         name="size"
                                         id="size"
+                                        value={formData.size}
+                                        onChange={handleInputChange}
                                         autoComplete="off"
                                     />
                                 </div>
@@ -99,6 +170,20 @@ const ModelForm = () => {
                 </div>
             </div>
             {/* /Add Role Modal */}
+
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
         </>
     )
 }
