@@ -117,20 +117,10 @@ const StaffList = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
-        // Update the form data state
-        setEditFormData((prevFormData) => {
-            const updatedFormData = {
-                ...prevFormData,
-                [name]: value,
-            };
-
-            // Log the current field name and its new value
-            console.log(`Field updated: ${name}, New value: ${value}`);
-            console.log('Updated Form Data:', updatedFormData);
-
-            return updatedFormData;
-        });
+        setEditFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value
+        }));
     };
 
 
