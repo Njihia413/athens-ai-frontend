@@ -21,9 +21,10 @@ import Contact from "../components/contact/Contact";
 import Logs from "../components/logs/Logs";
 import Notifications from "../components/notifications/Notifications";
 import ChangePassword from "../components/settings/ChangePassword";
-import Profile from "../components/user/Profile";
+import UserProfile from "../components/profile/UserProfile";
 import {UserProvider} from "./context/UserContext";
 import StaffCards from "../components/staff/staffCards";
+import AdminProfile from "../components/profile/AdminProfile";
 
 const App = () => {
 
@@ -44,7 +45,7 @@ const App = () => {
                     <Route path="user">
                         <Route index element={<User />} />
                         <Route path="change-password" element={<ChangePassword />} />
-                        <Route path="profile/:username" element={<Profile />} />
+                        <Route path="profile/:username" element={<UserProfile />} />
                     </Route>
 
                     <Route path="admin">
@@ -68,6 +69,9 @@ const App = () => {
                         </Route>
                         <Route path="settings">
                             <Route index element={<Settings />} />
+                        </Route>
+                        <Route path="profile">
+                            <Route index element={<AdminProfile />} />
                         </Route>
                     </Route>
                 </Routes>

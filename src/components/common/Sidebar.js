@@ -552,7 +552,7 @@ const Sidebar = (props) => {
                 <Link
                     className="nav-link"
                     id="v-pills-profile-tab"
-                    title="Profile"
+                    title="UserProfile"
                     data-bs-toggle="pill"
                     to="#v-pills-profile"
                     role="tab"
@@ -1823,7 +1823,7 @@ const Sidebar = (props) => {
                         id="v-pills-profile"
                         role="tabpanel"
                         aria-labelledby="v-pills-profile-tab">
-                      <p>Profile</p>
+                      <p>UserProfile</p>
                       <ul>
                         <li>
                           <Link
@@ -1832,7 +1832,7 @@ const Sidebar = (props) => {
                               }
                               to="/app/profile/employee-profile">
                             {" "}
-                            Employee Profile{" "}
+                            Employee UserProfile{" "}
                           </Link>
                         </li>
                         <li>
@@ -1840,7 +1840,7 @@ const Sidebar = (props) => {
                               className={location.pathname.includes("client-") ? "active" : ""}
                               to="/app/profile/client-profile">
                             {" "}
-                            Client Profile{" "}
+                            Client UserProfile{" "}
                           </Link>
                         </li>
                       </ul>

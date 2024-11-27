@@ -82,7 +82,7 @@ const UserHeader = (props) => {
                         </span>
                     </Link>
                     <div className="dropdown-menu dropdown-menu-end">
-                        {/* Dynamic Profile Route */}
+                        {/* Dynamic UserProfile Route */}
                         <Link
                             className="dropdown-item"
                             to={`/user/profile/${user.username || "default"}`}>

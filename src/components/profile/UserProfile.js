@@ -7,7 +7,7 @@ import fetchWithAuth from "../../utils/FetchWithAuth";
 import {userContext} from "../../InitialPage/context/UserContext";
 import {format} from "date-fns";
 
-const Profile = () => {
+const UserProfile = () => {
     const { user, updateUserDetails } = useContext(userContext);
     const [menu, setMenu] = useState(false);
     const [loading, setLoading ] = useState(true);
@@ -74,7 +74,7 @@ const Profile = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Add submission logic here (e.g., send formData to the server)
-        console.log("Updated Profile Data:", formData);
+        console.log("Updated UserProfile Data:", formData);
     };
 
 
@@ -238,7 +238,7 @@ const Profile = () => {
                                 </div>
                             </div>
 
-                            {/*Edit Profile Form*/}
+                            {/*Edit UserProfile Form*/}
                             <div
                                 id="profile_info"
                                 className="modal custom-modal fade"
@@ -382,7 +382,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                             </div>
-                            {/*Edit Profile Form*/}
+                            {/*Edit UserProfile Form*/}
                         </div>
                     </div>
                 </div>
@@ -391,4 +391,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default UserProfile;
