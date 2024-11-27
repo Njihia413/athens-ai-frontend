@@ -86,16 +86,16 @@ const Sidebar = (props) => {
                   <i className="la la-file-pdf-o"/> <span>Models</span>
                 </Link>
               </li>
-              <li className={location.pathname.includes("logs") ? "active" : ""}>
-                <Link to="/admin/logs">
-                  <i className="la la-exclamation-triangle"/> <span>Logs</span>
-                </Link>
-              </li>
-              <li className={location.pathname.includes("settings") ? "active" : ""}>
-                <Link to="/admin/settings">
-                  <i className="la la-cog"/> <span>Settings</span>
-                </Link>
-              </li>
+              {/*<li className={location.pathname.includes("logs") ? "active" : ""}>*/}
+              {/*  <Link to="/admin/logs">*/}
+              {/*    <i className="la la-exclamation-triangle"/> <span>Logs</span>*/}
+              {/*  </Link>*/}
+              {/*</li>*/}
+              {/*<li className={location.pathname.includes("settings") ? "active" : ""}>*/}
+              {/*  <Link to="/admin/settings">*/}
+              {/*    <i className="la la-cog"/> <span>Settings</span>*/}
+              {/*  </Link>*/}
+              {/*</li>*/}
             </ul>
           </div>
         </div>
