@@ -52,6 +52,24 @@ const StaffCards = () => {
         status: "",
     });
 
+    // Populate state with selectedUser data when modal is opened
+    useEffect(() => {
+        if (selectedUser) {
+            setEditFormData({
+                firstName: selectedUser.firstName || "",
+                middleName: selectedUser.middleName || "",
+                lastName: selectedUser.lastName || "",
+                gender: selectedUser.gender || "",
+                phoneNumber: selectedUser.phoneNumber || "",
+                dateOfBirth: selectedUser.dateOfBirth?.split("T")[0] || "",
+                identificationNumber: selectedUser.identificationNumber || "",
+                email: selectedUser.email || "",
+                roles: selectedUser.roles || [],
+                status: selectedUser.status || "",
+            });
+        }
+    }, [selectedUser]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setEditFormData((prevFormData) => ({
@@ -192,7 +210,24 @@ const StaffCards = () => {
         };
 
         fetchStaff();
-    });
+    },[]);
+
+    // Fetch roles data
+    useEffect(() => {
+        const fetchRoles = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles",
+                    {}, user.token
+                );
+                setRoles(data);
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+            }
+        };
+
+        fetchRoles();
+    },[]);
 
     return (
         <>
@@ -319,7 +354,7 @@ const StaffCards = () => {
                                                 </div>
                                                 <h4 className="user-name m-t-10 mb-0 text-ellipsis">
                                                     <Link to='#'>
-                                                        {user.firstName}
+                                                        {user.firstName} {user.lastName}
                                                     </Link>
                                                 </h4>
                                                 <div className="small text-muted">{user.roles}</div>
@@ -546,19 +581,19 @@ const StaffCards = () => {
                                                     </div>
 
 
-                                                    <h4 className="text-primary">Reset Password</h4>
-                                                    <p className="text-muted">Click on the button below to reset the
-                                                        user's password</p>
-                                                    <div className="col-sm-6">
-                                                        <div className="input-block">
-                                                            <button
-                                                                className="btn btn-outline-primary"
-                                                                type="submit"
-                                                            >
-                                                                Reset Password
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                    {/*<h4 className="text-primary">Reset Password</h4>*/}
+                                                    {/*<p className="text-muted">Click on the button below to reset the*/}
+                                                    {/*    user's password</p>*/}
+                                                    {/*<div className="col-sm-6">*/}
+                                                    {/*    <div className="input-block">*/}
+                                                    {/*        <button*/}
+                                                    {/*            className="btn btn-outline-primary"*/}
+                                                    {/*            type="submit"*/}
+                                                    {/*        >*/}
+                                                    {/*            Reset Password*/}
+                                                    {/*        </button>*/}
+                                                    {/*    </div>*/}
+                                                    {/*</div>*/}
                                                 </div>
                                                 <div className="submit-section">
                                                     <button className="btn btn-primary submit-btn"

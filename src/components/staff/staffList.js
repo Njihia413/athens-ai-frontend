@@ -689,19 +689,19 @@ const StaffList = () => {
                                                     </div>
 
 
-                                                    <h4 className="text-primary">Reset Password</h4>
-                                                    <p className="text-muted">Click on the button below to reset the
-                                                        user's password</p>
-                                                    <div className="col-sm-6">
-                                                        <div className="input-block">
-                                                            <button
-                                                                className="btn btn-outline-primary"
-                                                                type="submit"
-                                                            >
-                                                                Reset Password
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                    {/*<h4 className="text-primary">Reset Password</h4>*/}
+                                                    {/*<p className="text-muted">Click on the button below to reset the*/}
+                                                    {/*    user's password</p>*/}
+                                                    {/*<div className="col-sm-6">*/}
+                                                    {/*    <div className="input-block">*/}
+                                                    {/*        <button*/}
+                                                    {/*            className="btn btn-outline-primary"*/}
+                                                    {/*            type="submit"*/}
+                                                    {/*        >*/}
+                                                    {/*            Reset Password*/}
+                                                    {/*        </button>*/}
+                                                    {/*    </div>*/}
+                                                    {/*</div>*/}
                                                 </div>
                                                 <div className="submit-section">
                                                     <button className="btn btn-primary submit-btn"
