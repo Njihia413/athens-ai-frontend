@@ -40,6 +40,37 @@ const StaffList = () => {
         }
     };
 
+    const [editFormData, setEditFormData] = useState({
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        gender: "",
+        phoneNumber: "",
+        dateOfBirth: "",
+        identificationNumber: "",
+        email: "",
+        roles: [],
+        status: "",
+    });
+
+    // Populate state with selectedUser data when modal is opened
+    useEffect(() => {
+        if (selectedUser) {
+            setEditFormData({
+                firstName: selectedUser.firstName || "",
+                middleName: selectedUser.middleName || "",
+                lastName: selectedUser.lastName || "",
+                gender: selectedUser.gender || "",
+                phoneNumber: selectedUser.phoneNumber || "",
+                dateOfBirth: selectedUser.dateOfBirth?.split("T")[0] || "",
+                identificationNumber: selectedUser.identificationNumber || "",
+                email: selectedUser.email || "",
+                roles: selectedUser.roles || [],
+                status: selectedUser.status || "",
+            });
+        }
+    }, [selectedUser]);
+
     // Fetch staff data
     useEffect(() => {
         const fetchStaff = async () => {
@@ -84,6 +115,25 @@ const StaffList = () => {
         setEntriesPerPage(value === 'all' ? entriesCount : parseInt(value));
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        // Update the form data state
+        setEditFormData((prevFormData) => {
+            const updatedFormData = {
+                ...prevFormData,
+                [name]: value,
+            };
+
+            // Log the current field name and its new value
+            console.log(`Field updated: ${name}, New value: ${value}`);
+            console.log('Updated Form Data:', updatedFormData);
+
+            return updatedFormData;
+        });
+    };
+
+
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchInput(value);
@@ -97,24 +147,14 @@ const StaffList = () => {
         setRoleFilter(e.target.value);
     };
 
-    const handleStatusDropChange = (newStatus) => {
-        setSelectedUser((prevUser) => ({
-            ...prevUser,
-            status: newStatus,
-        }));
-    };
-
-
     // Filter staff based on status, role, and search input
     const filteredUsers = users
         .filter((user) => (statusFilter ? user.status === statusFilter : true))
         .filter((user) => (roleFilter ? user.roles.includes(roleFilter) : true))
         .filter((user) => {
             return user.firstName.toLowerCase().includes(searchInput.toLowerCase()) ||
-                user.middleName.toLowerCase().includes(searchInput.toLowerCase()) ||
                 user.lastName.toLowerCase().includes(searchInput.toLowerCase()) ||
                 user.createdOn.toLowerCase().includes(searchInput.toLowerCase()) ||
-                user.lastLogin.toLowerCase().includes(searchInput.toLowerCase()) ||
                 user.status.toLowerCase().includes(searchInput.toLowerCase()) ||
                 user.roles.some(role => role.toLowerCase().includes(searchInput.toLowerCase()))
         })
@@ -126,10 +166,8 @@ const StaffList = () => {
             (statusFilter ? user.status === statusFilter : true) &&
             (roleFilter ? user.roles.includes(roleFilter) : true) &&
             (user.firstName.toLowerCase().includes(searchInput.toLowerCase()) ||
-                user.middleName.toLowerCase().includes(searchInput.toLowerCase()) ||
                 user.lastName.toLowerCase().includes(searchInput.toLowerCase()) ||
                 user.createdOn.toLowerCase().includes(searchInput.toLowerCase()) ||
-                user.lastLogin.toLowerCase().includes(searchInput.toLowerCase()) ||
                 user.status.toLowerCase().includes(searchInput.toLowerCase()) ||
                 user.roles.some(role => role.toLowerCase().includes(searchInput.toLowerCase()))
             )
@@ -154,7 +192,7 @@ const StaffList = () => {
             dateOfBirth: new Date(dateOfBirthValue).toISOString(),
             identificationNumber: form.elements.identificationNumber.value,
             email: form.elements.email.value,
-            roles: [form.elements.role.value],
+            roles: [form.elements.roles.value],
             status: form.elements.status.value,
         };
 
@@ -372,7 +410,7 @@ const StaffList = () => {
                                                                         </>
                                                                     ) : (
                                                                         <span
-                                                                            className="d-block text-muted text-xs fw-medium">Null</span>
+                                                                            className="d-block text-muted text-xs fw-medium">Not available</span>
                                                                     )}
                                                                 </div>
                                                             </td>
@@ -496,20 +534,6 @@ const StaffList = () => {
                                             <form onSubmit={handleUpdate}>
                                                 <div className="row">
                                                     <h4 className="text-primary">Personal Details Section</h4>
-                                                    {/*<div className="col-sm-6">*/}
-                                                    {/*    <div className="input-block">*/}
-                                                    {/*        <label>User ID</label>*/}
-                                                    {/*        <input*/}
-                                                    {/*            className="form-control"*/}
-                                                    {/*            type="text"*/}
-                                                    {/*            name="datasourceID"*/}
-                                                    {/*            autoComplete="off"*/}
-                                                    {/*            defaultValue={selectedUser?.id} // Prepopulate User ID*/}
-                                                    {/*            disabled={true}*/}
-                                                    {/*            required*/}
-                                                    {/*        />*/}
-                                                    {/*    </div>*/}
-                                                    {/*</div>*/}
                                                     <div className="col-sm-6">
                                                         <div className="input-block">
                                                             <label>First Name</label>
@@ -518,7 +542,8 @@ const StaffList = () => {
                                                                 type="text"
                                                                 name="firstName"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.firstName}
+                                                                defaultValue={editFormData.firstName}
+                                                                onChange={handleInputChange}
                                                             />
                                                         </div>
                                                     </div>
@@ -530,7 +555,8 @@ const StaffList = () => {
                                                                 type="text"
                                                                 name="middleName"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.middleName}
+                                                                defaultValue={editFormData.middleName}
+                                                                onChange={handleInputChange}
                                                             />
                                                         </div>
                                                     </div>
@@ -542,7 +568,8 @@ const StaffList = () => {
                                                                 type="text"
                                                                 name="lastName"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.lastName}
+                                                                defaultValue={editFormData.lastName}
+                                                                onChange={handleInputChange}
                                                             />
                                                         </div>
                                                     </div>
@@ -552,7 +579,8 @@ const StaffList = () => {
                                                             <select
                                                                 className="form-select form-control"
                                                                 name="gender"
-                                                                value={selectedUser?.gender}
+                                                                value={editFormData.gender}
+                                                                onChange={handleInputChange}
                                                             >
                                                                 <option value="Male">Male</option>
                                                                 <option value="Female">Female</option>
@@ -568,7 +596,8 @@ const StaffList = () => {
                                                                 type="text"
                                                                 name="phoneNumber"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.phoneNumber} // Prepopulate Phone Number
+                                                                defaultValue={editFormData.phoneNumber}
+                                                                onChange={handleInputChange}
                                                             />
                                                         </div>
                                                     </div>
@@ -581,7 +610,8 @@ const StaffList = () => {
                                                                     type="date"
                                                                     name="dateOfBirth"
                                                                     id="dateOfBirth"
-                                                                    defaultValue={selectedUser?.dateOfBirth?.split("T")[0] || ""}
+                                                                    defaultValue={editFormData.dateOfBirth?.split("T")[0] || ""}
+                                                                    onChange={handleInputChange}
                                                                     required
                                                                 />
 
@@ -596,7 +626,8 @@ const StaffList = () => {
                                                                 type="number"
                                                                 name="identificationNumber"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.identificationNumber}
+                                                                defaultValue={editFormData.identificationNumber}
+                                                                onChange={handleInputChange}
                                                             />
                                                         </div>
                                                     </div>
@@ -609,7 +640,8 @@ const StaffList = () => {
                                                                 name="email"
                                                                 id="email"
                                                                 autoComplete="off"
-                                                                defaultValue={selectedUser?.email}
+                                                                defaultValue={editFormData.email}
+                                                                onChange={handleInputChange}
                                                             />
                                                         </div>
                                                     </div>
@@ -620,9 +652,9 @@ const StaffList = () => {
                                                             <label>Role</label>
                                                             <select
                                                                 className="form-select form-control"
-                                                                name="role"
-                                                                value={selectedRole || selectedUser?.roles}
-                                                                onChange={(e) => setRole(e.target.value)}  // Update state on change
+                                                                name="roles"
+                                                                value={editFormData.roles}
+                                                                onChange={handleInputChange}
                                                             >
                                                                 {/* Map over roles and create option elements dynamically */}
                                                                 {roles.length > 0 ? (
@@ -645,8 +677,8 @@ const StaffList = () => {
                                                             <select
                                                                 className="form-select form-control"
                                                                 name="status"
-                                                                value={selectedUser?.status}
-                                                                onChange={(e) => handleStatusDropChange(e.target.value)} // Add the onChange handler
+                                                                value={editFormData.status}
+                                                                onChange={handleInputChange}
                                                             >
                                                                 <option value="active">Active</option>
                                                                 <option value="pending">Pending</option>

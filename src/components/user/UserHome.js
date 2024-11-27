@@ -321,7 +321,7 @@ const UserHome = () => {
                                     </div>
                                 </form>
                                 <div className="submit-section">
-                                    <button onClick={handleFileUpload} className="btn btn-primary submit-btn">
+                                    <button onClick={handleFileUpload} className="btn btn-primary submit-btn" data-bs-dismiss="modal">
                                         Upload Files
                                     </button>
                                 </div>
