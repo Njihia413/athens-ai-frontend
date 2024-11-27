@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import {userContext} from "../../InitialPage/context/UserContext";
+import { userContext } from "../../InitialPage/context/UserContext";
 
 const LogoPath = '/Logo2.png';
 
@@ -20,6 +20,8 @@ const UserHeader = (props) => {
     const [username, setUsername] = useState(null);
     const [roles, setRoles] = useState([]);  // New state to store roles
     const { user } = useContext(userContext);
+
+    console.log(user.roles);
 
     useEffect(() => {
 
@@ -51,9 +53,9 @@ const UserHeader = (props) => {
                 }}
                 onClick={handlesidebar}>
                 <span className="bar-icon">
-                  <span />
-                  <span />
-                  <span />
+                    <span />
+                    <span />
+                    <span />
                 </span>
             </Link>
             {/* Header Title */}
@@ -76,8 +78,8 @@ const UserHeader = (props) => {
                         className="dropdown-toggle nav-link"
                         data-bs-toggle="dropdown">
                         <span className="user-img me-1">
-                          <img src={`https://ui-avatars.com/api/?name=${user.firstName}`} alt="" />
-                          <span className="status online" />
+                            <img src={`https://ui-avatars.com/api/?name=${user.firstName}`} alt="" />
+                            <span className="status online" />
                         </span>
                         <span>{user.firstName || "User"}</span>{" "}
                         <span className="text-xs">

@@ -1,12 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import {
     Attachment,
 } from "../../Entryfile/imagepath";
 import axios from "axios";
-import { ToastContainer, toast, Slide  } from 'react-toastify';
+import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaSpinner } from "react-icons/fa";
 
@@ -60,9 +60,9 @@ const UserHome = () => {
         try {
             const res = await axios.post("http://localhost:8000/process", {
                 text: query,
-                thread_id: "conversation-2",
+                thread_id: threadId,
                 model: "llama3.2",
-                role: "hr",
+                role: role,
             });
 
             // Add the LLM's response to the conversation
@@ -79,15 +79,14 @@ const UserHome = () => {
 
     // Handle file upload
     const handleFileUpload = async () => {
-        if (!files.length || !role || !model) {
-            showToast("Please select files, a role, and a model.", "error");
+        if (!files.length || !role) {
+            showToast("Please select files and a role.", "error");
             return;
         }
 
         const formData = new FormData();
         files.forEach((file) => formData.append("files", file));
         formData.append("role", role);
-        formData.append("model", model);
 
         try {
             const res = await axios.post("http://localhost:8000/embed", formData, {
@@ -105,7 +104,7 @@ const UserHome = () => {
             <div className="page-wrapper">
                 <Helmet>
                     <title>User - Athens AI</title>
-                    <meta name="description" content="Chat"/>
+                    <meta name="description" content="Chat" />
                 </Helmet>
                 {/* Chat Main Row */}
                 <div className="chat-main-row d-flex justify-content-center">
@@ -162,11 +161,11 @@ const UserHome = () => {
                                         <div className="chat-wrap-inner">
                                             <div className="chat-box">
                                                 <div className="chats">
-                                                    {conversation.map((message, index) =>(
+                                                    {conversation.map((message, index) => (
                                                         <div
                                                             key={index}
                                                             className={`mb-4 ${message.sender === 'user' ? 'chat chat-right' : 'chat chat-left'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             <div className="chat-body">
                                                                 <div className="chat-bubble">
@@ -192,31 +191,31 @@ const UserHome = () => {
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#drag_files"
                                             >
-                                                <img src={Attachment} alt=""/>
+                                                <img src={Attachment} alt="" />
                                             </Link>
                                             <div className="message-area">
                                                 <form>
                                                     <div className="input-group">
-                                                    <textarea
-                                                        value={query}
-                                                        onChange={(e) => setQuery(e.target.value)}
-                                                        className="form-control"
-                                                        placeholder="Message Athens AI"
-                                                    />
+                                                        <textarea
+                                                            value={query}
+                                                            onChange={(e) => setQuery(e.target.value)}
+                                                            className="form-control"
+                                                            placeholder="Message Athens AI"
+                                                        />
                                                         <span className="input-group-append">
-                                                        <button
-                                                            onClick={handleQuery}
-                                                            className="btn btn-primary btn-chat"
-                                                            type="button"
-                                                            disabled={isLoading}
-                                                        >
-                                                            {isLoading ? (
-                                                                <FaSpinner className="animate-spin"/>
-                                                            ) : (
-                                                                <i className="fa-solid fa-paper-plane"/>
-                                                            )}
-                                                        </button>
-                                                    </span>
+                                                            <button
+                                                                onClick={handleQuery}
+                                                                className="btn btn-primary btn-chat"
+                                                                type="button"
+                                                                disabled={isLoading}
+                                                            >
+                                                                {isLoading ? (
+                                                                    <FaSpinner className="animate-spin" />
+                                                                ) : (
+                                                                    <i className="fa-solid fa-paper-plane" />
+                                                                )}
+                                                            </button>
+                                                        </span>
                                                     </div>
                                                 </form>
                                             </div>
