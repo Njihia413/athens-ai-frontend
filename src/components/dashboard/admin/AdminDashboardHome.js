@@ -74,7 +74,7 @@ const AdminDashboardHome = () => {
         };
 
         fetchStaff();
-    }, []);
+    });
 
 
     useEffect(() => {
@@ -91,7 +91,7 @@ const AdminDashboardHome = () => {
         };
 
         fetchDataSources();
-    }, []);
+    });
 
 
     useEffect(() => {
@@ -108,7 +108,7 @@ const AdminDashboardHome = () => {
         };
 
         fetchRoles();
-    }, []);
+    });
 
     // Fetch models data
     useEffect(() => {
@@ -125,7 +125,7 @@ const AdminDashboardHome = () => {
             }
         }
         fetchModels();
-    }, []);
+    });
 
 
     return (

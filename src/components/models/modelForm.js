@@ -23,32 +23,28 @@ const ModelForm = () => {
                         </div>
                         <div className="modal-body">
                             <form noValidate>
-                                {/*<div className="input-block">*/}
-                                {/*    <label>*/}
-                                {/*        ID <span className="text-danger">*</span>*/}
-                                {/*    </label>*/}
-                                {/*    <input*/}
-                                {/*        className="form-control"*/}
-                                {/*        type="text"*/}
-                                {/*        name="modelId"*/}
-                                {/*        autoComplete="off"*/}
-                                {/*        required*/}
-                                {/*        defaultValue="mid5"*/}
-                                {/*        disabled={true}*/}
-                                {/*    />*/}
-                                {/*</div>*/}
-                                {/*<div className="input-block">*/}
-                                {/*    <label>*/}
-                                {/*        Name <span className="text-danger">*</span>*/}
-                                {/*    </label>*/}
-                                {/*    <input*/}
-                                {/*        className="form-control"*/}
-                                {/*        type="text"*/}
-                                {/*        name="modelName"*/}
-                                {/*        autoComplete="off"*/}
-                                {/*        required*/}
-                                {/*    />*/}
-                                {/*</div>*/}
+                                <div className="input-block">
+                                    <label>
+                                        Model <span className="text-danger">*</span>
+                                    </label>
+                                    {/*<select*/}
+                                    {/*    className="form-select form-control"*/}
+                                    {/*    name="name"*/}
+                                    {/*    id="name"*/}
+                                    {/*>*/}
+                                    {/*    <option value="">Select Model</option>*/}
+                                    {/*    <option value="llama3.2">Llama 3.2</option>*/}
+                                    {/*    <option value="gemma2">Gemma 2</option>*/}
+                                    {/*</select>*/}
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="name"
+                                        id="name"
+                                        autoComplete="off"
+                                        required
+                                    />
+                                </div>
                                 <div className="input-block">
                                     <label>
                                         Alias <span className="text-danger">*</span>
@@ -57,38 +53,40 @@ const ModelForm = () => {
                                         className="form-control"
                                         type="text"
                                         name="nickName"
+                                        id="nickName"
+                                        autoComplete="off"
+                                    />
+                                </div>
+                                <div className="input-block">
+                                    <label>
+                                        Size <span className="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="size"
+                                        id="size"
                                         autoComplete="off"
                                     />
                                 </div>
                                 {/*<div className="input-block">*/}
                                 {/*    <label>*/}
-                                {/*        Size <span className="text-danger">*</span>*/}
+                                {/*        Status <span className="text-danger">*</span>*/}
                                 {/*    </label>*/}
-                                {/*    <input*/}
-                                {/*        className="form-control"*/}
-                                {/*        type="text"*/}
-                                {/*        name="size"*/}
-                                {/*        autoComplete="off"*/}
-                                {/*    />*/}
+                                {/*    <select*/}
+                                {/*        className="form-select form-control"*/}
+                                {/*        name="status"*/}
+                                {/*    >*/}
+                                {/*        <option value="active">Active</option>*/}
+                                {/*        <option value="inactive">Inactive</option>*/}
+                                {/*    </select>*/}
                                 {/*</div>*/}
-                                <div className="input-block">
-                                    <label>
-                                        Status <span className="text-danger">*</span>
-                                    </label>
-                                    <select
-                                        className="form-select form-control"
-                                        name="status"
-                                    >
-                                        <option value={1}>Active</option>
-                                        <option value={2}>Inactive</option>
-                                    </select>
-                                </div>
-                                <div className="input-block">
-                                    <label>
-                                        Upload Model <span className="text-danger">*</span>
-                                    </label>
-                                    <input className="form-control" type="file"/>
-                                </div>
+                                {/*<div className="input-block">*/}
+                                {/*    <label>*/}
+                                {/*        Upload Model <span className="text-danger">*</span>*/}
+                                {/*    </label>*/}
+                                {/*    <input className="form-control" type="file"/>*/}
+                                {/*</div>*/}
                                 <div className="submit-section">
                                     <button className="btn btn-primary submit-btn" data-bs-dismiss="modal"
                                             type="submit">

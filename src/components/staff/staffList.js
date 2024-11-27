@@ -17,7 +17,6 @@ const StaffList = () => {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [roles, setRoles] = useState([]);
-    const [selectedRole, setRole] = useState("");
     const [searchInput, setSearchInput] = useState('');
     const [loading, setLoading] = useState(true);
     const { user } = useContext(userContext);
@@ -89,7 +88,7 @@ const StaffList = () => {
         };
 
         fetchStaff();
-    }, []);
+    });
 
 
     // Fetch roles data
@@ -107,7 +106,7 @@ const StaffList = () => {
         };
 
         fetchRoles();
-    }, []);
+    });
 
 
     const handleEntriesChange = (e) => {
@@ -185,8 +184,6 @@ const StaffList = () => {
             roles: [form.elements.roles.value],
             status: form.elements.status.value,
         };
-
-        const authToken = localStorage.getItem("authToken");
 
         try {
             const response = await fetch(`https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff/${selectedUser.username}`, {

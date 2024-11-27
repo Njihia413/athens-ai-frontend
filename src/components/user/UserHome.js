@@ -10,8 +10,6 @@ import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaSpinner } from "react-icons/fa";
 
-const LogoPath = '/Logo.png';
-
 const UserHome = () => {
     const [files, setFiles] = useState([]);
     const [query, setQuery] = useState('');

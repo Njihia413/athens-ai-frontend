@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { userContext } from "../../InitialPage/context/UserContext";
 
 const LogoPath = '/Logo2.png';
 
 const UserHeader = (props) => {
-    const layoutMode = document.body.getAttribute("data-layout-mode");
+    //const layoutMode = document.body.getAttribute("data-layout-mode");
 
     const handlesidebar = () => {
         document.body.classList.toggle("mini-sidebar");
@@ -16,12 +16,7 @@ const UserHeader = (props) => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const [profileName, setProfileName] = useState(null);
-    const [username, setUsername] = useState(null);
-    const [roles, setRoles] = useState([]);  // New state to store roles
     const { user } = useContext(userContext);
-
-    console.log(user.roles);
 
     useEffect(() => {
 
