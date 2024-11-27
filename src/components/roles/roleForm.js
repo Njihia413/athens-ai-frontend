@@ -26,6 +26,15 @@ const RoleForm = ({ addNewRole }) => {
         }
     };
 
+
+    // const toSnakeCase = (str) => {
+    //     return str
+    //         .replace(/([a-z])([A-Z])/g, '$1_$2')
+    //         .replace(/\s+/g, '_')
+    //         .replace(/[^a-zA-Z0-9_]/g, '')
+    //         .toLowerCase();
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 

@@ -2,23 +2,22 @@ import React, {useContext, useEffect, useState} from "react"
 import Header from '../common/Header.js';
 import Sidebar from "../common/Sidebar.js";
 import {Link} from "react-router-dom";
-import { format } from 'date-fns';
-import {Slide, toast, ToastContainer} from "react-toastify";
+import {NavLink} from "react-router";
 import fetchWithAuth from "../../utils/FetchWithAuth";
 import {userContext} from "../../InitialPage/context/UserContext";
-import {NavLink} from "react-router";
+import {toast} from "react-toastify";
 
-const StaffList = () => {
+const StaffCards = () => {
     const [menu, setMenu] = useState(false);
-    const [entriesCount, setEntriesCount] = useState(0);
-    const [filteredEntriesCount, setFilteredEntriesCount] = useState(0);
-    const [entriesPerPage, setEntriesPerPage] = useState(10);
-    const [statusFilter, setStatusFilter] = useState('');
+    const [roles, setRoles] = useState([]);
     const [roleFilter, setRoleFilter] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
-    const [roles, setRoles] = useState([]);
+    const [filteredEntriesCount, setFilteredEntriesCount] = useState(0);
     const [searchInput, setSearchInput] = useState('');
+    const [entriesCount, setEntriesCount] = useState(0);
+    const [entriesPerPage, setEntriesPerPage] = useState(10);
     const [loading, setLoading] = useState(true);
     const { user } = useContext(userContext);
 
@@ -53,68 +52,6 @@ const StaffList = () => {
         status: "",
     });
 
-    // Populate state with selectedUser data when modal is opened
-    useEffect(() => {
-        if (selectedUser) {
-            setEditFormData({
-                firstName: selectedUser.firstName || "",
-                middleName: selectedUser.middleName || "",
-                lastName: selectedUser.lastName || "",
-                gender: selectedUser.gender || "",
-                phoneNumber: selectedUser.phoneNumber || "",
-                dateOfBirth: selectedUser.dateOfBirth?.split("T")[0] || "",
-                identificationNumber: selectedUser.identificationNumber || "",
-                email: selectedUser.email || "",
-                roles: selectedUser.roles || [],
-                status: selectedUser.status || "",
-            });
-        }
-    }, [selectedUser]);
-
-    // Fetch staff data
-    useEffect(() => {
-        const fetchStaff = async () => {
-            try {
-                const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff",
-                    {}, user.token
-                );
-                setUsers(data);
-                setEntriesCount(data.length);
-                setFilteredEntriesCount(data.length);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching staff:", error);
-            }
-        };
-
-        fetchStaff();
-    });
-
-
-    // Fetch roles data
-    useEffect(() => {
-        const fetchRoles = async () => {
-            try {
-                const data = await fetchWithAuth(
-                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/roles",
-                    {}, user.token
-                );
-                setRoles(data);
-            } catch (error) {
-                console.error("Error fetching roles:", error);
-            }
-        };
-
-        fetchRoles();
-    });
-
-
-    const handleEntriesChange = (e) => {
-        const value = e.target.value;
-        setEntriesPerPage(value === 'all' ? entriesCount : parseInt(value));
-    };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setEditFormData((prevFormData) => ({
@@ -123,18 +60,12 @@ const StaffList = () => {
         }));
     };
 
-
-    const handleSearchChange = (e) => {
-        const value = e.target.value;
-        setSearchInput(value);
+    const handleRoleChange = (e) => {
+        setRoleFilter(e.target.value);
     };
 
     const handleStatusChange = (e) => {
         setStatusFilter(e.target.value);
-    };
-
-    const handleRoleChange = (e) => {
-        setRoleFilter(e.target.value);
     };
 
     // Filter staff based on status, role, and search input
@@ -165,7 +96,6 @@ const StaffList = () => {
 
         setFilteredEntriesCount(count);
     }, [users, statusFilter, roleFilter, searchInput]);
-
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -244,6 +174,25 @@ const StaffList = () => {
         }
     };
 
+    // Fetch staff data
+    useEffect(() => {
+        const fetchStaff = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/staff",
+                    {}, user.token
+                );
+                setUsers(data);
+                setEntriesCount(data.length);
+                setFilteredEntriesCount(data.length);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching staff:", error);
+            }
+        };
+
+        fetchStaff();
+    });
 
     return (
         <>
@@ -306,7 +255,6 @@ const StaffList = () => {
                                             <label className="focus-label">Status</label>
                                         </div>
                                     </div>
-
                                     <div className="col-sm-6 col-md-6">
                                         <div className="input-block form-focus select-focus">
                                             <select
@@ -330,182 +278,91 @@ const StaffList = () => {
                                     </div>
                                 </div>
 
-                                <div className="row mt-4">
-                                    <div className="col-md-12">
-                                        <div className="table-header">
-                                            <div className="row">
-                                                <div className="col-sm-6 col-md-6">
-                                                    <div className="dataTables_length">
-                                                        <label>
-                                                            Show
-                                                            <select
-                                                                className="form-control form-control-sm"
-                                                                value={entriesPerPage}
-                                                                onChange={handleEntriesChange}
-                                                            >
-                                                                <option value="all">All</option>
-                                                                <option value="5">5</option>
-                                                                <option value="10">10</option>
-                                                                <option value="25">25</option>
-                                                                <option value="50">50</option>
-                                                                <option value="100">100</option>
-                                                            </select>
-                                                            Entries
-                                                        </label>
+                                <div className="row staff-grid-row">
+                                    {filteredUsers.map((user, index) => (
+                                        <div key={user.id} className="col-md-4 col-sm-6 col-12 col-lg-4 col-xl-3">
+                                            <div className="profile-widget">
+                                                <div className="profile-img">
+                                                    <Link to="#"
+                                                          className="avatar">
+                                                        <img src={`https://ui-avatars.com/api/?name=${user.firstName}`} alt=""/>
+                                                    </Link>
+                                                </div>
+                                                <div className="dropdown profile-action">
+                                                    <Link
+                                                        to="#"
+                                                        className="action-icon dropdown-toggle"
+                                                        data-bs-toggle="dropdown"
+                                                        aria-expanded="false">
+                                                        <i className="material-icons">more_vert</i>
+                                                    </Link>
+                                                    <div className="dropdown-menu dropdown-menu-right">
+                                                        <Link
+                                                            className="dropdown-item"
+                                                            to="#"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#edit_user"
+                                                            onClick={() => setSelectedUser(user)}
+                                                        >
+                                                            <i className="fa fa-pencil m-r-5"/> Edit
+                                                        </Link>
+                                                        <Link
+                                                            className="dropdown-item"
+                                                            to="#"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#delete_user"
+                                                            onClick={() => setSelectedUser(user)}
+                                                        >
+                                                            <i className="fa-regular fa-trash-can m-r-5"/> Delete
+                                                        </Link>
                                                     </div>
                                                 </div>
-
-                                                <div className="col-sm-6 col-md-6">
-                                                    <div className="dataTables_filter">
-                                                        <label>
-                                                            Search:
-                                                            <input
-                                                                className="form-control form-control-sm"
-                                                                value={searchInput}
-                                                                onChange={handleSearchChange}
-                                                            />
-                                                        </label>
-                                                    </div>
+                                                <h4 className="user-name m-t-10 mb-0 text-ellipsis">
+                                                    <Link to='#'>
+                                                        {user.firstName}
+                                                    </Link>
+                                                </h4>
+                                                <div className="small text-muted">{user.roles}</div>
+                                                <div className="dropdown action-label mt-2">
+                                                    <Link
+                                                        to="#"
+                                                        className="btn btn-white btn-sm btn-rounded"
+                                                        aria-expanded="false"
+                                                    >
+                                                        <i
+                                                            className={`fa-regular fa-circle-dot text-${
+                                                                user.status === 'active'
+                                                                    ? 'success'
+                                                                    : user.status === 'inactive'
+                                                                        ? 'danger'
+                                                                        : user.status === 'pending'
+                                                                            ? 'warning'
+                                                                            : 'info'
+                                                            }`}
+                                                        ></i>
+                                                        {user.status === 'active'
+                                                            ? 'Active'
+                                                            : user.status === 'inactive'
+                                                                ? 'Inactive'
+                                                                : user.status === 'pending'
+                                                                    ? 'Pending'
+                                                                    : 'Unknown'}
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div className="row dt-row mt-4">
-                                            <div className="table-responsive">
-                                                <table className="table table-striped custom-table datatable">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        {/* Added serial number column */}
-                                                        <th>First Name</th>
-                                                        <th>Middle Name</th>
-                                                        <th>Last Name</th>
-                                                        <th>Date Joined</th>
-                                                        <th>Last Login</th>
-                                                        <th>Status</th>
-                                                        <th>Role</th>
-                                                        <th className="text-end">Action</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {filteredUsers.map((user, index) => (
-                                                        <tr key={user.identificationNumber}>
-                                                            <td>{index + 1}</td>
-                                                            {/* Display serial number starting from 1 */}
-                                                            <td>{user.firstName}</td>
-                                                            <td>{user.middleName}</td>
-                                                            <td>{user.lastName}</td>
-                                                            <td>{format(new Date(user.createdOn), 'MMMM dd, yyyy')}</td>
-                                                            <td>
-                                                                <div>
-                                                                    {user.lastLogin ? (
-                                                                        <>
-                                                                            <span className="d-block text-primary text-sm text-nowrap mb-1">
-                                                                                {format(new Date(user.lastLogin), 'MMMM dd, yyyy')}
-                                                                            </span>
-                                                                            <span
-                                                                                className="d-block text-muted text-xs fw-medium">
-                                                                                {format(new Date(user.lastLogin), 'hh:mm:ss a')}
-                                                                            </span>
-                                                                        </>
-                                                                    ) : (
-                                                                        <span
-                                                                            className="d-block text-muted text-xs fw-medium">Not available</span>
-                                                                    )}
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div className="dropdown action-label mt-2">
-                                                                    <Link
-                                                                        to="#"
-                                                                        className="btn btn-white btn-sm btn-rounded"
-                                                                        aria-expanded="false"
-                                                                    >
-                                                                        <i
-                                                                            className={`fa-regular fa-circle-dot text-${
-                                                                                user.status === 'active'
-                                                                                    ? 'success'
-                                                                                    : user.status === 'inactive'
-                                                                                        ? 'danger'
-                                                                                        : user.status === 'pending'
-                                                                                            ? 'warning'
-                                                                                            : 'info'
-                                                                            }`}
-                                                                        ></i>
-                                                                        {user.status === 'active'
-                                                                            ? 'Active'
-                                                                            : user.status === 'inactive'
-                                                                                ? 'Inactive'
-                                                                                : user.status === 'pending'
-                                                                                    ? 'Pending'
-                                                                                    : 'Unknown'}
-                                                                    </Link>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <span className="badge bg-inverse-primary">
-                                                                    {user.roles}
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <div className="dropdown profile-action">
-                                                                    <Link
-                                                                        to="#"
-                                                                        className="action-icon dropdown-toggle"
-                                                                        data-bs-toggle="dropdown"
-                                                                        aria-expanded="false"
-                                                                    >
-                                                                        <i className="material-icons">more_vert</i>
-                                                                    </Link>
-                                                                    <div className="dropdown-menu dropdown-menu-right">
-                                                                        <Link
-                                                                            className="dropdown-item"
-                                                                            to="#"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#edit_user"
-                                                                            onClick={() => setSelectedUser(user)}
-                                                                        >
-                                                                            <i className="fa fa-pencil m-r-5"/> Edit
-                                                                        </Link>
-                                                                        <Link
-                                                                            className="dropdown-item"
-                                                                            to="#"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#delete_user"
-                                                                            onClick={() => setSelectedUser(user)}
-                                                                        >
-                                                                            <i className="fa-regular fa-trash-can m-r-5"/> Delete
-                                                                        </Link>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        <div className="table-footer">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info">
-                                                Showing 1
-                                                    to {Math.min(filteredUsers.length, entriesPerPage)} of {filteredEntriesCount} entries
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    ))}
                                 </div>
                                 {loading && (
-                                    <div className="text-center">
-                                        <div
-                                            className="spinner-border text-primary"
-                                            role="status"
-                                            style={{ width: "3rem", height: "3rem" }}
-                                        >
-                                            <span className="visually-hidden">Loading...</span>
-                                        </div>
+                                <div className="text-center">
+                                    <div
+                                        className="spinner-border text-primary"
+                                        role="status"
+                                        style={{ width: "3rem", height: "3rem" }}
+                                    >
+                                        <span className="visually-hidden">Loading...</span>
                                     </div>
+                                </div>
                                 )}
                             </div>
 
@@ -520,7 +377,7 @@ const StaffList = () => {
                                 <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
                                     <div className="modal-content">
                                         <div className="modal-header">
-                                        <h5 className="modal-title">Edit Staff</h5>
+                                            <h5 className="modal-title">Edit Staff</h5>
                                             <button
                                                 type="button"
                                                 className="btn-close"
@@ -761,21 +618,8 @@ const StaffList = () => {
                     </div>
                 </div>
             </div>
-            <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="colored"
-                transition={Slide}
-            />
         </>
     )
 }
 
-export default StaffList;
+export default StaffCards

@@ -65,7 +65,7 @@ const Sidebar = (props) => {
                 </Link>
               </li>
               <li className={location.pathname.includes("staff") ? "active" : ""}>
-                <Link to="/admin/staff">
+                <Link to="/admin/staff/list">
                   <i className="la la-users"/> <span>Staff</span>
                 </Link>
               </li>

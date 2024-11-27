@@ -23,6 +23,7 @@ import Notifications from "../components/notifications/Notifications";
 import ChangePassword from "../components/settings/ChangePassword";
 import Profile from "../components/user/Profile";
 import {UserProvider} from "./context/UserContext";
+import StaffCards from "../components/staff/staffCards";
 
 const App = () => {
 
@@ -50,7 +51,8 @@ const App = () => {
                         <Route index element={<AdminDashboard />} />
                         <Route path="dashboard" element={<AdminDashboard />} />
                         <Route path="staff">
-                            <Route index element={<StaffList />} />
+                            <Route path="list" element={<StaffList />} />
+                            <Route path="cards" element={<StaffCards />} />
                         </Route>
                         <Route path="datasources">
                             <Route index element={<DatasourceList />} />

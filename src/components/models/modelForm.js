@@ -24,14 +24,6 @@ const ModelForm = ({ addNewModel }) => {
         }
     };
 
-    const toCamelCase = (str) => {
-        return str
-            .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) =>
-                index === 0 ? match.toLowerCase() : match.toUpperCase())
-            .replace(/\s+/g, '')
-            .replace(/[^a-zA-Z0-9]/g, '');
-    };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -73,7 +65,6 @@ const ModelForm = ({ addNewModel }) => {
             showToast("Error adding model", "error");
         }
     };
-
 
     return (
         <>
