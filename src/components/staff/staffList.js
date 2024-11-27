@@ -89,7 +89,7 @@ const StaffList = () => {
         };
 
         fetchStaff();
-    });
+    }, []);
 
 
     // Fetch roles data
@@ -107,7 +107,7 @@ const StaffList = () => {
         };
 
         fetchRoles();
-    });
+    },[]);
 
 
     const handleEntriesChange = (e) => {
