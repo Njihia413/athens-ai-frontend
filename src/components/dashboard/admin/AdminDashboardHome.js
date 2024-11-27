@@ -39,7 +39,7 @@ const AdminDashboardHome = () => {
     const [users, setUsers] = useState([]);
     const [dataSources, setDataSources] = useState([]);
     const [roles, setRoles] = useState([]);
-
+    const [models, setModels] = useState([]);
 
     const toggleMobileMenu = () => {
         setMenu(!menu);
@@ -110,6 +110,23 @@ const AdminDashboardHome = () => {
         fetchRoles();
     }, []);
 
+    // Fetch models data
+    useEffect(() => {
+        const fetchModels = async () => {
+            try {
+                const data = await fetchWithAuth(
+                    "https://ragorganizationdev-buajg8e6bfcubwbq.canadacentral-01.azurewebsites.net/api/languageModels",
+                    {}, user.token
+                );
+                setModels(data);
+                console.log(data);
+            } catch (error) {
+                console.error("Error fetching models:", error);
+            }
+        }
+        fetchModels();
+    }, []);
+
 
     return (
         <>
@@ -148,11 +165,11 @@ const AdminDashboardHome = () => {
                                 <div className="card dash-widget">
                                     <div className="card-body">
                                         <span className="dash-widget-icon">
-                                          <i className="fa fa-exclamation-triangle" />
+                                          <i className="fa fa-file" />
                                         </span>
                                         <div className="dash-widget-info">
-                                            <h3>0</h3>
-                                            <span>Errors</span>
+                                            <h3>{models.length}</h3>
+                                            <span>Models</span>
                                         </div>
                                     </div>
                                 </div>
@@ -174,7 +191,7 @@ const AdminDashboardHome = () => {
                                 <div className="card dash-widget">
                                     <div className="card-body">
                                         <span className="dash-widget-icon">
-                                          <i className="fa fa-file" />
+                                          <i className="fa fa-file-pdf" />
                                         </span>
                                         <div className="dash-widget-info">
                                             <h3>{dataSources.length}</h3>
