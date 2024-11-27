@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import {useLocation} from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Scrollbars } from "react-custom-scrollbars";
+import { Scrollbar } from 'react-scrollbars-custom';
 
 const Sidebar = (props) => {
   const MenuMore = () => {
@@ -54,62 +54,62 @@ const Sidebar = (props) => {
           id="sidebar"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}>
-        <Scrollbars
-            autoHide
-            autoHideTimeout={1000}
-            autoHideDuration={200}
-            autoHeight
-            autoHeightMin={0}
-            autoHeightMax="95vh"
-            thumbMinSize={30}
-            universal={false}
-            hideTracksWhenNotNeeded={true}>
-          <div className="sidebar-inner slimscroll">
-            <div id="sidebar-menu" className="sidebar-menu">
-              <ul className="sidebar-vertical" id="veritical-sidebar">
-                <li className={
-                  location.pathname.includes("/admin/dashboard") ? "active" : ""
-                }>
-                  <Link to="/admin/dashboard">
-                    <i className="la la-dashboard"/> <span>Dashboard</span>
-                  </Link>
-                </li>
-                <li className={location.pathname.includes("staff") ? "active" : ""}>
-                  <Link to="/admin/staff">
-                    <i className="la la-users"/> <span>Staff</span>
-                  </Link>
-                </li>
-                <li className={location.pathname.includes("datasources") ? "active" : ""}>
-                  <Link to="/admin/datasources">
-                    <i className="la la-files-o"/> <span>Datasources</span>
-                  </Link>
-                </li>
-                <li
-                    className={
-                      location.pathname.includes("roles") ? "active" : ""}>
-                  <Link to="/admin/roles">
-                    <i className="la la-ticket"/> <span>Roles</span>
-                  </Link>
-                </li>
-                <li className={location.pathname.includes("models") ? "active" : ""}>
-                  <Link to="/admin/models">
-                    <i className="la la-file-pdf-o"/> <span>Models</span>
-                  </Link>
-                </li>
-                <li className={location.pathname.includes("logs") ? "active" : ""}>
-                  <Link to="/admin/logs">
-                    <i className="la la-exclamation-triangle"/> <span>Logs</span>
-                  </Link>
-                </li>
-                <li className={location.pathname.includes("settings") ? "active" : ""}>
-                  <Link to="/admin/settings">
-                    <i className="la la-cog"/> <span>Settings</span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
+        <div className="sidebar-inner slimscroll">
+          <div id="sidebar-menu" className="sidebar-menu">
+            <ul className="sidebar-vertical" id="veritical-sidebar">
+              <li className={
+                location.pathname.includes("/admin/dashboard") ? "active" : ""
+              }>
+                <Link to="/admin/dashboard">
+                  <i className="la la-dashboard"/> <span>Dashboard</span>
+                </Link>
+              </li>
+              <li className={location.pathname.includes("staff") ? "active" : ""}>
+                <Link to="/admin/staff">
+                  <i className="la la-users"/> <span>Staff</span>
+                </Link>
+              </li>
+              <li className={location.pathname.includes("datasources") ? "active" : ""}>
+                <Link to="/admin/datasources">
+                  <i className="la la-files-o"/> <span>Datasources</span>
+                </Link>
+              </li>
+              <li
+                  className={
+                    location.pathname.includes("roles") ? "active" : ""}>
+                <Link to="/admin/roles">
+                  <i className="la la-ticket"/> <span>Roles</span>
+                </Link>
+              </li>
+              <li className={location.pathname.includes("models") ? "active" : ""}>
+                <Link to="/admin/models">
+                  <i className="la la-file-pdf-o"/> <span>Models</span>
+                </Link>
+              </li>
+              <li className={location.pathname.includes("logs") ? "active" : ""}>
+                <Link to="/admin/logs">
+                  <i className="la la-exclamation-triangle"/> <span>Logs</span>
+                </Link>
+              </li>
+              <li className={location.pathname.includes("settings") ? "active" : ""}>
+                <Link to="/admin/settings">
+                  <i className="la la-cog"/> <span>Settings</span>
+                </Link>
+              </li>
+            </ul>
           </div>
-        </Scrollbars>
+        </div>
+        {/*<Scrollbar*/}
+        {/*    autoHideTimeout={1000}*/}
+        {/*    autoHideDuration={200}*/}
+        {/*    autoHeight*/}
+        {/*    autoHeightMin={0}*/}
+        {/*    autoHeightMax="95vh"*/}
+        {/*    thumbMinSize={30}*/}
+        {/*    universal={false}*/}
+        {/*    hideTracksWhenNotNeeded={true}>*/}
+        {/*  */}
+        {/*</Scrollbar>*/}
         <div className="two-col-bar" id="two-col-bar">
           <div className="sidebar sidebar-twocol">
             <div className="sidebar-left slimscroll">
@@ -1013,7 +1013,7 @@ const Sidebar = (props) => {
                         <li
                             className={location.pathname.includes("clients") ? "active" : ""}>
                           <Link to="/app/employees/clients">
-                            <i className="la la-users" /> <span>Clients</span>
+                            <i className="la la-users"/> <span>Clients</span>
                           </Link>
                         </li>
                       </ul>
@@ -1077,7 +1077,7 @@ const Sidebar = (props) => {
                       <ul>
                         <li className={location.pathname.includes("leads") ? "active" : ""}>
                           <Link to="/app/employees/leads">
-                            <i className="la la-user-secret" /> <span>Leads</span>
+                            <i className="la la-user-secret"/> <span>Leads</span>
                           </Link>
                         </li>
                       </ul>
@@ -1102,7 +1102,7 @@ const Sidebar = (props) => {
                                       : ""
                             }>
                           <Link to="/app/employees/tickets">
-                            <i className="la la-ticket" /> <span>Tickets</span>
+                            <i className="la la-ticket"/> <span>Tickets</span>
                           </Link>
                         </li>
                       </ul>
@@ -1275,7 +1275,7 @@ const Sidebar = (props) => {
                         <li
                             className={location.pathname.includes("policies") ? "active" : ""}>
                           <Link to="/app/hr/policies">
-                            <i className="la la-file-pdf-o" /> <span>Policies</span>
+                            <i className="la la-file-pdf-o"/> <span>Policies</span>
                           </Link>
                         </li>
                       </ul>
@@ -1524,7 +1524,7 @@ const Sidebar = (props) => {
                               location.pathname.includes("promotion") ? "active" : ""
                             }>
                           <Link to="/app/performance/promotion">
-                            <i className="la la-bullhorn" /> <span>Promotion</span>
+                            <i className="la la-bullhorn"/> <span>Promotion</span>
                           </Link>
                         </li>
                       </ul>
@@ -1545,7 +1545,7 @@ const Sidebar = (props) => {
                               location.pathname.includes("resignation") ? "active" : ""
                             }>
                           <Link to="/app/performance/resignation">
-                            <i className="la la-external-link-square" />{" "}
+                            <i className="la la-external-link-square"/>{" "}
                             <span>Resignation</span>
                           </Link>
                         </li>
@@ -1567,7 +1567,7 @@ const Sidebar = (props) => {
                               location.pathname.includes("termination") ? "active" : ""
                             }>
                           <Link to="/app/performance/termination">
-                            <i className="la la-times-circle" />{" "}
+                            <i className="la la-times-circle"/>{" "}
                             <span>Termination</span>
                           </Link>
                         </li>
@@ -1586,7 +1586,7 @@ const Sidebar = (props) => {
                       <ul>
                         <li className={location.pathname.includes("assets") ? "active" : ""}>
                           <Link to="/app/administrator/assets">
-                            <i className="la la-object-ungroup" />{" "}
+                            <i className="la la-object-ungroup"/>{" "}
                             <span>Assets</span>
                           </Link>
                         </li>
@@ -1748,7 +1748,7 @@ const Sidebar = (props) => {
                               location.pathname.includes("knowledgebase") ? "active" : ""
                             }>
                           <Link to="/app/administrator/knowledgebase">
-                            <i className="la la-question" />{" "}
+                            <i className="la la-question"/>{" "}
                             <span>Knowledgebase</span>
                           </Link>
                         </li>
@@ -1770,7 +1770,7 @@ const Sidebar = (props) => {
                               location.pathname.includes("activities") ? "active" : ""
                             }>
                           <Link to="/app/administrator/activities">
-                            <i className="la la-bell" /> <span>Activities</span>
+                            <i className="la la-bell"/> <span>Activities</span>
                           </Link>
                         </li>
                       </ul>
@@ -1791,7 +1791,7 @@ const Sidebar = (props) => {
                               location.pathname.includes("administrator/staff") ? "active" : ""
                             }>
                           <Link to="/app/administrator/users">
-                            <i className="la la-user-plus" /> <span>Users</span>
+                            <i className="la la-user-plus"/> <span>Users</span>
                           </Link>
                         </li>
                       </ul>
@@ -1809,7 +1809,7 @@ const Sidebar = (props) => {
                       <ul>
                         <li>
                           <Link to="/settings/companysetting">
-                            <i className="la la-cog" /> <span>Settings</span>
+                            <i className="la la-cog"/> <span>Settings</span>
                           </Link>
                         </li>
                       </ul>
@@ -2113,7 +2113,7 @@ const Sidebar = (props) => {
                       <ul>
                         <li>
                           <Link to="#">
-                            <i className="la la-file-text" />{" "}
+                            <i className="la la-file-text"/>{" "}
                             <span>Documentation</span>
                           </Link>
                         </li>
@@ -2183,7 +2183,7 @@ const Sidebar = (props) => {
                                       }>
                                     {" "}
                                     <span> Level 2</span>{" "}
-                                    <span className="menu-arrow" />
+                                    <span className="menu-arrow"/>
                                   </Link>
                                   {level3Menu === "level 2" ? (
                                       <ul>
