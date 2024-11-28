@@ -118,44 +118,44 @@ const UserHome = () => {
                             <div className="chat-window">
                                 <div className="fixed-header">
                                     <div className="navbar">
-                                        <div className="user-details me-auto">
-                                            <div className="float-start user-img">
-                                                <div className="col-sm-12 col-md-12">
-                                                    <div
-                                                        className="input-block ">
-                                                        <select
-                                                            value={model}
-                                                            onChange={(e) => setModel(e.target.value)}
-                                                            className="form-select form-control"
-                                                        >
-                                                            <option value="llama3.2">
-                                                                Athens Delphi
-                                                            </option>
-                                                            <option value="gemma2">
-                                                                Athens Heracles
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div className="col-sm-12 col-md-12">
-                                                <div
-                                                    className="input-block ">
-                                                    <select
-                                                        value={role}
-                                                        onChange={(e) => setRole(e.target.value)}
-                                                        className="form-select form-control"
-                                                    >
-                                                        <option value="admin">Admin</option>
-                                                        <option value="hr">HR</option>
-                                                        <option value="manager">Manager</option>
-                                                        <option value="customer_service">Customer Service</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {/*<div className="user-details me-auto">*/}
+                                        {/*    <div className="float-start user-img">*/}
+                                        {/*        <div className="col-sm-12 col-md-12">*/}
+                                        {/*            <div*/}
+                                        {/*                className="input-block ">*/}
+                                        {/*                <select*/}
+                                        {/*                    value={model}*/}
+                                        {/*                    onChange={(e) => setModel(e.target.value)}*/}
+                                        {/*                    className="form-select form-control"*/}
+                                        {/*                >*/}
+                                        {/*                    <option value="llama3.2">*/}
+                                        {/*                        Athens Delphi*/}
+                                        {/*                    </option>*/}
+                                        {/*                    <option value="gemma2">*/}
+                                        {/*                        Athens Heracles*/}
+                                        {/*                    </option>*/}
+                                        {/*                </select>*/}
+                                        {/*            </div>*/}
+                                        {/*        </div>*/}
+                                        {/*    </div>*/}
+                                        {/*</div>*/}
+                                        {/*<div>*/}
+                                        {/*    <div className="col-sm-12 col-md-12">*/}
+                                        {/*        <div*/}
+                                        {/*            className="input-block ">*/}
+                                        {/*            <select*/}
+                                        {/*                value={role}*/}
+                                        {/*                onChange={(e) => setRole(e.target.value)}*/}
+                                        {/*                className="form-select form-control"*/}
+                                        {/*            >*/}
+                                        {/*                <option value="admin">Admin</option>*/}
+                                        {/*                <option value="hr">HR</option>*/}
+                                        {/*                <option value="manager">Manager</option>*/}
+                                        {/*                <option value="customer_service">Customer Service</option>*/}
+                                        {/*            </select>*/}
+                                        {/*        </div>*/}
+                                        {/*    </div>*/}
+                                        {/*</div>*/}
                                     </div>
                                 </div>
 
