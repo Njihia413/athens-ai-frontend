@@ -89,47 +89,45 @@ const GuestHome = () => {
                                         <div className="chat-wrap-inner">
                                             <div className="chat-box">
                                                 <div className="chats">
-                                                    {query === '' ? (
-                                                        <div className="container-fluid">
-                                                            <div className="row mt-5">
-                                                                <div className="welcome-message text-center mt-5">
-                                                                    <h2>
-                                                                        <TypeAnimation
-                                                                            sequence={['What can I help you with today?']}
-                                                                            cursor={false}
-                                                                            wrapper="div"
-                                                                            easing="ease-in-out"
-                                                                            speed={50}
-                                                                            repeat={0}
-                                                                        />
-                                                                    </h2>
-                                                                    <div className="prompt-container">
-                                                                        <p>Here are some things you can ask me:</p>
-                                                                        <div>
-                                                                            <ActionButtons/>
-                                                                        </div>
+                                                    {/*<div className="container-fluid">*/}
+                                                    {/*    <div className="row mt-5">*/}
+                                                    {/*        <div className="welcome-message text-center mt-5">*/}
+                                                    {/*            <h2>*/}
+                                                    {/*                <TypeAnimation*/}
+                                                    {/*                    sequence={['What can I help you with today?']}*/}
+                                                    {/*                    cursor={false}*/}
+                                                    {/*                    wrapper="div"*/}
+                                                    {/*                    easing="ease-in-out"*/}
+                                                    {/*                    speed={50}*/}
+                                                    {/*                    repeat={0}*/}
+                                                    {/*                />*/}
+                                                    {/*            </h2>*/}
+                                                    {/*            <div className="prompt-container">*/}
+                                                    {/*                <p>Here are some things you can ask me:</p>*/}
+                                                    {/*                <div>*/}
+                                                    {/*                    <ActionButtons/>*/}
+                                                    {/*                </div>*/}
+                                                    {/*            </div>*/}
+                                                    {/*        </div>*/}
+                                                    {/*    </div>*/}
+                                                    {/*</div>*/}
+
+                                                    {conversation.map((message, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className={`mb-4 ${
+                                                                message.sender === 'user' ? 'chat chat-right' : 'chat chat-left'
+                                                            }`}
+                                                        >
+                                                            <div className="chat-body">
+                                                                <div className="chat-bubble">
+                                                                    <div className="chat-content">
+                                                                        <p>{message.text}</p>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    ) : (
-                                                        conversation.map((message, index) => (
-                                                            <div
-                                                                key={index}
-                                                                className={`mb-4 ${
-                                                                    message.sender === 'user' ? 'chat chat-right' : 'chat chat-left'
-                                                                }`}
-                                                            >
-                                                                <div className="chat-body">
-                                                                    <div className="chat-bubble">
-                                                                        <div className="chat-content">
-                                                                            <p>{message.text}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        ))
-                                                    )}
+                                                    ))}
                                                 </div>
                                             </div>
                                         </div>
