@@ -157,7 +157,7 @@ const RoleList = () => {
         // Prepare the formData
         const formData = {
             name: form.elements.name.value,
-            dataSources: selectedRole.dataSources.map(dataSource => dataSource.id),
+            dataSourceIds: selectedRole.dataSources.map(dataSource => dataSource.id),
         };
 
         try {
